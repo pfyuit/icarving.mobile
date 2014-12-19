@@ -1,9 +1,6 @@
-// Ionic Starter App
+var uid = 8;
 
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('icarving', ['ionic'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -16,4 +13,108 @@ angular.module('starter', ['ionic'])
       StatusBar.styleDefault();
     }
   });
+});
+
+
+angular.module('icarving', ['ionic'])
+
+//Root Controller
+.controller('RootCtrl', function($scope) {
+  $scope.onControllerChanged = function(oldController, oldIndex, newController, newIndex) {
+    console.log('Controller changed', oldController, oldIndex, newController, newIndex);
+    console.log(arguments);
+  };
 })
+
+//Search Controller
+.controller('SearchCtrl', function($scope, $http, $ionicPopover) {
+	 $scope.items = [];
+	 $scope.items1 = [];
+	 $http.get('/icarving.api.pinche/activity/pick/findAll')
+	 .success(function(newItems) {
+		 $scope.items = newItems.response;
+	 });
+	 $http.get('/icarving.api.pinche/activity/picked/findAll')
+	 .success(function(newItems) {
+		 $scope.items1 = newItems.response;
+	 });
+	 
+	  $scope.doRefresh = function() {
+			 $http.get('/icarving.api.pinche/activity/pick/findAll')
+			 .success(function(newItems) {
+				 $scope.items = newItems.response;
+			 });
+			  $http.get('/icarving.api.pinche/activity/picked/findAll')
+			 .success(function(newItems) {
+				 $scope.items1 = newItems.response;
+			 })		  
+			 .finally(function() {
+			       $scope.$broadcast('scroll.refreshComplete');
+			});
+     }
+})
+
+//Pick Activity Controller
+.controller('PickCtrl', function($scope) {
+	$scope.publishPickActivity = function(){
+		alert("pick");
+	}
+})
+
+//Picked Activity Controller
+.controller('PickedCtrl', function($scope) {
+	$scope.publishPickedActivity = function(){
+		alert("picked");
+	}
+})
+
+//My Activity/Apply Controller
+.controller('MyCtrl', function($scope, $http) {
+	 $scope.items = [];
+	 $scope.items1 = [];
+	 $scope.items2 = [];
+	 $scope.items3 = [];
+	 $http.get('/icarving.api.pinche/activity/pick/findByUser?uid='+uid)
+	 .success(function(newItems) {
+		 $scope.items = newItems.response;
+	 });
+	 $http.get('/icarving.api.pinche/activity/picked/findByUser?uid='+uid)
+	 .success(function(newItems) {
+		 $scope.items1 = newItems.response;
+	 });
+	 $http.get('/icarving.api.pinche/apply/pick/findByUser?uid='+uid)
+	 .success(function(newItems) {
+		 $scope.items2 = newItems.response;
+	 });
+	 $http.get('/icarving.api.pinche/apply/picked/findByUser?uid='+uid)
+	 .success(function(newItems) {
+		 $scope.items3 = newItems.response;
+	 });
+	 
+	  $scope.doRefresh = function() {
+			 $http.get('/icarving.api.pinche/activity/pick/findByUser?uid='+uid)
+			 .success(function(newItems) {
+				 $scope.items = newItems.response;
+			 });
+			  $http.get('/icarving.api.pinche/activity/picked/findByUser?uid='+uid)
+			 .success(function(newItems) {
+				 $scope.items1 = newItems.response;
+			 });
+			 $http.get('/icarving.api.pinche/apply/pick/findByUser?uid='+uid)
+			 .success(function(newItems) {
+				 $scope.items2 = newItems.response;
+			 });
+			 $http.get('/icarving.api.pinche/apply/picked/findByUser?uid='+uid)
+			 .success(function(newItems) {
+				 $scope.items3 = newItems.response;
+			 })			  
+			 .finally(function() {
+			       $scope.$broadcast('scroll.refreshComplete');
+			});
+      }
+	
+});
+
+
+
+
