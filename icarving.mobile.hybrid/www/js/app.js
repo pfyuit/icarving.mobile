@@ -15,6 +15,11 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
   });
 })
 
+.config(function($ionicConfigProvider) {
+	$ionicConfigProvider.tabs.position("bottom"); //Places them at the bottom for all OS
+	$ionicConfigProvider.tabs.style("standard"); //Makes them all look the same across all OS
+})
+
 .config(function($stateProvider, $urlRouterProvider) {
 
   $stateProvider
