@@ -1,6 +1,6 @@
 var uid = 8;
 
-angular.module('icarving', ['ionic'])
+angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -13,107 +13,123 @@ angular.module('icarving', ['ionic'])
       StatusBar.styleDefault();
     }
   });
-});
-
-
-angular.module('icarving', ['ionic'])
-
-//Root Controller
-.controller('RootCtrl', function($scope) {
-  $scope.onControllerChanged = function(oldController, oldIndex, newController, newIndex) {
-    console.log('Controller changed', oldController, oldIndex, newController, newIndex);
-    console.log(arguments);
-  };
 })
 
-//Search Controller
-.controller('SearchCtrl', function($scope, $http, $ionicPopover) {
-	 $scope.items = [];
-	 $scope.items1 = [];
-	 $http.get('/icarving.api.pinche/activity/pick/findAll')
-	 .success(function(newItems) {
-		 $scope.items = newItems.response;
-	 });
-	 $http.get('/icarving.api.pinche/activity/picked/findAll')
-	 .success(function(newItems) {
-		 $scope.items1 = newItems.response;
-	 });
-	 
-	  $scope.doRefresh = function() {
-			 $http.get('/icarving.api.pinche/activity/pick/findAll')
-			 .success(function(newItems) {
-				 $scope.items = newItems.response;
-			 });
-			  $http.get('/icarving.api.pinche/activity/picked/findAll')
-			 .success(function(newItems) {
-				 $scope.items1 = newItems.response;
-			 })		  
-			 .finally(function() {
-			       $scope.$broadcast('scroll.refreshComplete');
-			});
-     }
-})
+.config(function($stateProvider, $urlRouterProvider) {
 
-//Pick Activity Controller
-.controller('PickCtrl', function($scope) {
-	$scope.publishPickActivity = function(){
-		alert("pick");
-	}
-})
+  $stateProvider
+  .state('tab', {
+    url: "/tab",
+    abstract: true,
+    templateUrl: "templates/tabs.html"
+  })
 
-//Picked Activity Controller
-.controller('PickedCtrl', function($scope) {
-	$scope.publishPickedActivity = function(){
-		alert("picked");
-	}
-})
-
-//My Activity/Apply Controller
-.controller('MyCtrl', function($scope, $http) {
-	 $scope.items = [];
-	 $scope.items1 = [];
-	 $scope.items2 = [];
-	 $scope.items3 = [];
-	 $http.get('/icarving.api.pinche/activity/pick/findByUser?uid='+uid)
-	 .success(function(newItems) {
-		 $scope.items = newItems.response;
-	 });
-	 $http.get('/icarving.api.pinche/activity/picked/findByUser?uid='+uid)
-	 .success(function(newItems) {
-		 $scope.items1 = newItems.response;
-	 });
-	 $http.get('/icarving.api.pinche/apply/pick/findByUser?uid='+uid)
-	 .success(function(newItems) {
-		 $scope.items2 = newItems.response;
-	 });
-	 $http.get('/icarving.api.pinche/apply/picked/findByUser?uid='+uid)
-	 .success(function(newItems) {
-		 $scope.items3 = newItems.response;
-	 });
-	 
-	  $scope.doRefresh = function() {
-			 $http.get('/icarving.api.pinche/activity/pick/findByUser?uid='+uid)
-			 .success(function(newItems) {
-				 $scope.items = newItems.response;
-			 });
-			  $http.get('/icarving.api.pinche/activity/picked/findByUser?uid='+uid)
-			 .success(function(newItems) {
-				 $scope.items1 = newItems.response;
-			 });
-			 $http.get('/icarving.api.pinche/apply/pick/findByUser?uid='+uid)
-			 .success(function(newItems) {
-				 $scope.items2 = newItems.response;
-			 });
-			 $http.get('/icarving.api.pinche/apply/picked/findByUser?uid='+uid)
-			 .success(function(newItems) {
-				 $scope.items3 = newItems.response;
-			 })			  
-			 .finally(function() {
-			       $scope.$broadcast('scroll.refreshComplete');
-			});
+  .state('tab.view', {
+    url: '/view',
+    views: {
+      'tab-view': {
+        templateUrl: 'templates/tab-view.html',
+        controller: 'ViewCtrl'
       }
-	
+    }
+   })
+  
+  .state('tab.view-pick-detail', {
+      url: '/view/pickdetail/:pickId',
+      views: {
+        'tab-view': {
+          templateUrl: 'templates/view-pick-detail.html',
+          controller: 'ViewPickDetailCtrl'
+        }
+      }
+    })
+    
+   .state('tab.view-picked-detail', {
+      url: '/view/pickeddetail/:pickedId',
+      views: {
+        'tab-view': {
+          templateUrl: 'templates/view-picked-detail.html',
+          controller: 'ViewPickedDetailCtrl'
+        }
+      }
+    })
+
+  .state('tab.pick', {
+      url: '/pick',
+      views: {
+        'tab-pick': {
+          templateUrl: 'templates/tab-pick.html',
+          controller: 'PickCtrl'
+        }
+      }
+    })
+
+  .state('tab.picked', {
+      url: '/picked',
+      views: {
+        'tab-picked': {
+          templateUrl: 'templates/tab-picked.html',
+          controller: 'PickedCtrl'
+        }
+      }
+    })
+
+   .state('tab.my', {
+    url: '/my',
+    views: {
+      'tab-my': {
+        templateUrl: 'templates/tab-my.html',
+        controller: 'MyCtrl'
+      }
+    }
+   })
+  
+   .state('tab.my-pick-detail', {
+      url: '/my/pickdetail/:pickId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-pick-detail.html',
+          controller: 'MyPickDetailCtrl'
+        }
+      }
+    })
+    
+   .state('tab.my-picked-detail', {
+      url: '/my/pickeddetail/:pickedId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-picked-detail.html',
+          controller: 'MyPickedDetailCtrl'
+        }
+      }
+    })
+    
+   .state('tab.my-pick-apply-detail', {
+      url: '/my/pickapplydetail/:pickApplyId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-pick-apply-detail.html',
+          controller: 'MyPickApplyDetailCtrl'
+        }
+      }
+    })
+    
+   .state('tab.my-picked-apply-detail', {
+      url: '/my/pickedapplydetail/:pickedApplyId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-picked-apply-detail.html',
+          controller: 'MyPickedApplyDetailCtrl'
+        }
+      }
+    });
+
+  // if none of the above states are matched, use this as the fallback
+  $urlRouterProvider.otherwise('/tab/view');
+
 });
+
+
 
 
 

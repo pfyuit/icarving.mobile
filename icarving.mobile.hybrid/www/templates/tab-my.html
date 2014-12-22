@@ -1,0 +1,26 @@
+<ion-view view-title="个人">
+  <ion-content>
+           <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher>       
+           <ion-list scroll="false" animation="fade-out">
+            <ion-item class="item-divider">我发布的捡人活动</ion-item>
+            <ion-item ng-repeat="item in items" href="#/tab/my/pickdetail/{{item.pickActivityId}}">
+             <i class="icon ion-email"></i> {{item.sourceAddress}}, {{item.status}}
+            </ion-item>
+            
+            <ion-item class="item-divider">我发布的求捡活动</ion-item>
+            <ion-item ng-repeat="item1 in items1" href="#/tab/my/pickeddetail/{{item1.pickedActivityId}}">
+             <i class="icon ion-chatbubble-working"></i> {{item1.sourceAddress}}, {{item1.status}}
+            </ion-item>
+            
+            <ion-item class="item-divider">我参与的捡人活动</ion-item>
+            <ion-item ng-repeat="item2 in items2" href="#/tab/my/pickapplydetail/{{item2.pickActivityApplyId}}">
+              <i class="icon ion-bug"></i> {{item2.pickActivityId}}, {{item2.status}}
+            </ion-item>
+            
+            <ion-item class="item-divider">我参与的求捡活动</ion-item>
+            <ion-item ng-repeat="item3 in items3" href="#/tab/my/pickedapplydetail/{{item3.pickedActivityApplyId}}">
+             <i class="icon ion-person-stalker"></i> {{item3.pickedActivityId}}, {{item3.status}}
+            </ion-item>
+          </ion-list>
+  </ion-content>
+</ion-view>
