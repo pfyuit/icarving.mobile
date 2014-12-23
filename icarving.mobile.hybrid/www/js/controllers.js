@@ -39,16 +39,32 @@ angular.module('icarving.controllers', [])
 })
 
 //Pick Activity Controller
-.controller('PickCtrl', function($scope) {
+.controller('PickCtrl', function($scope, $http) {
+	$scope.model = {};
 	$scope.publishPickActivity = function(){
-		alert("pick");
+		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"note":$scope.model.note};
+		$http.post('/icarving.api.pinche/activity/pick/create', payload).
+		  success(function(data, status, headers, config) {
+			  alert("捡人活动发布成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("捡人活动发布失败");
+		  });
 	}
 })
 
 //Picked Activity Controller
-.controller('PickedCtrl', function($scope) {
+.controller('PickedCtrl', function($scope, $http) {
+	$scope.model = {};
 	$scope.publishPickedActivity = function(){
-		alert("picked");
+		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"note":$scope.model.note};
+		$http.post('/icarving.api.pinche/activity/picked/create', payload).
+		  success(function(data, status, headers, config) {
+			  alert("求捡活动发布成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("求捡活动发布失败");
+		  });
 	}
 })
 
