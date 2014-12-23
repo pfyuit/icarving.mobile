@@ -29,13 +29,35 @@ angular.module('icarving.controllers', [])
 })
 
 //View Pick Activity Detail Controller
-.controller('ViewPickDetailCtrl', function($scope, $stateParams, PickActivity) {
+.controller('ViewPickDetailCtrl', function($scope, $http, $stateParams, PickActivity) {
 	$scope.pick = PickActivity.get($stateParams.pickId);
+	
+	$scope.applyPickActivity = function(){
+		var payload = {"pickActivityId":$scope.pick.pickActivityId,"applyUserId":uid};
+		$http.post('/icarving.api.pinche/apply/pick/create', payload).
+		  success(function(data, status, headers, config) {
+			  alert("捡人活动申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("捡人活动申请失败");
+		  });
+	};
 })
 
 //View Picked Activity Detail Controller
-.controller('ViewPickedDetailCtrl', function($scope, $stateParams, PickedActivity) {
+.controller('ViewPickedDetailCtrl', function($scope, $http, $stateParams, PickedActivity) {
 	$scope.picked = PickedActivity.get($stateParams.pickedId);
+	
+	$scope.applyPickedActivity = function(){
+		var payload = {"pickedActivityId":$scope.picked.pickedActivityId,"applyUserId":uid};
+		$http.post('/icarving.api.pinche/apply/picked/create', payload).
+		  success(function(data, status, headers, config) {
+			  alert("求捡活动申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("求捡活动申请失败");
+		  });
+	};
 })
 
 //Pick Activity Controller
