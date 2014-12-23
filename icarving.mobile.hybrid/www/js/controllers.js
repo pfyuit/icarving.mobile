@@ -128,7 +128,17 @@ angular.module('icarving.controllers', [])
 		  error(function(data, status, headers, config) {
 			  alert("捡人活动更新失败");
 		  });
-    }
+    };
+    
+    $scope.cancelPickActivity = function(){
+		 $http.get('/icarving.api.pinche/activity/pick/cancel?uid='+uid+'&pickActivityId='+$scope.pick.pickActivityId).
+		  success(function(data, status, headers, config) {
+			  alert("捡人活动取消成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("捡人活动取消失败");
+		  });
+    };
     
 })
 
@@ -145,7 +155,17 @@ angular.module('icarving.controllers', [])
 		  error(function(data, status, headers, config) {
 			  alert("求捡活动更新失败");
 		  });
-    }
+    };
+    
+    $scope.cancelPickedActivity = function(){
+		 $http.get('/icarving.api.pinche/activity/picked/cancel?uid='+uid+'&pickedActivityId='+$scope.picked.pickedActivityId).
+		  success(function(data, status, headers, config) {
+			  alert("求捡活动取消成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("求捡活动取消失败");
+		  });
+   };
 })
 
 //My Pick Activity Apply Detail Controller
