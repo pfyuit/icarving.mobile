@@ -191,11 +191,31 @@ angular.module('icarving.controllers', [])
 })
 
 //My Pick Activity Apply Detail Controller
-.controller('MyPickApplyDetailCtrl', function($scope, $stateParams, MyPickActivityApply) {
+.controller('MyPickApplyDetailCtrl', function($scope, $http, $stateParams, MyPickActivityApply) {
 	$scope.pickApply = MyPickActivityApply.get($stateParams.pickApplyId);
+	
+	$scope.cancelPickActivityApply = function(){
+		 $http.get('/icarving.api.pinche/apply/pick/cancel?uid='+uid+'&pickActivityApplyId='+$scope.pickApply.pickActivityApplyId).
+		  success(function(data, status, headers, config) {
+			  alert("捡人活动申请取消成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("捡人活动申请取消失败");
+		  });
+	};
 })
 
 //My Picked Activity Apply Detail Controller
-.controller('MyPickedApplyDetailCtrl', function($scope, $stateParams, MyPickedActivityApply) {
+.controller('MyPickedApplyDetailCtrl', function($scope, $http, $stateParams, MyPickedActivityApply) {
 	$scope.pickedApply = MyPickedActivityApply.get($stateParams.pickedApplyId);
+	
+	$scope.cancelPickedActivityApply = function(){
+		 $http.get('/icarving.api.pinche/apply/picked/cancel?uid='+uid+'&pickedActivityApplyId='+$scope.pickedApply.pickedActivityApplyId).
+		  success(function(data, status, headers, config) {
+			  alert("求捡活动申请取消成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("求捡活动申请取消失败");
+		  });
+	};
 });
