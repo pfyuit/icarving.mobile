@@ -116,13 +116,36 @@ angular.module('icarving.controllers', [])
 })
 
 //My Pick Activity Detail Controller
-.controller('MyPickDetailCtrl', function($scope, $stateParams, MyPickActivity) {
+.controller('MyPickDetailCtrl', function($scope, $http, $stateParams, MyPickActivity) {
 	$scope.pick = MyPickActivity.get($stateParams.pickId);
+
+    $scope.updatePickActivity = function(){
+		var payload = {"pickActivityId":$scope.pick.pickActivityId,"startTime":$scope.pick.startTime,"returnTime":$scope.pick.returnTime,"sourceAddress":$scope.pick.sourceAddress,"destAddress":$scope.pick.destAddress,"charge":$scope.pick.charge,"carType":$scope.pick.carType,"note":$scope.pick.note};
+		$http.post('/icarving.api.pinche/activity/pick/update', payload).
+		  success(function(data, status, headers, config) {
+			  alert("捡人活动更新成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("捡人活动更新失败");
+		  });
+    }
+    
 })
 
 //My Picked Activity Detail Controller
-.controller('MyPickedDetailCtrl', function($scope, $stateParams, MyPickedActivity) {
+.controller('MyPickedDetailCtrl', function($scope, $http, $stateParams, MyPickedActivity) {
 	$scope.picked = MyPickedActivity.get($stateParams.pickedId);
+	
+    $scope.updatePickedActivity = function(){
+		var payload = {"pickedActivityId":$scope.picked.pickedActivityId,"startTime":$scope.picked.startTime,"returnTime":$scope.picked.returnTime,"sourceAddress":$scope.picked.sourceAddress,"destAddress":$scope.picked.destAddress,"charge":$scope.picked.charge,"carType":$scope.picked.carType,"note":$scope.picked.note};
+		$http.post('/icarving.api.pinche/activity/picked/update', payload).
+		  success(function(data, status, headers, config) {
+			  alert("求捡活动更新成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("求捡活动更新失败");
+		  });
+    }
 })
 
 //My Pick Activity Apply Detail Controller
