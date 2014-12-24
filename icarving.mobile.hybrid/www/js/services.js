@@ -1,5 +1,55 @@
 angular.module('icarving.services', [])
 
+.factory('UserService', function() { 
+	  return {	  
+	    getUid: function() {
+	    	var cookieUid = "";
+	    	
+	    	var strcookie=document.cookie;
+	    	var arrcookie=strcookie.split("; ");
+	    	for(var i=0;i<arrcookie.length;i++){
+	    		var arr=arrcookie[i].split("=");
+	    		if(arr[0]=='uid'){
+	    			cookieUid =  arr[1];
+	    		}
+	    	}
+	    	
+	    	return cookieUid;
+	    },
+	    
+	    getUsername: function() {
+	    	var username = "";
+	    	
+	    	var strcookie=document.cookie;
+	    	var arrcookie=strcookie.split("; ");
+	    	for(var i=0;i<arrcookie.length;i++){
+	    		var arr=arrcookie[i].split("=");
+	    		if(arr[0]=='username'){
+	    			username =  arr[1];
+	    		}
+	    	}
+	    	
+	    	return username;
+	    },
+	    
+	    getPassword: function(modal) {
+	    	var password = "";
+	    	
+	    	var strcookie=document.cookie;
+	    	var arrcookie=strcookie.split("; ");
+	    	for(var i=0;i<arrcookie.length;i++){
+	    		var arr=arrcookie[i].split("=");
+	    		if(arr[0]=='password'){
+	    			password =  arr[1];
+	    		}
+	    	}
+	    	
+	    	return password;
+	    }
+	    
+	  }
+  })
+
 .factory('PickActivity', function($http) { 
   var pickActivities = [];
   return {	  

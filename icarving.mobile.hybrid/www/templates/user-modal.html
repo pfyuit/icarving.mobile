@@ -1,0 +1,52 @@
+<ion-modal-view>
+
+ <ion-content class="padding">
+   <div class="modal"> 
+      <div class="bar bar-balanced"> 
+          <h1 class="title">用户登录</h1>
+      </div> 
+      <br></br> 
+      <form ng-submit="login(data)"> 
+         <div class="list"> 
+            <div class="list list-inset"> 
+               <label class="item item-input"> 
+                  <input type="text" placeholder="用户名: " ng-model="data.username"> 
+               </label> 
+               <label class="item item-input"> 
+                  <input type="text" placeholder="密码: " ng-model="data.password"> 
+               </label> 
+            </div> 
+            <button class="button button-block button-balanced" type="submit"> 
+                                                 登录
+            </button> 
+         </div> 
+      </form>
+      <hr/>
+      <div class="bar bar-calm"> 
+         <h1 class="title">还没有账户?请注册</h1>
+      </div>
+      <br></br>  
+      <form ng-submit="register(data1)"> 
+         <div class="list"> 
+            <div class="list list-inset"> 
+               <label class="item item-input"> 
+                  <input type="text" placeholder="用户名: " ng-model="data1.username"> 
+               </label> 
+               <label class="item item-input"> 
+                  <input type="text" placeholder="密码: " ng-model="data1.password"> 
+               </label> 
+               <label class="item item-input"> 
+                  <input type="text" placeholder="姓名: " ng-model="data1.name"> 
+               </label> 
+               <label class="item item-input"> 
+                  <input type="text" placeholder="手机: " ng-model="data1.phone"> 
+               </label> 
+            </div> 
+            <button class="button button-block button-positive" type="submit"> 
+                                                 注册
+            </button> 
+         </div> 
+      </form>  
+   </div> 
+ </ion-content>
+</ion-modal-view>

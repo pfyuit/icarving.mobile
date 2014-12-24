@@ -1,4 +1,4 @@
-var uid = 8;
+var uid = 0; // Initialize to 0, it means no body registered/logged in.
 
 angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'])
 

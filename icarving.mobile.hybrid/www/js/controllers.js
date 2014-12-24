@@ -1,8 +1,86 @@
 angular.module('icarving.controllers', [])
 
 //View Controller
-.controller('ViewCtrl', function($scope, $http, PickActivity, PickedActivity, $ionicModal) {
+.controller('ViewCtrl', function($scope, $http, $ionicModal, PickActivity, PickedActivity, UserService) {
+  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+  $scope.openModal = function() {
+    $scope.modal.show();
+  }; 
+  $scope.closeModal = function() {
+    $scope.modal.hide();
+  }; 
+  $scope.$on('$destroy', function() {
+    $scope.modal.remove();
+  });
+  $scope.$on('modal.hidden', function() {
+  });
+  $scope.$on('modal.removed', function() {
+  });
+  
+  $scope.login = function (data) { 
+	  $http.get('/icarving.api.pinche/user/login?username='+data.username+'&password='+data.password).
+	  success(function(data, status, headers, config) {
+		  var userid = data.response.uid;
+		  var username = data.response.username;
+		  var password = data.response.password;
+		  
+		  var date=new Date();
+		  var expireDays=10;
+		  date.setTime(date.getTime()+expireDays*24*3600*1000);
+		  var cookieStr = "uid="+userid+"; expires="+date.toUTCString();
+		  document.cookie=cookieStr;
+		  cookieStr = "username="+username+"; expires="+date.toUTCString();
+		  document.cookie=cookieStr;
+		  cookieStr = "password="+password+"; expires="+date.toUTCString();
+		  document.cookie=cookieStr;
+		  
+		  uid=userid;		  
+		  $scope.closeModal(); 
+	  }).
+	  error(function(data, status, headers, config) {
+		  alert("登录失败");
+	 });
+  }; 
+	
+   $scope.register = function (data1) { 
+	   var payload = {"username":data1.username,"password":data1.password,"name":data1.name,"phone":data1.phone}
+	   $http.post('/icarving.api.pinche/user/register', payload).
+	   success(function(data, status, headers, config) {
+		  var userid = data.response.uid;
+		  var username = data.response.username;
+		  var password = data.response.password;
+		  
+		  var date=new Date();
+		  var expireDays=10;
+		  date.setTime(date.getTime()+expireDays*24*3600*1000);
+		  var cookieStr = "uid="+userid+"; expires="+date.toUTCString();
+		  document.cookie=cookieStr;
+		  cookieStr = "username="+username+"; expires="+date.toUTCString();
+		  document.cookie=cookieStr;
+		  cookieStr = "password="+password+"; expires="+date.toUTCString();
+		  document.cookie=cookieStr;
+		  
+		  uid=userid;		  
+		  $scope.closeModal(); 
+	   }).
+	   error(function(data, status, headers, config) {
+		  alert("注册失败");
+	   });
+  }; 
+	
+    var cookieUid = UserService.getUid();
+	
 	PickActivity.all().success(function(res){
+		if(cookieUid != ""){
+			uid = cookieUid;
+		} else {
+			 $scope.openModal();
+		}
 		$scope.items = res.response;
 		PickActivity.save($scope.items);
 	});
@@ -87,8 +165,110 @@ angular.module('icarving.controllers', [])
 })
 
 //My Activity/Apply Controller
-.controller('MyCtrl', function($scope, $http, MyPickActivity, MyPickedActivity, MyPickActivityApply, MyPickedActivityApply) {	 
+.controller('MyCtrl', function($scope, $http, $ionicModal, MyPickActivity, MyPickedActivity, MyPickActivityApply, MyPickedActivityApply, UserService) {
+	 $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+	    scope: $scope,
+	    animation: 'slide-in-up'
+	  }).then(function(modal) {
+	    $scope.modal = modal;
+	  });
+	  $scope.openModal = function() {
+	    $scope.modal.show();
+	  };
+	  $scope.closeModal = function() {
+		$scope.modal.hide();
+	  }; 
+	  $scope.$on('$destroy', function() {
+	    $scope.modal.remove();
+	  });
+	  $scope.$on('modal.hidden', function() {
+	  });
+	  $scope.$on('modal.removed', function() {
+	  });
+	  
+	  $scope.login = function (data) { 
+		  $http.get('/icarving.api.pinche/user/login?username='+data.username+'&password='+data.password).
+		  success(function(data, status, headers, config) {
+			  var userid = data.response.uid;
+			  var username = data.response.username;
+			  var password = data.response.password;
+			  
+			  var date=new Date();
+			  var expireDays=10;
+			  date.setTime(date.getTime()+expireDays*24*3600*1000);
+			  var cookieStr = "uid="+userid+"; expires="+date.toUTCString();
+			  document.cookie=cookieStr;
+			  cookieStr = "username="+username+"; expires="+date.toUTCString();
+			  document.cookie=cookieStr;
+			  cookieStr = "password="+password+"; expires="+date.toUTCString();
+			  document.cookie=cookieStr;
+			  
+			  uid=userid;		  
+			  $scope.closeModal(); 
+		  }).
+		  error(function(data, status, headers, config) {
+			  alert("登录失败");
+		 });
+	  }; 
+		
+	   $scope.register = function (data1) { 
+		   var payload = {"username":data1.username,"password":data1.password,"name":data1.name,"phone":data1.phone}
+		   $http.post('/icarving.api.pinche/user/register', payload).
+		   success(function(data, status, headers, config) {
+		   var userid = data.response.uid;
+		   var username = data.response.username;
+		   var password = data.response.password;
+		   
+		   var date=new Date();
+		   var expireDays=10;
+		   date.setTime(date.getTime()+expireDays*24*3600*1000);
+		   var cookieStr = "uid="+userid+"; expires="+date.toUTCString();
+		   document.cookie=cookieStr;
+		   cookieStr = "username="+username+"; expires="+date.toUTCString();
+		   document.cookie=cookieStr;
+		   cookieStr = "password="+password+"; expires="+date.toUTCString();
+		   document.cookie=cookieStr;
+		  
+		   uid=userid;		  
+		   $scope.closeModal(); 
+		 }).
+		   error(function(data, status, headers, config) {
+			  alert("注册失败");
+		   });
+	  }; 
+	  	   
+	  $scope.logoff = function () { 
+		  $http.get('/icarving.api.pinche/user/logoff?username='+UserService.getUsername()+'&password='+UserService.getPassword()).
+		  success(function(data, status, headers, config) {
+			  var userid = UserService.getUid();
+			  var username = UserService.getUsername();
+			  var password = UserService.getPassword();
+			  
+			  var date=new Date();
+			  date.setTime(date.getTime()-10000);
+			  var deleteCookieStr = "uid="+userid+"; expires="+date.toUTCString();
+			  document.cookie=deleteCookieStr;	
+			  deleteCookieStr = "username="+username+"; expires="+date.toUTCString();
+			  document.cookie=deleteCookieStr;	
+			  deleteCookieStr = "password="+password+"; expires="+date.toUTCString();
+			  document.cookie=deleteCookieStr;	
+			 
+			  uid = 0;
+			  $scope.openModal(); 
+		  }).
+		  error(function(data, status, headers, config) {
+			 alert("退出登录失败");
+		 });
+	 }; 
+	
+	 var cookieUid = UserService.getUid();
+	 
 	 MyPickActivity.all().success(function(res){
+		if(cookieUid != ""){
+			uid = cookieUid;
+		} else {
+			 $scope.openModal();
+		}
 		 $scope.items = res.response;
 		 MyPickActivity.save($scope.items);
 	 });
