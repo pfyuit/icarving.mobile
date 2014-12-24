@@ -1,66 +1,56 @@
 angular.module('icarving.services', [])
 
-.factory('PickActivity', function($http) {
-	var pickActivities = [];
-	
-	$http.get('/icarving.api.pinche/activity/pick/findAll')
-	.success(function(newItems) {
-	  pickActivities = newItems.response;
-	});
- 
-  return {
+.factory('PickActivity', function($http) { 
+  var pickActivities = [];
+  return {	  
     all: function() {
-      return pickActivities;
+    	return $http.get('/icarving.api.pinche/activity/pick/findAll');
     },
-
-    get: function(pickActivityId) {
+    
+  	get: function(pickActivityId) {
       for (var i = 0; i < pickActivities.length; i++) {
         if (pickActivities[i].pickActivityId === parseInt(pickActivityId)) {
           return pickActivities[i];
         }
       }
       return null;
-    }
+   },
+   
+   save: function(data){
+	   pickActivities = data;
+   }
     
   }
 })
 
-.factory('PickedActivity', function($http) {
-	var pickedActivities = [];
-	
-	$http.get('/icarving.api.pinche/activity/picked/findAll')
-	.success(function(newItems) {
-	  pickedActivities = newItems.response;
-	});
- 
+.factory('PickedActivity', function($http) { 
+  var pickedActivities = [];
   return {
-    all: function() {
-      return pickedActivities;
+    all: function() {    	
+      return $http.get('/icarving.api.pinche/activity/picked/findAll');
     },
 
-    get: function(pickedActivityId) {
-      for (var i = 0; i < pickedActivities.length; i++) {
-        if (pickedActivities[i].pickedActivityId === parseInt(pickedActivityId)) {
-          return pickedActivities[i];
+  	get: function(pickedActivityId) {
+        for (var i = 0; i < pickedActivities.length; i++) {
+          if (pickedActivities[i].pickedActivityId === parseInt(pickedActivityId)) {
+            return pickedActivities[i];
+          }
         }
-      }
-      return null;
-    }
+        return null;
+     },
+     
+     save: function(data){
+    	 pickedActivities = data;
+     }
     
   }
 })
 
 .factory('MyPickActivity', function($http) {
-	var pickActivities = [];
-	
-	$http.get('/icarving.api.pinche/activity/pick/findByUser?uid='+uid)
-	.success(function(newItems) {
-	  pickActivities = newItems.response;
-	});
- 
+  var pickActivities = [];
   return {
     all: function() {
-      return pickActivities;
+      return $http.get('/icarving.api.pinche/activity/pick/findByUser?uid='+uid);
     },
 
     get: function(pickActivityId) {
@@ -70,22 +60,20 @@ angular.module('icarving.services', [])
         }
       }
       return null;
+    },
+    
+    save: function(data){
+       pickActivities = data;
     }
     
   }
 })
 
 .factory('MyPickedActivity', function($http) {
-	var pickedActivities = [];
-	
-	$http.get('/icarving.api.pinche/activity/picked/findByUser?uid='+uid)
-	.success(function(newItems) {
-	  pickedActivities = newItems.response;
-	});
- 
+  var pickedActivities = []; 
   return {
     all: function() {
-      return pickedActivities;
+      return $http.get('/icarving.api.pinche/activity/picked/findByUser?uid='+uid);
     },
 
     get: function(pickedActivityId) {
@@ -95,22 +83,20 @@ angular.module('icarving.services', [])
         }
       }
       return null;
-    }
+    },
+    
+    save: function(data){
+    	pickedActivities = data;
+    } 
     
   }
 })
 
 .factory('MyPickActivityApply', function($http) {
-	var pickActivityApply = [];
-	
-	$http.get('/icarving.api.pinche/apply/pick/findByUser?uid='+uid)
-	.success(function(newItems) {
-		pickActivityApply = newItems.response;
-	});
- 
+  var pickActivityApply = [];
   return {
     all: function() {
-      return pickActivityApply;
+      return $http.get('/icarving.api.pinche/apply/pick/findByUser?uid='+uid);
     },
 
     get: function(pickActivityApplyId) {
@@ -120,22 +106,20 @@ angular.module('icarving.services', [])
         }
       }
       return null;
-    }
+    },
+    
+    save: function(data){
+    	pickActivityApply = data;
+    } 
     
   }
 })
 
 .factory('MyPickedActivityApply', function($http) {
-	var pickedActivityApply = [];
-	
-	$http.get('/icarving.api.pinche/apply/picked/findByUser?uid='+uid)
-	.success(function(newItems) {
-		pickedActivityApply = newItems.response;
-	});
- 
+  var pickedActivityApply = []; 
   return {
     all: function() {
-      return pickedActivityApply;
+      return $http.get('/icarving.api.pinche/apply/picked/findByUser?uid='+uid);
     },
 
     get: function(pickedActivityApplyId) {
@@ -145,7 +129,11 @@ angular.module('icarving.services', [])
         }
       }
       return null;
-    }
+    },
+    
+    save: function(data){
+    	pickedActivityApply = data;
+    } 
     
   }
 });
