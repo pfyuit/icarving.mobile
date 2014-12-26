@@ -108,6 +108,46 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
       }
     }
    })
+   
+  .state('tab.my-pick-list', {
+    url: '/my/picklist',
+    views: {
+      'tab-my': {
+        templateUrl: 'templates/my-pick-list.html',
+        controller: 'MyCtrl'
+      }
+    }
+   })
+   
+   .state('tab.my-picked-list', {
+    url: '/my/pickedlist',
+    views: {
+      'tab-my': {
+        templateUrl: 'templates/my-picked-list.html',
+        controller: 'MyCtrl'
+      }
+    }
+   })
+   
+   .state('tab.my-pick-apply-list', {
+    url: '/my/pickapplylist',
+    views: {
+      'tab-my': {
+        templateUrl: 'templates/my-pick-apply-list.html',
+        controller: 'MyCtrl'
+      }
+    }
+   })
+   
+   .state('tab.my-picked-apply-list', {
+    url: '/my/pickedapplylist',
+    views: {
+      'tab-my': {
+        templateUrl: 'templates/my-picked-apply-list.html',
+        controller: 'MyCtrl'
+      }
+    }
+   })
   
    .state('tab.my-pick-detail', {
       url: '/my/pickdetail/:pickId',
