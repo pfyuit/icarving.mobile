@@ -1,7 +1,18 @@
 angular.module('icarving.controllers', [])
 
 //View Controller
-.controller('ViewCtrl', function($scope, $http, $ionicModal, PickActivity, PickedActivity, UserService) {
+.controller('ViewCtrl', function($scope, $http, $ionicModal, $ionicPopup, PickActivity, PickedActivity, UserService) {
+	//Pop Up
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };	
+	
   $ionicModal.fromTemplateUrl('templates/user-modal.html', {
     scope: $scope,
     animation: 'slide-in-up'
@@ -43,7 +54,7 @@ angular.module('icarving.controllers', [])
 		  $scope.closeModal(); 
 	  }).
 	  error(function(data, status, headers, config) {
-		  alert("登录失败");
+		  $scope.showAlert("登录失败");
 	 });
   }; 
 	
@@ -69,9 +80,9 @@ angular.module('icarving.controllers', [])
 		  $scope.closeModal(); 
 	   }).
 	   error(function(data, status, headers, config) {
-		  alert("注册失败");
+		   $scope.showAlert("注册失败");
 	   });
-  }; 
+  };
 	
     var cookieUid = UserService.getUid();
 	
@@ -103,69 +114,123 @@ angular.module('icarving.controllers', [])
 })
 
 //View Pick Activity Detail Controller
-.controller('ViewPickDetailCtrl', function($scope, $http, $stateParams, PickActivity) {
+.controller('ViewPickDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, PickActivity) {
+	//Pop Up
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };
+	
 	$scope.pick = PickActivity.get($stateParams.pickId);
 	
 	$scope.applyPickActivity = function(){
 		var payload = {"pickActivityId":$scope.pick.pickActivityId,"applyUserId":uid};
 		$http.post('/icarving.api.pinche/apply/pick/create', payload).
 		  success(function(data, status, headers, config) {
-			  alert("捡人活动申请成功");
+			  $scope.showAlert('捡人活动申请成功，可以在个人页面中查看申请详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("捡人活动申请失败");
+			  $scope.showAlert('捡人活动申请失败');
 		  });
 	};
 })
 
 //View Picked Activity Detail Controller
-.controller('ViewPickedDetailCtrl', function($scope, $http, $stateParams, PickedActivity) {
+.controller('ViewPickedDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, PickedActivity) {
+	//Pop Up
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };
+	
 	$scope.picked = PickedActivity.get($stateParams.pickedId);
 	
 	$scope.applyPickedActivity = function(){
 		var payload = {"pickedActivityId":$scope.picked.pickedActivityId,"applyUserId":uid};
 		$http.post('/icarving.api.pinche/apply/picked/create', payload).
 		  success(function(data, status, headers, config) {
-			  alert("求捡活动申请成功");
+			  $scope.showAlert('求捡活动申请成功，可以在个人页面中查看申请详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("求捡活动申请失败");
+			  $scope.showAlert('求捡活动申请失败');
 		  });
 	};
 })
 
 //Pick Activity Controller
-.controller('PickCtrl', function($scope, $http) {
+.controller('PickCtrl', function($scope, $http, $ionicPopup) {
+	//Pop Up
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };
+	
 	$scope.model = {};
 	$scope.publishPickActivity = function(){
 		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"note":$scope.model.note};
 		$http.post('/icarving.api.pinche/activity/pick/create', payload).
 		  success(function(data, status, headers, config) {
-			  alert("捡人活动发布成功");
+			  $scope.showAlert('捡人活动发布成功，可以在个人页面中查看活动详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("捡人活动发布失败");
+			  $scope.showAlert('捡人活动发布失败');
 		  });
 	}
 })
 
 //Picked Activity Controller
-.controller('PickedCtrl', function($scope, $http) {
+.controller('PickedCtrl', function($scope, $http, $ionicPopup) {
+	//Pop Up
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };	
+	
 	$scope.model = {};
 	$scope.publishPickedActivity = function(){
 		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"note":$scope.model.note};
 		$http.post('/icarving.api.pinche/activity/picked/create', payload).
 		  success(function(data, status, headers, config) {
-			  alert("求捡活动发布成功");
+			  $scope.showAlert('求捡活动发布成功，可以在个人页面中查看活动详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("求捡活动发布失败");
+			  $scope.showAlert('求捡活动发布失败');
 		  });
 	}
 })
 
 //My Activity/Apply Controller
-.controller('MyCtrl', function($scope, $http, $ionicModal, MyPickActivity, MyPickedActivity, MyPickActivityApply, MyPickedActivityApply, UserService) {
+.controller('MyCtrl', function($scope, $http, $ionicModal, $ionicPopup, MyPickActivity, MyPickedActivity, MyPickActivityApply, MyPickedActivityApply, UserService) {
+     $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+     };
+	
 	 $ionicModal.fromTemplateUrl('templates/user-modal.html', {
 	    scope: $scope,
 	    animation: 'slide-in-up'
@@ -207,7 +272,7 @@ angular.module('icarving.controllers', [])
 			  $scope.closeModal(); 
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("登录失败");
+			  $scope.showAlert('登录失败');
 		 });
 	  }; 
 		
@@ -233,7 +298,7 @@ angular.module('icarving.controllers', [])
 		   $scope.closeModal(); 
 		 }).
 		   error(function(data, status, headers, config) {
-			  alert("注册失败");
+			   $scope.showAlert('注册失败');
 		   });
 	  }; 
 	  	   
@@ -257,7 +322,7 @@ angular.module('icarving.controllers', [])
 			  $scope.openModal(); 
 		  }).
 		  error(function(data, status, headers, config) {
-			 alert("退出登录失败");
+			  $scope.showAlert('退出登录失败');
 		 });
 	 }; 
 	
@@ -308,84 +373,124 @@ angular.module('icarving.controllers', [])
 })
 
 //My Pick Activity Detail Controller
-.controller('MyPickDetailCtrl', function($scope, $http, $stateParams, MyPickActivity) {
+.controller('MyPickDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, MyPickActivity) {
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };	
+	
 	$scope.pick = MyPickActivity.get($stateParams.pickId);
 
     $scope.updatePickActivity = function(){
 		var payload = {"pickActivityId":$scope.pick.pickActivityId,"startTime":$scope.pick.startTime,"returnTime":$scope.pick.returnTime,"sourceAddress":$scope.pick.sourceAddress,"destAddress":$scope.pick.destAddress,"charge":$scope.pick.charge,"carType":$scope.pick.carType,"note":$scope.pick.note};
 		$http.post('/icarving.api.pinche/activity/pick/update', payload).
 		  success(function(data, status, headers, config) {
-			  alert("捡人活动更新成功");
+			  $scope.showAlert("捡人活动更新成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("捡人活动更新失败");
+			  $scope.showAlert("捡人活动更新失败");
 		  });
     };
     
     $scope.cancelPickActivity = function(){
 		 $http.get('/icarving.api.pinche/activity/pick/cancel?uid='+uid+'&pickActivityId='+$scope.pick.pickActivityId).
 		  success(function(data, status, headers, config) {
-			  alert("捡人活动取消成功");
+			  $scope.showAlert("捡人活动取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("捡人活动取消失败");
+			  $scope.showAlert("捡人活动取消失败");
 		  });
     };
     
 })
 
 //My Picked Activity Detail Controller
-.controller('MyPickedDetailCtrl', function($scope, $http, $stateParams, MyPickedActivity) {
+.controller('MyPickedDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, MyPickedActivity) {
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };	
+ 
 	$scope.picked = MyPickedActivity.get($stateParams.pickedId);
 	
     $scope.updatePickedActivity = function(){
 		var payload = {"pickedActivityId":$scope.picked.pickedActivityId,"startTime":$scope.picked.startTime,"returnTime":$scope.picked.returnTime,"sourceAddress":$scope.picked.sourceAddress,"destAddress":$scope.picked.destAddress,"charge":$scope.picked.charge,"carType":$scope.picked.carType,"note":$scope.picked.note};
 		$http.post('/icarving.api.pinche/activity/picked/update', payload).
 		  success(function(data, status, headers, config) {
-			  alert("求捡活动更新成功");
+			  $scope.showAlert("求捡活动更新成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("求捡活动更新失败");
+			  $scope.showAlert("求捡活动更新失败");
 		  });
     };
     
     $scope.cancelPickedActivity = function(){
 		 $http.get('/icarving.api.pinche/activity/picked/cancel?uid='+uid+'&pickedActivityId='+$scope.picked.pickedActivityId).
 		  success(function(data, status, headers, config) {
-			  alert("求捡活动取消成功");
+			  $scope.showAlert("求捡活动取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("求捡活动取消失败");
+			  $scope.showAlert("求捡活动取消失败");
 		  });
    };
 })
 
 //My Pick Activity Apply Detail Controller
-.controller('MyPickApplyDetailCtrl', function($scope, $http, $stateParams, MyPickActivityApply) {
+.controller('MyPickApplyDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, MyPickActivityApply) {
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };	
+ 
 	$scope.pickApply = MyPickActivityApply.get($stateParams.pickApplyId);
 	
 	$scope.cancelPickActivityApply = function(){
 		 $http.get('/icarving.api.pinche/apply/pick/cancel?uid='+uid+'&pickActivityApplyId='+$scope.pickApply.pickActivityApplyId).
 		  success(function(data, status, headers, config) {
-			  alert("捡人活动申请取消成功");
+			  $scope.showAlert("捡人活动申请取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("捡人活动申请取消失败");
+			  $scope.showAlert("捡人活动申请取消失败");
 		  });
 	};
 })
 
 //My Picked Activity Apply Detail Controller
-.controller('MyPickedApplyDetailCtrl', function($scope, $http, $stateParams, MyPickedActivityApply) {
+.controller('MyPickedApplyDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, MyPickedActivityApply) {
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };	
+ 
 	$scope.pickedApply = MyPickedActivityApply.get($stateParams.pickedApplyId);
 	
 	$scope.cancelPickedActivityApply = function(){
 		 $http.get('/icarving.api.pinche/apply/picked/cancel?uid='+uid+'&pickedActivityApplyId='+$scope.pickedApply.pickedActivityApplyId).
 		  success(function(data, status, headers, config) {
-			  alert("求捡活动申请取消成功");
+			  $scope.showAlert("求捡活动申请取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  alert("求捡活动申请取消失败");
+			  $scope.showAlert("求捡活动申请取消失败");
 		  });
 	};
 });
