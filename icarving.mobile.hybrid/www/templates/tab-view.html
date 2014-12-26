@@ -7,19 +7,23 @@
                <input type="search" placeholder="Search">
             </label>
             <button class="button button-balanced">
-                                       搜索
+                                                    搜索
             </button>
            </div>
      
            <ion-list scroll="false" animation="fade-out">
-            <ion-item class="item-divider">近期发布的捡人活动</ion-item>
-            <ion-item ng-repeat="item in items" href="#/tab/view/pickdetail/{{item.pickActivityId}}">
-              <i class="icon ion-email"></i> {{item.sourceAddress}}->{{item.destAddress}}, {{item.status}}
+            <ion-item class="item-avatar item-icon-right" href="#/tab/view/picklist">
+               <img ng-src="img/car_pick.jpg">
+               <h2>捡人活动</h2>
+               <p>点击查看近期捡人活动列表<br/>可选择合适的申请加入</p>
+               <i class="icon ion-chevron-right icon-accessory"></i> 
             </ion-item>
             
-            <ion-item class="item-divider">近期发布的求捡活动</ion-item>
-            <ion-item ng-repeat="item1 in items1" href="#/tab/view/pickeddetail/{{item1.pickedActivityId}}">
-             <i class="icon ion-chatbubble-working"></i> {{item1.sourceAddress}}->{{item1.destAddress}}, {{item1.status}}
+            <ion-item class="item-avatar item-icon-right" href="#/tab/view/pickedlist">
+               <img ng-src="img/car_picked.jpg">
+               <h2>被捡活动</h2>
+               <p>点击查看近期求捡活动列表<br/>可选择合适的申请加入</p>
+               <i class="icon ion-chevron-right icon-accessory"></i> 
             </ion-item>
           </ion-list>
   </ion-content>
