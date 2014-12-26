@@ -462,6 +462,11 @@ angular.module('icarving.controllers', [])
 	$scope.cancelPickActivityApply = function(){
 		 $http.get('/icarving.api.pinche/apply/pick/cancel?uid='+uid+'&pickActivityApplyId='+$scope.pickApply.pickActivityApplyId).
 		  success(function(data, status, headers, config) {
+			 MyPickActivityApply.all().success(function(res){
+				 $scope.items = res.response;
+				 MyPickActivityApply.save($scope.items);
+				 $scope.pickApply = MyPickActivityApply.get($stateParams.pickApplyId);
+			  });
 			  $scope.showAlert("捡人活动申请取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
@@ -487,6 +492,11 @@ angular.module('icarving.controllers', [])
 	$scope.cancelPickedActivityApply = function(){
 		 $http.get('/icarving.api.pinche/apply/picked/cancel?uid='+uid+'&pickedActivityApplyId='+$scope.pickedApply.pickedActivityApplyId).
 		  success(function(data, status, headers, config) {
+			 MyPickedActivityApply.all().success(function(res){
+				 $scope.items = res.response;
+				 MyPickedActivityApply.save($scope.items);
+				 $scope.pickedApply = MyPickedActivityApply.get($stateParams.pickedApplyId);
+			  });
 			  $scope.showAlert("求捡活动申请取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
