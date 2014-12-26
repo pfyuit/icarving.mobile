@@ -186,4 +186,50 @@ angular.module('icarving.services', [])
     } 
     
   }
+})
+
+.factory('MyPickActivityPeopleApply', function($http) {
+  var pickActivityApply = []; 
+  return {
+    all: function(pickActivityId) {
+      return $http.get('/icarving.api.pinche/apply/pick/findByPickActivity?pickActivityId='+pickActivityId);
+    },
+
+    get: function(pickActivityApplyId) {
+      for (var i = 0; i < pickActivityApply.length; i++) {
+        if (pickActivityApply[i].pickActivityApplyId === parseInt(pickActivityApplyId)) {
+          return pickActivityApply[i];
+        }
+      }
+      return null;
+    },
+    
+    save: function(data){
+    	pickActivityApply = data;
+    } 
+    
+  }
+})
+
+.factory('MyPickedActivityPeopleApply', function($http) {
+  var pickedActivityApply = []; 
+  return {
+    all: function(pickedActivityId) {
+      return $http.get('/icarving.api.pinche/apply/picked/findByPickedActivity?pickedActivityId='+pickedActivityId);
+    },
+
+    get: function(pickedActivityApplyId) {
+      for (var i = 0; i < pickedActivityApply.length; i++) {
+        if (pickedActivityApply[i].pickedActivityApplyId === parseInt(pickedActivityApplyId)) {
+          return pickedActivityApply[i];
+        }
+      }
+      return null;
+    },
+    
+    save: function(data){
+    	pickedActivityApply = data;
+    } 
+    
+  }
 });

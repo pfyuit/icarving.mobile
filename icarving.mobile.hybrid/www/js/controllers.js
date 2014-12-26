@@ -493,4 +493,109 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("求捡活动申请取消失败");
 		  });
 	};
+})
+
+//My Pick Activity People Apply List Controller
+.controller('MyPickPeopleApplyListCtrl', function($scope, $http, $stateParams, MyPickActivityPeopleApply) {	
+	MyPickActivityPeopleApply.all($stateParams.pickActivityId).success(function(res){
+		$scope.applies = res.response;
+		MyPickActivityPeopleApply.save($scope.applies);
+	});
+		
+	$scope.doRefresh = function() {
+		MyPickActivityPeopleApply.all($stateParams.pickActivityId).success(function(res){
+			$scope.applies = res.response;
+			MyPickActivityPeopleApply.save($scope.applies);
+		});
+		$scope.$broadcast('scroll.refreshComplete');
+	 };
+})
+
+//My Pick Activity People Apply Detail Controller
+.controller('MyPickPeopleApplyDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, MyPickActivityPeopleApply) {
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };	
+
+	$scope.pickApply = MyPickActivityPeopleApply.get($stateParams.pickActivityApplyId);
+	
+	$scope.approvePickActivityApply = function(){
+		 $http.get('/icarving.api.pinche/apply/pick/approve?pickActivityApplyId='+$scope.pickApply.pickActivityApplyId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("批准申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("批准申请失败");
+		  });
+	};
+	
+	$scope.unApprovePickActivityApply = function(){
+		 $http.get('/icarving.api.pinche/apply/pick/unapprove?pickActivityApplyId='+$scope.pickApply.pickActivityApplyId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("拒绝申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("拒绝申请失败");
+		  });
+	};
+
+})
+
+//My Picked Activity People Apply List Controller
+.controller('MyPickedPeopleApplyListCtrl', function($scope, $http, $stateParams, MyPickedActivityPeopleApply) {	
+	MyPickedActivityPeopleApply.all($stateParams.pickedActivityId).success(function(res){
+		$scope.applies = res.response;
+		MyPickedActivityPeopleApply.save($scope.applies);
+	});
+		
+	$scope.doRefresh = function() {
+		MyPickedActivityPeopleApply.all($stateParams.pickedActivityId).success(function(res){
+			$scope.applies = res.response;
+			MyPickedActivityPeopleApply.save($scope.applies);
+		});
+		$scope.$broadcast('scroll.refreshComplete');
+	 };
+})
+
+//My Picked Activity People Apply Detail Controller
+.controller('MyPickedPeopleApplyDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, MyPickedActivityPeopleApply) {
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };	
+
+	$scope.pickedApply = MyPickedActivityPeopleApply.get($stateParams.pickedActivityApplyId);
+	
+	$scope.approvePickedActivityApply = function(){
+		 $http.get('/icarving.api.pinche/apply/picked/approve?pickedActivityApplyId='+$scope.pickedApply.pickedActivityApplyId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("批准申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("批准申请失败");
+		  });
+	};
+	
+	$scope.unApprovePickedActivityApply = function(){
+		 $http.get('/icarving.api.pinche/apply/picked/unapprove?pickedActivityApplyId='+$scope.pickedApply.pickedActivityApplyId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("拒绝申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("拒绝申请失败");
+		  });
+	};
+
 });
+

@@ -1,0 +1,10 @@
+<ion-view view-title="捡人活动的申请列表">
+  <ion-content>
+        <ion-refresher  pulling-text="下拉 刷新..." on-refresh="doRefresh()"></ion-refresher>       
+        <ion-list scroll="false" animation="fade-out">
+         <ion-item  class="item-icon-right" ng-repeat="apply in applies | orderBy:'pickActivityApplyId' :reverse=true" href="#/tab/my/pickpeopleapplydetail/{{apply.pickActivityApplyId}}">
+            <i class="icon ion-chevron-right icon-accessory"></i> 申请编号: {{apply.pickActivityApplyId}},&nbsp;&nbsp;状态: {{apply.status}}
+         </ion-item>
+       </ion-list>
+  </ion-content>
+</ion-view>

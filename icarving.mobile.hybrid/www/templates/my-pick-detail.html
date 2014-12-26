@@ -25,6 +25,7 @@
             <label class="item item-input">
                 <span class="input-label">备注</span><input type="text" placeholder="备注"  ng-model="pick.note" value={{pick.note}}>
             </label>
+            <a class="button button-block button-positive icon ion-clock" href="#/tab/my/pickpeopleapplylist/{{pick.pickActivityId}}">&nbsp;处理活动申请</a>
             <button class="button button-block button-balanced" ng-click="updatePickActivity()">
               <i class="icon ion-loop"></i>&nbsp;更改捡人活动
             </button>

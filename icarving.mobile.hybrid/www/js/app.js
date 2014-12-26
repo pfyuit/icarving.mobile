@@ -187,6 +187,46 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
           controller: 'MyPickedApplyDetailCtrl'
         }
       }
+    })
+    
+    .state('tab.my-pick-people-apply-list', {
+      url: '/my/pickpeopleapplylist/:pickActivityId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-pick-people-apply-list.html',
+          controller: 'MyPickPeopleApplyListCtrl'
+        }
+      }
+    })
+    
+    .state('tab.my-pick-people-apply-detail', {
+      url: '/my/pickpeopleapplydetail/:pickActivityApplyId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-pick-people-apply-detail.html',
+          controller: 'MyPickPeopleApplyDetailCtrl'
+        }
+      }
+    })
+    
+    .state('tab.my-picked-people-apply-list', {
+      url: '/my/pickedpeopleapplylist/:pickedActivityId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-picked-people-apply-list.html',
+          controller: 'MyPickedPeopleApplyListCtrl'
+        }
+      }
+    })
+    
+    .state('tab.my-picked-people-apply-detail', {
+      url: '/my/pickedpeopleapplydetail/:pickedActivityApplyId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-picked-people-apply-detail.html',
+          controller: 'MyPickedPeopleApplyDetailCtrl'
+        }
+      }
     });
 
   // if none of the above states are matched, use this as the fallback
