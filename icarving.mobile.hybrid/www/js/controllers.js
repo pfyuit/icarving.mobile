@@ -168,7 +168,7 @@ angular.module('icarving.controllers', [])
 })
 
 //Pick Activity Controller
-.controller('PickCtrl', function($scope, $http, $ionicPopup) {
+.controller('PickCtrl', function($scope, $http, $ionicPopup, $filter) {
 	//Pop Up
     $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
@@ -190,11 +190,64 @@ angular.module('icarving.controllers', [])
 		  error(function(data, status, headers, config) {
 			  $scope.showAlert('捡人活动发布失败');
 		  });
-	}
+	};
+	
+	$scope.openStartTimeDatePicker = function() {
+		  
+		$scope.$watch('model.startTimeStr', function(unformattedDate){
+			$scope.model.startTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.startTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.startTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	};
+	  
+	$scope.openReturnTimeDatePicker = function() {
+
+		$scope.$watch('model.returnTimeStr', function(unformattedDate){
+		    $scope.model.returnTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.returnTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.returnTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	 }
+	  
 })
 
 //Picked Activity Controller
-.controller('PickedCtrl', function($scope, $http, $ionicPopup) {
+.controller('PickedCtrl', function($scope, $http, $ionicPopup, $filter) {
 	//Pop Up
     $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
@@ -216,7 +269,59 @@ angular.module('icarving.controllers', [])
 		  error(function(data, status, headers, config) {
 			  $scope.showAlert('求捡活动发布失败');
 		  });
-	}
+	};
+	
+	$scope.openStartTimeDatePicker = function() {
+		  
+		$scope.$watch('model.startTimeStr', function(unformattedDate){
+			$scope.model.startTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.startTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.startTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	};
+	  
+	$scope.openReturnTimeDatePicker = function() {
+
+		$scope.$watch('model.returnTimeStr', function(unformattedDate){
+		    $scope.model.returnTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.returnTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.returnTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	 }
 })
 
 //My Activity/Apply Controller
@@ -373,7 +478,7 @@ angular.module('icarving.controllers', [])
 })
 
 //My Pick Activity Detail Controller
-.controller('MyPickDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, MyPickActivity) {
+.controller('MyPickDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, MyPickActivity) {
     $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
 		     title: '<b>温馨提示</b>',
@@ -407,10 +512,62 @@ angular.module('icarving.controllers', [])
 		  });
     };
     
+	$scope.openStartTimeDatePicker = function() {
+		  
+		$scope.$watch('pick.startTimeStr', function(unformattedDate){
+			$scope.pick.startTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.pick.startTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.pick.startTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	};
+	  
+	$scope.openReturnTimeDatePicker = function() {
+
+		$scope.$watch('pick.returnTimeStr', function(unformattedDate){
+		    $scope.pick.returnTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.pick.returnTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.pick.returnTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	 }
+    
 })
 
 //My Picked Activity Detail Controller
-.controller('MyPickedDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, MyPickedActivity) {
+.controller('MyPickedDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, MyPickedActivity) {
     $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
 		     title: '<b>温馨提示</b>',
@@ -443,6 +600,59 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("求捡活动取消失败");
 		  });
    };
+   
+	$scope.openStartTimeDatePicker = function() {
+		  
+		$scope.$watch('picked.startTimeStr', function(unformattedDate){
+			$scope.picked.startTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.picked.startTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.picked.startTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	};
+	  
+	$scope.openReturnTimeDatePicker = function() {
+
+		$scope.$watch('picked.returnTimeStr', function(unformattedDate){
+		    $scope.picked.returnTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.picked.returnTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.picked.returnTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	 }
+	
 })
 
 //My Pick Activity Apply Detail Controller

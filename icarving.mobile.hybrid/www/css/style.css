@@ -1,1 +1,42 @@
 /* Empty. Add your own CSS if you like */
+
+// Custom CSS to overwrite default datepicker style
+.popup-container .popup {
+    max-height: 100%;
+    width: 450px;
+}
+.popup-body .datetimepicker {
+  min-height: 221px;
+}
+.popup-body .datetimepicker table {
+  width: 100%;
+}
+.glyphicon {
+  vertical-align: top;
+  display: inline-block;
+  font-family: "Ionicons";
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  text-rendering: auto;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.glyphicon:before {
+  vertical-align: top;
+  font-size: 32px;
+  line-height: 32px;
+  padding-right: 2px;
+  padding-left: 2px;
+  display: inline-block;
+  padding: 0 0 1px 0;
+}
+.glyphicon-arrow-right:before {
+  content: "\f10a";
+}
+.glyphicon-arrow-left:before{
+  content: "\f107";
+}

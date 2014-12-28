@@ -8,10 +8,10 @@
                <span class="input-label">目的地</span><input type="text" placeholder="目的地" ng-model="pick.destAddress" value={{pick.destAddress}}>
             </label>
             <label class="item item-input">
-                <span class="input-label">出发时间</span><input type="text" placeholder="出发时间" ng-model="pick.startTime" value={{pick.startTime}}>
+                <span class="input-label">出发时间</span><input type="text" placeholder="出发时间" ng-click="openStartTimeDatePicker()" ng-model="pick.startTime" value={{pick.startTime}}>
             </label>
             <label class="item item-input">
-                <span class="input-label">返回时间</span><input type="text" placeholder="返回时间" ng-model="pick.returnTime" value={{pick.returnTime}}>
+                <span class="input-label">返回时间</span><input type="text" placeholder="返回时间" ng-click="openReturnTimeDatePicker()" ng-model="pick.returnTime" value={{pick.returnTime}}>
             </label>
             <label class="item item-input">
                 <span class="input-label">汽车类型</span><input type="text" placeholder="汽车类型" ng-model="pick.carType" value={{pick.carType}}>
