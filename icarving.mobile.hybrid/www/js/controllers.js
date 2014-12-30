@@ -33,7 +33,17 @@ angular.module('icarving.controllers', [])
   $scope.$on('modal.removed', function() {
   });
   
-  $scope.login = function (data) { 
+  $scope.data = {};
+  $scope.data1 = {};  
+  $scope.login = function (data) {
+	  if(data.username == undefined || data.username==null || data.username ==""){
+		  $scope.showAlert("登录失败。用户名不可为空。");
+		  return;
+	  }
+	  if(data.password == undefined || data.password==null || data.password ==""){
+		  $scope.showAlert("登录失败。密码不可为空。");
+		  return;
+	  }	  
 	  $http.get('/icarving.api.pinche/user/login?username='+data.username+'&password='+data.password).
 	  success(function(data, status, headers, config) {
 		  var userid = data.response.uid;
@@ -54,12 +64,24 @@ angular.module('icarving.controllers', [])
 		  $scope.closeModal(); 
 	  }).
 	  error(function(data, status, headers, config) {
-		  $scope.showAlert("登录失败");
+		  $scope.showAlert("登录失败。 "+data.message+"。");
 	 });
   }; 
 	
    $scope.register = function (data1) { 
-	   var payload = {"username":data1.username,"password":data1.password,"name":data1.name,"phone":data1.phone}
+	   if(data1.username == undefined || data1.username==null || data1.username ==""){
+		   $scope.showAlert("注册失败。用户名不可为空。");
+		   return;
+	   }
+	   if(data1.password == undefined || data1.password==null || data1.password ==""){
+		   $scope.showAlert("注册失败。密码不可为空。");
+		   return;
+	   }
+	   if(data1.password != data1.password1){
+		   $scope.showAlert("注册失败。密码不匹配，请重试。");
+		   return;
+	   }
+	   var payload = {"username":data1.username,"password":data1.password,"name":"","phone":data1.phone}
 	   $http.post('/icarving.api.pinche/user/register', payload).
 	   success(function(data, status, headers, config) {
 		  var userid = data.response.uid;
@@ -80,7 +102,7 @@ angular.module('icarving.controllers', [])
 		  $scope.closeModal(); 
 	   }).
 	   error(function(data, status, headers, config) {
-		   $scope.showAlert("注册失败");
+		   $scope.showAlert("注册失败。 "+data.message+"。");
 	   });
   };
 	
@@ -135,7 +157,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert('捡人活动申请成功，可以在个人页面中查看申请详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert('捡人活动申请失败');
+			  $scope.showAlert('捡人活动申请失败。 '+data.message+"。");
 		  });
 	};
 })
@@ -159,10 +181,10 @@ angular.module('icarving.controllers', [])
 		var payload = {"pickedActivityId":$scope.picked.pickedActivityId,"applyUserId":uid};
 		$http.post('/icarving.api.pinche/apply/picked/create', payload).
 		  success(function(data, status, headers, config) {
-			  $scope.showAlert('求捡活动申请成功，可以在个人页面中查看申请详细信息');
+			  $scope.showAlert('搭车活动申请成功，可以在个人页面中查看申请详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert('求捡活动申请失败');
+			  $scope.showAlert('搭车活动申请失败。 '+data.message+"。");
 		  });
 	};
 })
@@ -188,7 +210,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert('捡人活动发布成功，可以在个人页面中查看活动详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert('捡人活动发布失败');
+			  $scope.showAlert('捡人活动发布失败。 '+data.message+"。");
 		  });
 	};
 	
@@ -264,10 +286,10 @@ angular.module('icarving.controllers', [])
 		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"note":$scope.model.note};
 		$http.post('/icarving.api.pinche/activity/picked/create', payload).
 		  success(function(data, status, headers, config) {
-			  $scope.showAlert('求捡活动发布成功，可以在个人页面中查看活动详细信息');
+			  $scope.showAlert('搭车活动发布成功，可以在个人页面中查看活动详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert('求捡活动发布失败');
+			  $scope.showAlert('搭车活动发布失败。 '+data.message+"。");
 		  });
 	};
 	
@@ -356,7 +378,17 @@ angular.module('icarving.controllers', [])
 	  $scope.$on('modal.removed', function() {
 	  });
 	  
-	  $scope.login = function (data) { 
+	  $scope.data = {};
+	  $scope.data1 = {};
+	  $scope.login = function (data) {
+		  if(data.username == undefined || data.username==null || data.username ==""){
+			  $scope.showAlert("登录失败。用户名不可为空。");
+			  return;
+		  }
+		  if(data.password == undefined || data.password==null || data.password ==""){
+			  $scope.showAlert("登录失败。密码不可为空。");
+			  return;
+		  }	  
 		  $http.get('/icarving.api.pinche/user/login?username='+data.username+'&password='+data.password).
 		  success(function(data, status, headers, config) {
 			  var userid = data.response.uid;
@@ -377,12 +409,24 @@ angular.module('icarving.controllers', [])
 			  $scope.closeModal(); 
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert('登录失败');
+			  $scope.showAlert('登录失败。 '+data.message+"。");
 		 });
 	  }; 
 		
 	   $scope.register = function (data1) { 
-		   var payload = {"username":data1.username,"password":data1.password,"name":data1.name,"phone":data1.phone}
+		   if(data1.username == undefined || data1.username==null || data1.username ==""){
+			   $scope.showAlert("注册失败。用户名不可为空。");
+			   return;
+		   }
+		   if(data1.password == undefined || data1.password==null || data1.password ==""){
+			   $scope.showAlert("注册失败。密码不可为空。");
+			   return;
+		   }
+		   if(data1.password != data1.password1){
+			   $scope.showAlert("注册失败。密码不匹配，请重试。");
+			   return;
+		   }
+		   var payload = {"username":data1.username,"password":data1.password,"name":"","phone":data1.phone}
 		   $http.post('/icarving.api.pinche/user/register', payload).
 		   success(function(data, status, headers, config) {
 		   var userid = data.response.uid;
@@ -403,7 +447,7 @@ angular.module('icarving.controllers', [])
 		   $scope.closeModal(); 
 		 }).
 		   error(function(data, status, headers, config) {
-			   $scope.showAlert('注册失败');
+			   $scope.showAlert('注册失败。 '+data.message+"。");
 		   });
 	  }; 
 	  	   
@@ -427,7 +471,7 @@ angular.module('icarving.controllers', [])
 			  $scope.openModal(); 
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert('退出登录失败');
+			  $scope.showAlert('退出登录失败。 '+data.message+"。");
 		 });
 	 }; 
 	
@@ -498,7 +542,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("捡人活动更新成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("捡人活动更新失败");
+			  $scope.showAlert("捡人活动更新失败。 "+data.message+"。");
 		  });
     };
     
@@ -508,7 +552,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("捡人活动取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("捡人活动取消失败");
+			  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
 		  });
     };
     
@@ -584,20 +628,20 @@ angular.module('icarving.controllers', [])
 		var payload = {"pickedActivityId":$scope.picked.pickedActivityId,"startTime":$scope.picked.startTime,"returnTime":$scope.picked.returnTime,"sourceAddress":$scope.picked.sourceAddress,"destAddress":$scope.picked.destAddress,"charge":$scope.picked.charge,"carType":$scope.picked.carType,"note":$scope.picked.note};
 		$http.post('/icarving.api.pinche/activity/picked/update', payload).
 		  success(function(data, status, headers, config) {
-			  $scope.showAlert("求捡活动更新成功");
+			  $scope.showAlert("搭车活动更新成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("求捡活动更新失败");
+			  $scope.showAlert("搭车活动更新失败。 "+data.message+"。");
 		  });
     };
     
     $scope.cancelPickedActivity = function(){
 		 $http.get('/icarving.api.pinche/activity/picked/cancel?uid='+uid+'&pickedActivityId='+$scope.picked.pickedActivityId).
 		  success(function(data, status, headers, config) {
-			  $scope.showAlert("求捡活动取消成功");
+			  $scope.showAlert("搭车活动取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("求捡活动取消失败");
+			  $scope.showAlert("搭车活动取消失败。 "+data.message+"。");
 		  });
    };
    
@@ -680,7 +724,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("捡人活动申请取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("捡人活动申请取消失败");
+			  $scope.showAlert("捡人活动申请取消失败。 "+data.message+"。");
 		  });
 	};
 })
@@ -707,10 +751,10 @@ angular.module('icarving.controllers', [])
 				 MyPickedActivityApply.save($scope.items);
 				 $scope.pickedApply = MyPickedActivityApply.get($stateParams.pickedApplyId);
 			  });
-			  $scope.showAlert("求捡活动申请取消成功");
+			  $scope.showAlert("搭车活动申请取消成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("求捡活动申请取消失败");
+			  $scope.showAlert("搭车活动申请取消失败。 "+data.message+"。");
 		  });
 	};
 })
@@ -751,7 +795,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("批准申请成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("批准申请失败");
+			  $scope.showAlert("批准申请失败。 "+data.message+"。");
 		  });
 	};
 	
@@ -761,7 +805,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("拒绝申请成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("拒绝申请失败");
+			  $scope.showAlert("拒绝申请失败。 "+data.message+"。");
 		  });
 	};
 
@@ -803,7 +847,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("批准申请成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("批准申请失败");
+			  $scope.showAlert("批准申请失败。 "+data.message+"。");
 		  });
 	};
 	
@@ -813,7 +857,7 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("拒绝申请成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("拒绝申请失败");
+			  $scope.showAlert("拒绝申请失败。 "+data.message+"。");
 		  });
 	};
 
