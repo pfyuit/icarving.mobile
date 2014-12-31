@@ -96,6 +96,29 @@ angular.module('icarving.services', [])
   }
 })
 
+.factory('MyMessage', function($http) { 
+  var myMessages = [];
+  return {	  
+    all: function() {
+    	return $http.get('/icarving.api.pinche/message/'+uid+'/all');
+    },
+    
+  	get: function(msgId) {
+      for (var i = 0; i < myMessages.length; i++) {
+        if (myMessages[i].userMessageId === parseInt(msgId)) {
+          return myMessages[i];
+        }
+      }
+      return null;
+   },
+   
+   save: function(data){
+	   myMessages = data;
+   }
+    
+  }
+})
+
 .factory('MyPickActivity', function($http) {
   var pickActivities = [];
   return {

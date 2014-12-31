@@ -347,7 +347,7 @@ angular.module('icarving.controllers', [])
 })
 
 //My Activity/Apply Controller
-.controller('MyCtrl', function($scope, $http, $ionicModal, $ionicPopup, MyPickActivity, MyPickedActivity, MyPickActivityApply, MyPickedActivityApply, UserService) {
+.controller('MyCtrl', function($scope, $http, $ionicModal, $ionicPopup, MyPickActivity, MyPickedActivity, MyPickActivityApply, MyPickedActivityApply, UserService, MyMessage) {
      $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
 		     title: '<b>温馨提示</b>',
@@ -474,12 +474,25 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert('退出登录失败。 '+data.message+"。");
 		 });
 	 }; 
+	 
+	 $scope.messageLength = 0;
 	
 	 var cookieUid = UserService.getUid();
 	 
 	 MyPickActivity.all().success(function(res){
 		if(cookieUid != ""){
 			uid = cookieUid;
+			MyMessage.all().success(function(res){
+			 $scope.messages = res.response;
+			 MyMessage.save($scope.messages);
+			 if($scope.messages != null && $scope.messages != undefined){
+				 for(var i = 0; i < $scope.messages.length; i++){
+					 if($scope.messages[i].status == 0){
+						 $scope.messageLength =  $scope.messageLength +1; 
+					 }
+				 }
+			 }
+			});
 		} else {
 			 $scope.openModal();
 		}
@@ -519,6 +532,58 @@ angular.module('icarving.controllers', [])
 		 $scope.$broadcast('scroll.refreshComplete');
       }
 	
+})
+
+//My Message List Controller
+.controller('MyMessageListCtrl', function($scope, MyMessage) {
+	$scope.msgs = [];
+	MyMessage.all().success(function(res){
+		 $scope.messages = res.response;
+		 MyMessage.save($scope.messages);
+		 var msg = {};
+		 for(var i =0; i<$scope.messages.length; i++){
+			 var msg = $scope.messages[i];
+			 if(msg.status==0){
+				 msg.isNew = true;
+				 msg.isOld = false;
+			 } else {
+				 msg.isNew = false;
+				 msg.isOld = true; 
+			 }
+			 $scope.msgs[i] = msg;
+		 }
+	});
+		
+	$scope.doRefresh = function() {
+		MyMessage.all().success(function(res){
+			 $scope.messages = res.response;
+			 MyMessage.save($scope.messages);
+			 var msg = {};
+			 for(var i =0; i<$scope.messages.length; i++){
+				 var msg = $scope.messages[i];
+				 if(msg.status==0){
+					 msg.isNew = true;
+					 msg.isOld = false;
+				 } else {
+					 msg.isNew = false;
+					 msg.isOld = true; 
+				 }
+				 $scope.msgs[i] = msg;
+			 }
+		});
+		$scope.$broadcast('scroll.refreshComplete');
+	 };
+})
+
+//My Message Detail Controller
+.controller('MyMessageDetailCtrl', function($scope, $http, $stateParams, MyMessage) {
+	$scope.message = MyMessage.get($stateParams.userMessageId);
+	
+	$http.get('/icarving.api.pinche/message/read?msgId='+$stateParams.userMessageId)
+	.success(function(data, status, headers, config) {
+	 })
+	.error(function(data, status, headers, config) {
+	 });
 })
 
 //My Pick Activity Detail Controller

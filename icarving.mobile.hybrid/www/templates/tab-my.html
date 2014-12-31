@@ -29,6 +29,13 @@
             <p>点击查看我的申请列表<br/>可取消活动申请</p>
             <i class="icon ion-chevron-right icon-accessory"></i> 
          </ion-item>
+         <ion-item class="item-avatar item-icon-right" href="#/tab/my/messagelist">
+            <img ng-src="img/car_pick.jpg">
+            <h2>我的消息</h2>
+            <p>点击查看我的系统消息<br/>或查看用户留言</p>
+            <i class="icon ion-chevron-right icon-accessory"></i>
+            <span class="badge badge-assertive" style="margin-top:19px; margin-right:30px">{{messageLength}}</span> 
+         </ion-item>
        </ion-list>
        <button class="button button-block button-assertive" ng-click="logoff()">
            <i class="icon ion-power"></i>&nbsp;退出登录

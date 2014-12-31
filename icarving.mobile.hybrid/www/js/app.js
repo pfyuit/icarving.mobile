@@ -110,6 +110,26 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     }
    })
    
+   .state('tab.my-message-list', {
+    url: '/my/messagelist',
+    views: {
+      'tab-my': {
+        templateUrl: 'templates/my-message-list.html',
+        controller: 'MyMessageListCtrl'
+      }
+    }
+   })
+   
+   .state('tab.my-message-detail', {
+    url: '/my/messagedetail/:userMessageId',
+    views: {
+      'tab-my': {
+        templateUrl: 'templates/my-message-detail.html',
+        controller: 'MyMessageDetailCtrl'
+      }
+    }
+   })
+   
   .state('tab.my-pick-list', {
     url: '/my/picklist',
     views: {

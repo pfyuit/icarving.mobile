@@ -39,3 +39,11 @@
 .glyphicon-arrow-left:before{
   content: "\f107";
 }
+
+.newmessage {
+	color: red;
+}
+
+.oldmessage {
+	color: black;
+}
