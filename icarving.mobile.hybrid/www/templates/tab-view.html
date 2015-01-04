@@ -1,16 +1,6 @@
 <ion-view view-title="查看活动">
   <ion-content>
-          <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher>  
-           <div class="bar bar-header item-input-inset">
-            <label class="item-input-wrapper">
-               <i class="icon ion-ios7-search placeholder-icon"></i>
-               <input type="search" placeholder="Search">
-            </label>
-            <button class="button button-balanced">
-                                                    搜索
-            </button>
-           </div>
-     
+          <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher>             
            <ion-list scroll="false" animation="fade-out">
             <ion-item class="item-avatar item-icon-right" href="#/tab/view/picklist">
                <img ng-src="img/car_pick.jpg">
@@ -26,5 +16,29 @@
                <i class="icon ion-chevron-right icon-accessory"></i> 
             </ion-item>
           </ion-list>
+          
+           <div class="list list-inset">
+            <label class="item item-input">
+               <i class="icon ion-log-out placeholder-icon"></i>
+               <input type="search" ng-model="model.sourceAddress" placeholder="出发地，不能为空">
+            </label>
+            <label class="item item-input">
+               <i class="icon ion-log-in placeholder-icon"></i>
+               <input type="search" ng-model="model.destAddress" placeholder="目的地">
+            </label>
+            <label class="item item-input">
+               <i class="icon ion-clock placeholder-icon"></i>
+               <input type="search" ng-click="openStartTimeDatePicker()" ng-model="model.startTime" placeholder="出发时间">
+            </label>
+            <label class="item item-input">
+               <i class="icon ion-compass placeholder-icon"></i>
+               <input type="search" ng-click="openReturnTimeDatePicker()" ng-model="model.returnTime" placeholder="返回时间">
+            </label>
+            <div class="row">
+             <a class="button button-block button-balanced icon ion-ios7-search col" href="#/tab/view/searchpicklist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索捡人</a>
+             <a class="button button-block button-positive icon ion-ios7-search col" href="#/tab/view/searchpickedlist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索搭车</a>
+            </div>
+           </div>
+     
   </ion-content>
 </ion-view>

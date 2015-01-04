@@ -1,7 +1,7 @@
 angular.module('icarving.controllers', [])
 
 //View Controller
-.controller('ViewCtrl', function($scope, $http, $ionicModal, $ionicPopup, PickActivity, PickedActivity, UserService) {
+.controller('ViewCtrl', function($scope, $http, $ionicModal, $ionicPopup, $filter, PickActivity, PickedActivity, UserService) {
 	//Pop Up
     $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
@@ -132,7 +132,61 @@ angular.module('icarving.controllers', [])
 			PickedActivity.save($scope.items1);
 		});
 		$scope.$broadcast('scroll.refreshComplete');
-    }
+    };
+    
+    $scope.model={};
+	$scope.openStartTimeDatePicker = function() {
+		  
+		$scope.$watch('model.startTimeStr', function(unformattedDate){
+			$scope.model.startTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.startTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.startTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	};
+	  
+	$scope.openReturnTimeDatePicker = function() {
+
+		$scope.$watch('model.returnTimeStr', function(unformattedDate){
+		    $scope.model.returnTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});
+		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.returnTimeStr;
+	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.returnTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	 };
+    
 })
 
 //View Pick Activity Detail Controller
@@ -926,5 +980,69 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 
+})
+
+//Search Pick Activity List Controller
+.controller('SearchPickListCtrl', function($scope, $ionicPopup, $stateParams, SearchPickActivity) {
+	//Pop Up
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };
+	
+	$scope.items = [];
+	SearchPickActivity.all($stateParams.sourceAddress, $stateParams.destAddress,$stateParams.startTime, $stateParams.returnTime).success(function(res){	
+		$scope.items = res.response;
+		SearchPickActivity.save($scope.items);
+	}).error(function(res) {
+		  $scope.showAlert("搜索失败。 "+res.message+"。");
+	});
+	 
+	 $scope.doRefresh = function(){
+		SearchPickActivity.all($stateParams.sourceAddress, $stateParams.destAddress,$stateParams.startTime, $stateParams.returnTime).success(function(res){
+			$scope.items = res.response;
+			SearchPickActivity.save($scope.items);
+		}).error(function(res) {
+			  $scope.showAlert("搜索失败。 "+res.message+"。");
+		});
+     };
+	  
+})
+
+//Search Picked Activity List Controller
+.controller('SearchPickedListCtrl', function($scope, $ionicPopup, $stateParams, SearchPickedActivity) {
+	//Pop Up
+    $scope.showAlert = function(templateStr) {
+		   var alertPopup = $ionicPopup.alert({
+		     title: '<b>温馨提示</b>',
+		     template: templateStr
+		   });
+		   alertPopup.then(function(res) {
+		     console.log('');
+		   });
+    };
+	
+	$scope.items = [];
+	SearchPickedActivity.all($stateParams.sourceAddress, $stateParams.destAddress,$stateParams.startTime, $stateParams.returnTime).success(function(res){
+		$scope.items = res.response;
+		SearchPickedActivity.save($scope.items);
+	}).error(function(res) {
+		  $scope.showAlert("搜索失败。 "+res.message+"。");
+	});
+	 
+	$scope.doRefresh = function(){
+		SearchPickedActivity.all($stateParams.sourceAddress, $stateParams.destAddress,$stateParams.startTime, $stateParams.returnTime).success(function(res){
+			$scope.items = res.response;
+			SearchPickedActivity.save($scope.items);
+		}).error(function(res) {
+			  $scope.showAlert("搜索失败。 "+res.message+"。");
+		});
+	 }
+	  
 });
 
