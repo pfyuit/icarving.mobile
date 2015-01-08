@@ -106,37 +106,7 @@ angular.module('icarving.controllers', [])
 	   });
   };
 	
-    var cookieUid = UserService.getUid();
-    
-    $scope.str2asc = function(strstr){ 
-    	return ("0"+strstr.charCodeAt(0).toString(16)).slice(-2); 
-    }; 
-    
-    $scope.asc2str = function(ascasc){ 
-    	return String.fromCharCode(ascasc); 
-    }; 
-    
-    $scope.urlDecode = function(str){      
-	  var ret="";      
-	  for(var i=0;i<str.length;i++){      
-	   var chr = str.charAt(i);      
-	    if(chr == "+"){      
-	      ret+=" ";      
-	    }else if(chr=="%"){      
-	     var asc = str.substring(i+1,i+3);      
-	     if(parseInt("0x"+asc)>0x7f){      
-	      ret += $scope.asc2str(parseInt("0x"+asc+str.substring(i+4,i+6)));      
-	      i+=5;      
-	     }else{      
-	      ret += $scope.asc2str(parseInt("0x"+asc));      
-	      i+=2;      
-	     }      
-	    }else{      
-	      ret+= chr;      
-	    }      
-	  }      
-	  return ret;      
-    };     
+    var cookieUid = UserService.getUid();   
 	
 	PickActivity.all().success(function(res){
 		if(cookieUid != ""){
@@ -146,9 +116,7 @@ angular.module('icarving.controllers', [])
 			
 			if(index > -1){
 				var query = window.location.href.substring(index+1,  window.location.href.length);
-				if(query != null && query != undefined && query != ""){
-					query = $scope.urlDecode(query);
-					
+				if(query != null && query != undefined && query != ""){					
 					var args = new Object( );
 				    var pairs = query.split("&");
 				    for(var i = 0; i < pairs.length; i++) {
@@ -160,16 +128,17 @@ angular.module('icarving.controllers', [])
 				    }
 				   
 				    uid = args["uid"];
-				    //username = args["username"];
-				    //password = args["password"];
+				    var username = args["username"];
+				    var password = args["password"];
+				    
 					var date=new Date();
 					var expireDays=10;
 					date.setTime(date.getTime()+expireDays*24*3600*1000);
 					var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
 					document.cookie=cookieStr;
-					cookieStr = "username="+"username"+"; expires="+date.toUTCString();
+					cookieStr = "username="+username+"; expires="+date.toUTCString();
 					document.cookie=cookieStr;
-					cookieStr = "password="+"password"+"; expires="+date.toUTCString();
+					cookieStr = "password="+password+"; expires="+date.toUTCString();
 					document.cookie=cookieStr;
 			}
 			
@@ -177,7 +146,7 @@ angular.module('icarving.controllers', [])
 			else {
 				var userAgent = navigator.userAgent.toLowerCase(); 
 				if(userAgent.indexOf("micromessenger", 0) > -1){
-					window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx2518d6ae1fdaa431&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+					window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
 				}
 				else {
 					$scope.openModal();
