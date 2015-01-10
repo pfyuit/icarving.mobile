@@ -1,44 +1,27 @@
-<ion-view view-title="查看活动">
-  <ion-content>
-          <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher>             
-           <ion-list scroll="false" animation="fade-out">
-            <ion-item class="item-avatar item-icon-right" href="#/tab/view/picklist">
-               <img ng-src="img/car_pick.jpg">
-               <h2>捡人活动</h2>
-               <p>点击查看近期捡人活动列表<br/>可选择合适的申请加入</p>
-               <i class="icon ion-chevron-right icon-accessory"></i> 
-            </ion-item>
-            
-            <ion-item class="item-avatar item-icon-right" href="#/tab/view/pickedlist">
-               <img ng-src="img/car_picked.jpg">
-               <h2>搭车活动</h2>
-               <p>点击查看近期搭车活动列表<br/>可选择合适的申请加入</p>
-               <i class="icon ion-chevron-right icon-accessory"></i> 
-            </ion-item>
-          </ion-list>
-          
-           <div class="list list-inset">
-            <label class="item item-input">
-               <i class="icon ion-log-out placeholder-icon"></i>
-               <input type="search" ng-model="model.sourceAddress" placeholder="出发地，不能为空">
-            </label>
-            <label class="item item-input">
-               <i class="icon ion-log-in placeholder-icon"></i>
-               <input type="search" ng-model="model.destAddress" placeholder="目的地">
-            </label>
-            <label class="item item-input">
-               <i class="icon ion-clock placeholder-icon"></i>
-               <input type="search" ng-click="openStartTimeDatePicker()" ng-model="model.startTime" placeholder="出发时间">
-            </label>
-            <label class="item item-input">
-               <i class="icon ion-compass placeholder-icon"></i>
-               <input type="search" ng-click="openReturnTimeDatePicker()" ng-model="model.returnTime" placeholder="返回时间">
-            </label>
-            <div class="row">
-             <a class="button button-block button-balanced icon ion-ios7-search col" href="#/tab/view/searchpicklist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索捡人</a>
-             <a class="button button-block button-positive icon ion-ios7-search col" style="margin-left:10px" href="#/tab/view/searchpickedlist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索搭车</a>
-            </div>
-           </div>
-     
+<ion-view view-title="近期活动">
+   <ion-nav-buttons side="right">
+      <a class="button button-block button-balanced icon ion-ios7-search" style="margin-top: 0px" href="#/tab/view/searchform">&nbsp;搜索</a>
+   </ion-nav-buttons>
+   <ion-tabs class="tabs-striped tabs-top">
+      <ion-tab title="全部" on-select="selectAll()">
+      </ion-tab>
+      <ion-tab title="捡人" on-select="selectPick()">
+      </ion-tab>
+      <ion-tab title="搭车" on-select="selectPicked()">
+      </ion-tab>
+   </ion-tabs>
+   <ion-content style="margin-top:47px">
+         <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher>                         
+		 <ion-list scroll="false" animation="fade-out">          
+           <ion-item class="item-avatar item-icon-right" ng-repeat="item in activities | orderBy:'activityId' :reverse=true" href="#/tab/view/pickdetail/{{item.activityId}}">
+             <img ng-src="img/car_pick.jpg">
+             <h3>{{item.sourceAddress}}->{{item.destAddress}}</h3>
+             <p><h4>{{item.startTime}}->{{item.returnTime}}</h4></p>
+             <p><h4>组织者：{{item.ownerName}}</h4></p>
+             <p><h4>拼车类型：{{item.type}}</h4></p>
+             <p><h4 ng-if="item.pick">剩余空位：{{item.capacity-item.approveNumber}}</h4><h4 ng-if="item.picked">搭车人数：{{item.capacity}}</h4></p>
+             <i class="icon ion-chevron-right icon-accessory"></i> 
+           </ion-item>
+         </ion-list>     
   </ion-content>
 </ion-view>

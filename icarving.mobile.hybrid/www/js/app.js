@@ -40,6 +40,16 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     }
    })
    
+   .state('tab.search-form', {
+    url: '/view/searchform',
+    views: {
+      'tab-view': {
+        templateUrl: 'templates/search-form.html',
+        controller: 'ViewCtrl'
+      }
+    }
+   })
+   
    .state('tab.search-pick-list', {
     url: '/view/searchpicklist/:sourceAddress/:destAddress/:startTime/:returnTime',
     views: {

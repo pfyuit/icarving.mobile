@@ -1,0 +1,26 @@
+<ion-view view-title="搜索活动">
+  <ion-content>         
+     <div class="list list-inset">
+       <label class="item item-input">
+         <i class="icon ion-log-out placeholder-icon"></i>
+         <input type="search" ng-model="model.sourceAddress" placeholder="出发地，不可为空">
+       </label>
+       <label class="item item-input">
+         <i class="icon ion-log-in placeholder-icon"></i>
+         <input type="search" ng-model="model.destAddress" placeholder="目的地，可为空">
+       </label>
+       <label class="item item-input">
+         <i class="icon ion-clock placeholder-icon"></i>
+         <input type="search" ng-click="openStartTimeDatePicker()" ng-model="model.startTime" placeholder="出发时间，可为空">
+       </label>
+       <label class="item item-input">
+         <i class="icon ion-compass placeholder-icon"></i>
+         <input type="search" ng-click="openReturnTimeDatePicker()" ng-model="model.returnTime" placeholder="返回时间，可为空">
+       </label>
+       <div class="row">
+        <a class="button button-block button-balanced icon ion-ios7-search col" href="#/tab/view/searchpicklist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索捡人</a>
+        <a class="button button-block button-positive icon ion-ios7-search col" style="margin-left:10px" href="#/tab/view/searchpickedlist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索搭车</a>
+       </div>
+     </div>    
+  </ion-content>
+</ion-view>

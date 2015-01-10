@@ -1,7 +1,7 @@
 angular.module('icarving.controllers', [])
 
 //View Controller
-.controller('ViewCtrl', function($scope, $http, $ionicModal, $ionicPopup, $filter, PickActivity, PickedActivity, UserService) {
+.controller('ViewCtrl', function($scope, $http, $ionicModal, $ionicPopup, $filter, Activity, UserService) {
 	//Pop Up
     $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
@@ -106,9 +106,11 @@ angular.module('icarving.controllers', [])
 	   });
   };
 	
-    var cookieUid = UserService.getUid();   
+    $scope.activities = [];
+    var cookieUid = UserService.getUid();
+    var filter = 0;
 	
-	PickActivity.all().success(function(res){
+	Activity.all().success(function(res){
 		if(cookieUid != ""){
 			uid = cookieUid;
 		} else {
@@ -155,21 +157,118 @@ angular.module('icarving.controllers', [])
 
 		}
 		$scope.items = res.response;
-		PickActivity.save($scope.items);
+		Activity.save($scope.items);
+		for(var i =0;i<$scope.items.length; i++){
+			$scope.activities[i] = $scope.items[i];
+			if($scope.items[i].activityType==1){
+				$scope.activities[i].type = "捡人";
+				$scope.activities[i].pick = true;
+				$scope.activities[i].picked = false;
+			} else {
+				$scope.activities[i].type = "搭车";
+				$scope.activities[i].pick = false;
+				$scope.activities[i].picked = true;
+			}
+		}
 	});
-	PickedActivity.all().success(function(res){
-		$scope.items1 = res.response;
-		PickedActivity.save($scope.items1);
-	});
+	
+	$scope.selectAll = function(){
+		$scope.activities = [];
+		for(var i =0;i<$scope.items.length; i++){
+			$scope.activities[i] = $scope.items[i];
+			if($scope.items[i].activityType==1){
+				$scope.activities[i].type = "捡人";
+				$scope.activities[i].pick = true;
+				$scope.activities[i].picked = false;
+			} else {
+				$scope.activities[i].type = "搭车";
+				$scope.activities[i].pick = false;
+				$scope.activities[i].picked = true;
+			}
+		}
+		filter = 0;
+	};
+	
+	$scope.selectPick = function(){
+		$scope.activities = [];
+		for(var i =0;i<$scope.items.length; i++){
+			if($scope.items[i].activityType==1){
+				var temp = $scope.items[i];
+				temp.type = "捡人";
+				temp.pick = true;
+				temp.picked = false;
+				$scope.activities.push(temp);
+			}
+		}
+		filter = 1;
+	};
+	
+	$scope.selectPicked = function(){
+		$scope.activities = [];
+		for(var i =0;i<$scope.items.length; i++){
+			if($scope.items[i].activityType==2){
+				var temp = $scope.items[i];
+				temp.type = "搭车";
+				temp.pick = false;
+				temp.picked = true;
+				$scope.activities.push(temp);
+			}
+		}
+		filter = 2;
+	};
 
 	$scope.doRefresh = function() {
-		PickActivity.all().success(function(res){
+		Activity.all().success(function(res){
 			$scope.items = res.response;
-			PickActivity.save($scope.items);
-		});
-		PickedActivity.all().success(function(res){
-			$scope.items1 = res.response;
-			PickedActivity.save($scope.items1);
+			Activity.save($scope.items);
+			
+			//all
+		    if(filter == 0){
+		    	$scope.activities = [];
+				for(var i =0;i<$scope.items.length; i++){
+					$scope.activities[i] = $scope.items[i];
+					if($scope.items[i].activityType==1){
+						$scope.activities[i].type = "捡人";
+						$scope.activities[i].pick = true;
+						$scope.activities[i].picked = false;
+					} else {
+						$scope.activities[i].type = "搭车";
+						$scope.activities[i].pick = false;
+						$scope.activities[i].picked = true;
+					}
+				}
+		    }
+		    
+		    //pick
+		    if(filter == 1){
+				$scope.activities = [];
+				for(var i =0;i<$scope.items.length; i++){
+					if($scope.items[i].activityType==1){
+						var temp = $scope.items[i];
+						temp.type = "捡人";
+						temp.pick = true;
+						temp.picked = false;
+						$scope.activities.push(temp);
+					}
+				}
+		    }
+		    
+		    //picked
+		    if(filter == 2){
+				$scope.activities = [];
+				for(var i =0;i<$scope.items.length; i++){
+					if($scope.items[i].activityType==2){
+						var temp = $scope.items[i];
+						temp.type = "搭车";
+						temp.pick = false;
+						temp.picked = true;
+						$scope.activities.push(temp);
+					}
+				}
+		    }
+		    
+
+			
 		});
 		$scope.$broadcast('scroll.refreshComplete');
     };
