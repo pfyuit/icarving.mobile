@@ -148,7 +148,7 @@ angular.module('icarving.controllers', [])
 			else {
 				var userAgent = navigator.userAgent.toLowerCase(); 
 				if(userAgent.indexOf("micromessenger", 0) > -1){
-					window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+					window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
 				}
 				else {
 					$scope.openModal();

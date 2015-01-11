@@ -1,4 +1,5 @@
 var uid = 0; // Initialize to 0, it means no body registered/logged in.
+var appid = 0; // Initialize to 0, it means no app id set up.
 
 angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services', 'ui.bootstrap.datetimepicker'])
 
