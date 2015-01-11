@@ -1,0 +1,15 @@
+<ion-view view-title="搜索结果">
+   <ion-content>
+		 <ion-list scroll="false" animation="fade-out">          
+           <ion-item class="item-avatar item-icon-right" ng-repeat="item in acts | orderBy:'activityId' :reverse=true" href="#/tab/view/pickdetail/{{item.activityId}}">
+             <img ng-src="img/car_pick.jpg">
+             <h3>{{item.sourceAddress}}->{{item.destAddress}}</h3>
+             <p><h4>{{item.startTime}}->{{item.returnTime}}</h4></p>
+             <p><h4>组织者：{{item.ownerName}}</h4></p>
+             <p><h4>拼车类型：{{item.type}}</h4></p>
+             <p><h4 ng-if="item.pick">剩余空位：{{item.capacity-item.approveNumber}}</h4><h4 ng-if="item.picked">搭车人数：{{item.capacity}}</h4></p>
+             <i class="icon ion-chevron-right icon-accessory"></i> 
+           </ion-item>
+         </ion-list>     
+  </ion-content>
+</ion-view>

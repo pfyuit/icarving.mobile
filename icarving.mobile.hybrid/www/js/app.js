@@ -1,5 +1,5 @@
 var uid = 0; // Initialize to 0, it means no body registered/logged in.
-var appid = 0; // Initialize to 0, it means no app id set up.
+var appid = ""; // Initialize to 0, it means no app id set up.
 
 angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services', 'ui.bootstrap.datetimepicker'])
 
@@ -31,6 +31,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     templateUrl: "templates/tabs.html"
   })
 
+  // View Tab
   .state('tab.view', {
     url: '/view',
     views: {
@@ -41,32 +42,23 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     }
    })
    
-   .state('tab.search-form', {
+   // Search
+   .state('tab.view-search-form', {
     url: '/view/searchform',
     views: {
       'tab-view': {
-        templateUrl: 'templates/search-form.html',
-        controller: 'ViewCtrl'
+        templateUrl: 'templates/view-search-form.html',
+        controller: 'ViewSearchFormCtrl'
       }
     }
    })
    
-   .state('tab.search-pick-list', {
-    url: '/view/searchpicklist/:sourceAddress/:destAddress/:startTime/:returnTime',
+   .state('tab.view-search-activity-list', {
+    url: '/view/searchactivitylist/:sourceAddress/:destAddress/:startTime/:returnTime',
     views: {
       'tab-view': {
-        templateUrl: 'templates/search-pick-list.html',
-        controller: 'SearchPickListCtrl'
-      }
-    }
-   })
-   
-   .state('tab.search-picked-list', {
-    url: '/view/searchpickedlist/:sourceAddress/:destAddress/:startTime/:returnTime',
-    views: {
-      'tab-view': {
-        templateUrl: 'templates/search-picked-list.html',
-        controller: 'SearchPickedListCtrl'
+        templateUrl: 'templates/view-search-activity-list.html',
+        controller: 'ViewSearchActivityListCtrl'
       }
     }
    })
@@ -111,6 +103,8 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
       }
     })
 
+    
+  // Pick Tab
   .state('tab.pick', {
       url: '/pick',
       views: {
@@ -121,6 +115,8 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
       }
     })
 
+    
+  // Picked Tab  
   .state('tab.picked', {
       url: '/picked',
       views: {
@@ -131,6 +127,8 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
       }
     })
 
+    
+   // My Tab
    .state('tab.my', {
     url: '/my',
     views: {

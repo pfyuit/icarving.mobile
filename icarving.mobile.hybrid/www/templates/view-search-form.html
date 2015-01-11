@@ -17,10 +17,7 @@
          <i class="icon ion-compass placeholder-icon"></i>
          <input type="search" ng-click="openReturnTimeDatePicker()" ng-model="model.returnTime" placeholder="返回时间，可为空">
        </label>
-       <div class="row">
-        <a class="button button-block button-balanced icon ion-ios7-search col" href="#/tab/view/searchpicklist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索捡人</a>
-        <a class="button button-block button-positive icon ion-ios7-search col" style="margin-left:10px" href="#/tab/view/searchpickedlist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索搭车</a>
-       </div>
+       <a class="button button-block button-balanced icon ion-ios7-search" href="#/tab/view/searchactivitylist/{{model.sourceAddress}}/{{model.destAddress}}/{{model.startTime}}/{{model.returnTime}}">&nbsp;搜索活动</a>
      </div>    
   </ion-content>
 </ion-view>

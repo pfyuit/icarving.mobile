@@ -280,18 +280,17 @@ angular.module('icarving.services', [])
   }
 })
 
-.factory('SearchPickActivity', function($http) {
-  var pickActivities = []; 
+.factory('SearchActivity', function($http) {
+  var activities = []; 
   return {
     all: function(sourceAddress, destAddress, startTime, returnTime) {
       var payload = {"startTime":startTime,"returnTime":returnTime,"sourceAddress":sourceAddress,"destAddress":destAddress};	
-      return $http.post('/icarving.api.pinche/search/pickActivity', payload);
+      return $http.post('/icarving.api.pinche/search/activity', payload);
     },
     
     save: function(data){
-    	pickActivities = data;
-    } 
-    
+    	activities = data;
+    }     
   }
 })
 

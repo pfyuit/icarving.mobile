@@ -1121,36 +1121,88 @@ angular.module('icarving.controllers', [])
 
 })
 
-//Search Pick Activity List Controller
-.controller('SearchPickListCtrl', function($scope, $ionicPopup, $stateParams, SearchPickActivity) {
-	//Pop Up
+
+.controller('ViewSearchFormCtrl', function($scope, $ionicPopup, $stateParams, SearchActivity) {
+	//TODO
+})
+
+.controller('ViewSearchActivityListCtrl', function($scope, $ionicPopup, $stateParams, SearchActivity) {
     $scope.showAlert = function(templateStr) {
-		   var alertPopup = $ionicPopup.alert({
-		     title: '<b>温馨提示</b>',
-		     template: templateStr
-		   });
-		   alertPopup.then(function(res) {
-		     console.log('');
-		   });
+	   var alertPopup = $ionicPopup.alert({
+	     title: '<b>温馨提示</b>',
+	     template: templateStr
+	   });
+	   alertPopup.then(function(res) {
+	     console.log('');
+	   });
     };
 	
 	$scope.items = [];
-	SearchPickActivity.all($stateParams.sourceAddress, $stateParams.destAddress,$stateParams.startTime, $stateParams.returnTime).success(function(res){	
+	$scope.acts = [];
+	var filter = 0;
+	SearchActivity.all($stateParams.sourceAddress, $stateParams.destAddress,$stateParams.startTime, $stateParams.returnTime).success(function(res){	
 		$scope.items = res.response;
-		SearchPickActivity.save($scope.items);
+		SearchActivity.save($scope.items);
+		for(var i =0;i<$scope.items.length; i++){
+			$scope.acts[i] = $scope.items[i];
+			if($scope.items[i].activityType==1){
+				$scope.acts[i].type = "捡人";
+				$scope.acts[i].pick = true;
+				$scope.acts[i].picked = false;
+			} else {
+				$scope.acts[i].type = "搭车";
+				$scope.acts[i].pick = false;
+				$scope.acts[i].picked = true;
+			}
+		}		
 	}).error(function(res) {
-		  $scope.showAlert("搜索失败。 "+res.message+"。");
+		$scope.showAlert("搜索失败。 "+res.message+"。");
 	});
 	 
-	 $scope.doRefresh = function(){
-		SearchPickActivity.all($stateParams.sourceAddress, $stateParams.destAddress,$stateParams.startTime, $stateParams.returnTime).success(function(res){
-			$scope.items = res.response;
-			SearchPickActivity.save($scope.items);
-		}).error(function(res) {
-			  $scope.showAlert("搜索失败。 "+res.message+"。");
-		});
-     };
-	  
+	$scope.selectAll = function(){
+		$scope.acts = [];
+		for(var i =0;i<$scope.items.length; i++){
+			$scope.acts[i] = $scope.items[i];
+			if($scope.items[i].activityType==1){
+				$scope.acts[i].type = "捡人";
+				$scope.acts[i].pick = true;
+				$scope.acts[i].picked = false;
+			} else {
+				$scope.acts[i].type = "搭车";
+				$scope.acts[i].pick = false;
+				$scope.acts[i].picked = true;
+			}
+		}
+		filter = 0;
+	};
+	
+	$scope.selectPick = function(){
+		$scope.acts = [];
+		for(var i =0;i<$scope.items.length; i++){
+			if($scope.items[i].activityType==1){
+				var temp = $scope.items[i];
+				temp.type = "捡人";
+				temp.pick = true;
+				temp.picked = false;
+				$scope.acts.push(temp);
+			}
+		}
+		filter = 1;
+	};
+	
+	$scope.selectPicked = function(){
+		$scope.acts = [];
+		for(var i =0;i<$scope.items.length; i++){
+			if($scope.items[i].activityType==2){
+				var temp = $scope.items[i];
+				temp.type = "搭车";
+				temp.pick = false;
+				temp.picked = true;
+				$scope.acts.push(temp);
+			}
+		}
+		filter = 2;
+	};  
 })
 
 //Search Picked Activity List Controller
