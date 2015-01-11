@@ -1,5 +1,5 @@
 var uid = 0; // Initialize to 0, it means no body registered/logged in.
-var appid = ""; // Initialize to 0, it means no app id set up.
+var appid = "wxe0a065ca64369148"; // Initialize to 0, it means no app id set up.
 
 angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services', 'ui.bootstrap.datetimepicker'])
 
@@ -31,7 +31,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     templateUrl: "templates/tabs.html"
   })
 
-  // View Tab
+   // View Tab
   .state('tab.view', {
     url: '/view',
     views: {
@@ -42,7 +42,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     }
    })
    
-   // Search
+    //  View Tab - Search
    .state('tab.view-search-form', {
     url: '/view/searchform',
     views: {
@@ -63,42 +63,36 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     }
    })
    
-   .state('tab.view-pick-list', {
-    url: '/view/picklist',
-    views: {
-      'tab-view': {
-        templateUrl: 'templates/view-pick-list.html',
-        controller: 'ViewCtrl'
-      }
-    }
-   })
-   
-   .state('tab.view-picked-list', {
-    url: '/view/pickedlist',
-    views: {
-      'tab-view': {
-        templateUrl: 'templates/view-picked-list.html',
-        controller: 'ViewCtrl'
-      }
-    }
-   })
-   
-  .state('tab.view-pick-detail', {
-      url: '/view/pickdetail/:pickId',
+
+   //  View Tab - Activity Detail
+  .state('tab.view-activity-detail', {
+      url: '/view/activitydetail/:activityId',
       views: {
         'tab-view': {
-          templateUrl: 'templates/view-pick-detail.html',
-          controller: 'ViewPickDetailCtrl'
+          templateUrl: 'templates/view-activity-detail.html',
+          controller: 'ViewActivityDetailCtrl'
         }
       }
     })
     
-   .state('tab.view-picked-detail', {
-      url: '/view/pickeddetail/:pickedId',
+   //  View Tab - Activity Applies
+  .state('tab.view-activity-detail-apply', {
+      url: '/view/activitydetailapply/:activityId',
       views: {
         'tab-view': {
-          templateUrl: 'templates/view-picked-detail.html',
-          controller: 'ViewPickedDetailCtrl'
+          templateUrl: 'templates/view-activity-detail-apply.html',
+          controller: 'ViewActivityDetailCtrl'
+        }
+      }
+    })
+    
+   //  View Tab - Activity Detail Update
+  .state('tab.view-activity-detail-update', {
+      url: '/view/activitydetailupdate/:activityId',
+      views: {
+        'tab-view': {
+          templateUrl: 'templates/view-activity-detail-update.html',
+          controller: 'ViewActivityDetailCtrl'
         }
       }
     })

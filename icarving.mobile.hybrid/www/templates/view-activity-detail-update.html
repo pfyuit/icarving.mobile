@@ -1,0 +1,35 @@
+<ion-view view-title="{{activity.sourceAddress}}->{{activity.destAddress}}">
+  <ion-nav-buttons side="right">
+       <button ng-if="activity.showUpdatePick" class="button button-block button-balanced" style="margin-top: 0px" ng-click="updatePickActivity()">
+                              完成
+       </button>
+       <button ng-if="activity.showUpdatePicked" class="button button-block button-balanced" style="margin-top: 0px" ng-click="updatePickedActivity()">
+                              完成
+       </button>
+  </ion-nav-buttons>
+  <ion-content class="padding">
+       <div class="list">
+         <label class="item item-input">
+            <span class="input-label">出发地</span><input type="text" placeholder="出发地" ng-model="activity.sourceAddress" value={{activity.sourceAddress}}>
+         </label>
+         <label class="item item-input">
+            <span class="input-label">目的地</span><input type="text" placeholder="目的地" ng-model="activity.destAddress" value={{activity.destAddress}}>
+         </label>
+         <label class="item item-input">
+             <span class="input-label">出发时间</span><input type="text" placeholder="出发时间" ng-click="openStartTimeDatePicker()" ng-model="activity.startTime" value={{activity.startTime}}>
+         </label>
+         <label class="item item-input">
+             <span class="input-label">返回时间</span><input type="text" placeholder="返回时间" ng-click="openReturnTimeDatePicker()" ng-model="activity.returnTime" value={{activity.returnTime}}>
+         </label>
+         <label class="item item-input">
+             <span class="input-label">汽车类型</span><input type="text" placeholder="汽车类型" ng-model="activity.carType" value={{activity.carType}}>
+         </label>
+         <label class="item item-input">
+             <span class="input-label">费用</span><input type="text" placeholder="费用"  ng-model="activity.charge" value={{activity.charge}}>
+         </label>
+         <label class="item item-input">
+             <span class="input-label">备注</span><textarea type="text" placeholder="备注"  ng-model="activity.note" value={{activity.note}}></textarea>
+         </label>
+      </div>
+  </ion-content>
+</ion-view>
