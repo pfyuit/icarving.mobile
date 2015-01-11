@@ -152,6 +152,28 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
       }
     }
    })
+    
+   //  My Tab - Activity Applies
+  .state('tab.my-activity-detail-apply', {
+      url: '/my/activitydetailapply/:activityId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-activity-detail-apply.html',
+          controller: 'MyActivityDetailCtrl'
+        }
+      }
+    })
+    
+   //  My Tab - Activity Detail Update
+  .state('tab.my-activity-detail-update', {
+      url: '/my/activitydetailupdate/:activityId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-activity-detail-update.html',
+          controller: 'MyActivityDetailCtrl'
+        }
+      }
+    })
    
   .state('tab.my-pick-list', {
     url: '/my/picklist',

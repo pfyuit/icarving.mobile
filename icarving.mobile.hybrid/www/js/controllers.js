@@ -706,7 +706,7 @@ angular.module('icarving.controllers', [])
 })
 
 //My Activity/Apply Controller
-.controller('MyCtrl', function($scope, $http, $ionicModal, $ionicPopup, MyPickActivity, MyPickedActivity, MyPickActivityApply, MyPickedActivityApply, UserService, MyMessage) {
+.controller('MyCtrl', function($scope, $http, $ionicModal, $ionicPopup, MyActivity, MyPickActivity, MyPickedActivity, MyPickActivityApply, MyPickedActivityApply, UserService, MyMessage) {
      $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
 		     title: '<b>温馨提示</b>',
@@ -835,10 +835,13 @@ angular.module('icarving.controllers', [])
 	 }; 
 	 
 	 $scope.messageLength = 0;
-	
+	 $scope.msgs = [];
 	 var cookieUid = UserService.getUid();
-	 
-	 MyPickActivity.all().success(function(res){
+	 $scope.activities = [];
+	 $scope.showActivity = true;
+	 $scope.showNotify = false;
+	 $scope.showMessage = false;
+	 MyActivity.all().success(function(res){
 		if(cookieUid != ""){
 			uid = cookieUid;
 			MyMessage.all().success(function(res){
@@ -851,45 +854,292 @@ angular.module('icarving.controllers', [])
 					 }
 				 }
 			 }
+			 var msg = {};
+			 for(var i =0; i<$scope.messages.length; i++){
+				 var msg = $scope.messages[i];
+				 if(msg.status==0){
+					 msg.isNew = true;
+					 msg.isOld = false;
+				 } else {
+					 msg.isNew = false;
+					 msg.isOld = true; 
+				 }
+				 $scope.msgs[i] = msg;
+			 }
 			});
 		} else {
 			 $scope.openModal();
 		}
-		 $scope.items = res.response;
-		 MyPickActivity.save($scope.items);
+		$scope.items = res.response;
+		MyActivity.save($scope.items);
+		 
+		for(var i =0;i<$scope.items.length; i++){
+			$scope.activities[i] = $scope.items[i];
+			
+			if($scope.activities[i].ownerId == uid){
+				$scope.activities[i].my = true;
+			} else {
+				$scope.activities[i].my = false;
+			}
+			if($scope.activities[i].activityType==1){
+				$scope.activities[i].type = "捡人";
+				$scope.activities[i].pick = true;
+				$scope.activities[i].picked = false;
+			} else {
+				$scope.activities[i].type = "搭车";
+				$scope.activities[i].pick = false;
+				$scope.activities[i].picked = true;
+			}
+			$scope.activities[i].showApplyPick = !$scope.activities[i].my && $scope.activities[i].pick;
+			$scope.activities[i].showApplyPicked = !$scope.activities[i].my && $scope.activities[i].picked;
+			$scope.activities[i].showUpdatePick = $scope.activities[i].my && $scope.activities[i].pick;
+			$scope.activities[i].showUpdatePicked = $scope.activities[i].my && $scope.activities[i].picked;
+		}
+		 
 	 });
-	 MyPickedActivity.all().success(function(res){
-		 $scope.items1 = res.response;
-		 MyPickedActivity.save($scope.items1);
-	 });
-	 MyPickActivityApply.all().success(function(res){
-		 $scope.items2 = res.response;
-		 MyPickActivityApply.save($scope.items2);
-	 });
-	 MyPickedActivityApply.all().success(function(res){
-		 $scope.items3 = res.response;
-		 MyPickedActivityApply.save($scope.items3);
-	 });
+	 
+	$scope.selectActivity = function(){
+		 $scope.showActivity = true;
+		 $scope.showNotify = false;
+		 $scope.showMessage = false;
+	};
+	
+	$scope.selectNotify = function(){
+		 $scope.showActivity = false;
+		 $scope.showNotify = true;
+		 $scope.showMessage = false;
+	};
+	
+	$scope.selectMessage = function(){
+		 $scope.showActivity = false;
+		 $scope.showNotify = false;
+		 $scope.showMessage = true;
+	};	 
+	 
+//	 MyPickedActivity.all().success(function(res){
+//		 $scope.items1 = res.response;
+//		 MyPickedActivity.save($scope.items1);
+//	 });
+//	 MyPickActivityApply.all().success(function(res){
+//		 $scope.items2 = res.response;
+//		 MyPickActivityApply.save($scope.items2);
+//	 });
+//	 MyPickedActivityApply.all().success(function(res){
+//		 $scope.items3 = res.response;
+//		 MyPickedActivityApply.save($scope.items3);
+//	 });
 	 
 	  $scope.doRefresh = function() {
 		 MyPickActivity.all().success(function(res){
 			 $scope.items = res.response;
 			 MyPickActivity.save($scope.items);
 		 });
-		 MyPickedActivity.all().success(function(res){
-			 $scope.items1 = res.response;
-			 MyPickedActivity.save($scope.items1);
-		 });
-		 MyPickActivityApply.all().success(function(res){
-			 $scope.items2 = res.response;
-			 MyPickActivityApply.save($scope.items2);
-		 });
-		 MyPickedActivityApply.all().success(function(res){
-			 $scope.items3 = res.response;
-			 MyPickedActivityApply.save($scope.items3);
-		 });
+//		 MyPickedActivity.all().success(function(res){
+//			 $scope.items1 = res.response;
+//			 MyPickedActivity.save($scope.items1);
+//		 });
+//		 MyPickActivityApply.all().success(function(res){
+//			 $scope.items2 = res.response;
+//			 MyPickActivityApply.save($scope.items2);
+//		 });
+//		 MyPickedActivityApply.all().success(function(res){
+//			 $scope.items3 = res.response;
+//			 MyPickedActivityApply.save($scope.items3);
+//		 });
 		 $scope.$broadcast('scroll.refreshComplete');
       }
+	
+})
+
+.controller('MyActivityDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, Activity, ActivityApply) {
+    $scope.showAlert = function(templateStr) {
+	   var alertPopup = $ionicPopup.alert({
+	     title: '<b>温馨提示</b>',
+	     template: templateStr
+	   });
+	   alertPopup.then(function(res) {
+	     console.log('');
+	   });
+    };
+	
+	$scope.activity = Activity.get($stateParams.activityId);
+	if($scope.activity.ownerId == uid){
+		$scope.activity.my = true;
+	} else {
+		$scope.activity.my = false;
+	}
+	if($scope.activity.activityType==1){
+		$scope.activity.type = "捡人";
+		$scope.activity.pick = true;
+		$scope.activity.picked = false;
+	} else {
+		$scope.activity.type = "搭车";
+		$scope.activity.pick = false;
+		$scope.activity.picked = true;
+	}
+	$scope.activity.showApplyPick = !$scope.activity.my && $scope.activity.pick;
+	$scope.activity.showApplyPicked = !$scope.activity.my && $scope.activity.picked;
+	$scope.activity.showUpdatePick = $scope.activity.my && $scope.activity.pick;
+	$scope.activity.showUpdatePicked = $scope.activity.my && $scope.activity.picked;
+	
+	$scope.applyPickActivity = function(){
+		var payload = {"pickActivityId":$scope.activity.activityId,"applyUserId":uid};
+		$http.post('/icarving.api.pinche/apply/pick/create', payload).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert('捡人活动申请成功，可以在个人页面中查看申请详细信息');
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert('捡人活动申请失败。 '+data.message+"。");
+		  });
+	};
+	
+	$scope.applyPickedActivity = function(){
+		var payload = {"pickedActivityId":$scope.activity.activityId,"applyUserId":uid};
+		$http.post('/icarving.api.pinche/apply/picked/create', payload).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert('搭车活动申请成功，可以在个人页面中查看申请详细信息');
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert('搭车活动申请失败。 '+data.message+"。");
+		  });
+	};
+	
+    $scope.updatePickActivity = function(){
+		var payload = {"pickActivityId":$scope.activity.activityId,"startTime":$scope.activity.startTime,"returnTime":$scope.activity.returnTime,"sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
+		$http.post('/icarving.api.pinche/activity/pick/update', payload).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("捡人活动更新成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("捡人活动更新失败。 "+data.message+"。");
+		  });
+    };
+    
+    $scope.updatePickedActivity = function(){
+		var payload = {"pickedActivityId":$scope.activity.activityId,"startTime":$scope.activity.startTime,"returnTime":$scope.activity.returnTime,"sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
+		$http.post('/icarving.api.pinche/activity/picked/update', payload).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("搭车活动更新成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("搭车活动更新失败。 "+data.message+"。");
+		  });
+    };
+	
+    $scope.cancelPickActivity = function(){
+		 $http.get('/icarving.api.pinche/activity/pick/cancel?uid='+uid+'&pickActivityId='+$scope.activity.activityId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("捡人活动取消成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
+		  });
+    };
+     
+    $scope.cancelPickedActivity = function(){
+		 $http.get('/icarving.api.pinche/activity/picked/cancel?uid='+uid+'&pickedActivityId='+$scope.activity.activityId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("搭车活动取消成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("搭车活动取消失败。 "+data.message+"。");
+		  });
+    };
+    
+    // activity apply
+    $scope.applies = [];
+    ActivityApply.all($stateParams.activityId).success(function(res){
+		$scope.applies = res.response;
+		ActivityApply.save($scope.applies);
+	});
+    
+	$scope.approvePickActivityApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/pick/approve?pickActivityApplyId='+applyId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("批准申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("批准申请失败。 "+data.message+"。");
+		  });
+	};
+	
+	$scope.unApprovePickActivityApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/pick/unapprove?pickActivityApplyId='+applyId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("拒绝申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("拒绝申请失败。 "+data.message+"。");
+		  });
+	};
+	
+	$scope.approvePickedActivityApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/picked/approve?pickedActivityApplyId='+applyId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("批准申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("批准申请失败。 "+data.message+"。");
+		  });
+	};
+	
+	$scope.unApprovePickedActivityApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/picked/unapprove?pickedActivityApplyId='+applyId).
+		  success(function(data, status, headers, config) {
+			  $scope.showAlert("拒绝申请成功");
+		  }).
+		  error(function(data, status, headers, config) {
+			  $scope.showAlert("拒绝申请失败。 "+data.message+"。");
+		  });
+	};
+	
+	// date time picker
+    $scope.model = {};
+    $scope.openStartTimeDatePicker = function() {		  
+		$scope.$watch('model.startTimeStr', function(unformattedDate){
+			$scope.model.startTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.startTimeStr;	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.startTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	};
+	  
+	$scope.openReturnTimeDatePicker = function() {
+		$scope.$watch('model.returnTimeStr', function(unformattedDate){
+		    $scope.model.returnTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.returnTimeStr;	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.returnTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	 };
 	
 })
 

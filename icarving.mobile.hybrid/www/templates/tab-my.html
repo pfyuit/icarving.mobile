@@ -1,42 +1,84 @@
 <ion-view view-title="个人">
-  <ion-content>
-        <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher>       
-        <ion-list scroll="false" animation="fade-out">
-         <ion-item class="item-avatar item-icon-right" href="#/tab/my/picklist">
-            <img ng-src="img/car_pick.jpg">
-            <h2>我发布的捡人活动</h2>
-            <p>点击查看我的捡人活动列表</p>
-            <i class="icon ion-chevron-right icon-accessory"></i> 
-         </ion-item>
-         
-         <ion-item class="item-avatar item-icon-right" href="#/tab/my/pickedlist">
-            <img ng-src="img/car_picked.jpg">
-            <h2>我发布的搭车活动</h2>
-            <p>点击查看我的搭车活动列表</p>
-            <i class="icon ion-chevron-right icon-accessory"></i> 
-         </ion-item>
-         
-         <ion-item class="item-avatar item-icon-right" href="#/tab/my/pickapplylist">
-            <img ng-src="img/car_pick.jpg">
-            <h2>我申请的捡人活动</h2>
-            <p>点击查看我的申请列表</p>
-            <i class="icon ion-chevron-right icon-accessory"></i> 
-         </ion-item>
-         
-         <ion-item class="item-avatar item-icon-right" href="#/tab/my/pickedapplylist">
-            <img ng-src="img/car_picked.jpg">
-            <h2>我申请的搭车活动</h2>
-            <p>点击查看我的申请列表</p>
-            <i class="icon ion-chevron-right icon-accessory"></i> 
-         </ion-item>
-         <ion-item class="item-avatar item-icon-right" href="#/tab/my/messagelist">
-            <img ng-src="img/car_pick.jpg">
-            <h2>我的消息</h2>
-            <p>点击查看我的系统消息</p>
-            <i class="icon ion-chevron-right icon-accessory"></i>
-            <span class="badge badge-assertive" style="margin-top:19px; margin-right:30px">{{messageLength}}</span> 
-         </ion-item>
-       </ion-list>
+      <ion-tabs class="tabs-striped tabs-top">
+          <ion-tab title="活动" on-select="selectActivity()">
+          </ion-tab>
+          <ion-tab title="通知" on-select="selectNotify()">
+          </ion-tab>
+          <ion-tab title="留言" on-select="selectMessage()">
+          </ion-tab>
+      </ion-tabs>      
+<!--       <div class="item item-avatar" style="margin-bottom: 50px;"> -->
+<!--          <img src="img/car_pick.jpg"> -->
+<!--          <h2>Marty McFly</h2> -->
+<!--          <p>November 05, 1955</p> -->
+<!--       </div> -->
+     <ion-content>
+         <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher> 
+         <div class="list card" ng-if="showActivity" style="margin-top: 0px;" ng-repeat="activity in activities | orderBy:'activityId' :reverse=true">               
+           <div class="item item-avatar">
+             <img src="img/car_pick.jpg">
+             <h2>{{activity.ownerName}}</h2>
+             <p>November 05, 1955</p>
+           </div>              
+           <div class="item item-body">
+            <h3 style="margin-top: 0px;"> 拼车类型：{{activity.type}} </h3>
+            <h3> 地点：{{activity.sourceAddress}} -> {{activity.destAddress}} </h3>
+            <h3> 时间：{{activity.startTime}} -> {{activity.returnTime}} </h3>
+            <h3> 容纳人数：{{activity.capacity}} </h3>
+            <h3 ng-if="activity.pick">剩余空位：{{activity.capacity-activity.approveNumber}}</h3><h3 ng-if="activity.picked">搭车人数：{{activity.capacity}}</h3>
+            <h3> 手机：{{activity.ownerPhone}} </h3>
+            <h3> 费用：{{activity.charge}} </h3>
+            <h3> 汽车类型：{{activity.carType}} </h3>
+            <h3> 说明：{{activity.note}} </h3>          
+            <hr/>                 
+            <p>
+              <a ng-if="activity.pick" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准</a>
+              <a ng-if="activity.picked" href="#" class="subdued">5个车主申请</a>
+            </p>                  
+           </div>              
+           <div class="item tabs tabs-secondary tabs-icon-left">
+             <a ng-if="activity.showApplyPick" class="tab-item" href="#" ng-click="applyPickActivity()">
+               <i class="icon ion-thumbsup"></i>
+                                                                          搭车
+             </a>
+             <a ng-if="activity.showApplyPicked" class="tab-item" href="#" ng-click="applyPickedActivity()">
+               <i class="icon ion-thumbsup"></i>
+                                                                       捡TA
+             </a>
+             <a ng-if="activity.showUpdatePick" class="tab-item" href="#/tab/my/activitydetailupdate/{{activity.activityId}}">
+               <i class="icon ion-edit"></i>
+                                                                      修改
+             </a>
+             <a ng-if="activity.showUpdatePicked" class="tab-item" href="#/tab/my/activitydetailupdate/{{activity.activityId}}">
+               <i class="icon ion-edit"></i>
+                                                                    修改
+             </a>
+             <a ng-if="activity.showUpdatePick" class="tab-item" href="#" ng-click="cancelPickActivity()">
+               <i class="icon ion-minus-circled"></i>
+                                                                   取消
+             </a>
+             <a ng-if="activity.showUpdatePicked" class="tab-item" href="#" ng-click="cancelPickedActivity()">
+               <i class="icon ion-minus-circled"></i>
+                                                                   取消
+             </a>
+             <a class="tab-item" href="#">
+               <i class="icon ion-chatbox"></i>
+                                                                   留言
+             </a>
+             <a class="tab-item" href="#">
+               <i class="icon ion-share"></i>
+                                                                  分享
+             </a>
+           </div>               
+         </div>
+          
+         <ion-list ng-if="showNotify" scroll="false" animation="fade-out">
+            <ion-item  class="item-icon-right" ng-repeat="msg in msgs" href="#/tab/my/messagedetail/{{msg.userMessageId}}">
+               <h3 ng-class="{newmessage: msg.isNew, oldmessage: msg.isOld}">{{msg.content}}</h3>
+               <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+         </ion-list>
+ 
        <button class="button button-block button-assertive" ng-click="logoff()">
            <i class="icon ion-power"></i>&nbsp;退出登录
        </button>
