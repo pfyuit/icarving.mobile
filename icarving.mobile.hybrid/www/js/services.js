@@ -234,6 +234,29 @@ angular.module('icarving.services', [])
   }
 })
 
+.factory('ActivityApply', function($http) {
+  var applies = []; 
+  return {
+    all: function(activityId) {
+      return $http.get('/icarving.api.pinche/apply/findByActivity?activityId='+activityId);
+    },
+
+    get: function(applyId) {
+      for (var i = 0; i < applies.length; i++) {
+        if (applies[i].applyId === parseInt(applyId)) {
+          return applies[i];
+        }
+      }
+      return null;
+    },
+    
+    save: function(data){
+    	applies = data;
+    } 
+    
+  }
+})
+
 .factory('MyPickActivityPeopleApply', function($http) {
   var pickActivityApply = []; 
   return {
