@@ -1,33 +1,40 @@
 <ion-view view-title="发布捡人活动">
+    <ion-nav-buttons side="right" type="submit">
+        <a class="button button-block button-balanced " style="margin-top: 0px" ng-click="publishPickActivity()">&nbsp;发布</a>
+    </ion-nav-buttons>
   <ion-content>
-          <div class="list">
+         <div class="list">
+            <div class="item item-divider">请有车者输入:邀请他人搭车所需信息</div>
             <label class="item item-input">
-                <span class="input-label">出发地:</span><input type="text" ng-model="model.sourceAddress">
+                <span class="input-label">出发地:</span><textarea placeholder="必填" ng-model="model.sourceAddress"></textarea>
+            </label>
+            <label class="item item-input validated">
+                <span class="input-label">目的地:</span><textarea placeholder="必填" required="required" ng-model="model.destAddress"></textarea>
             </label>
             <label class="item item-input">
-                <span class="input-label">目的地:</span><input type="text" ng-model="model.destAddress">
+               <span class="input-label">出发时间:</span><input type="text" placeholder="必填,2015-1-16 18:30:00" ng-click="openStartTimeDatePicker()" ng-model="model.startTime">
             </label>
             <label class="item item-input">
-               <span class="input-label">出发时间:</span><input type="text"  ng-click="openStartTimeDatePicker()" ng-model="model.startTime" placeholder="如 2015-10-01 12:30:00">
+               <span class="input-label">返回时间:</span><input type="text" placeholder="必填,2015-1-18 15:30:00" ng-click="openReturnTimeDatePicker()" ng-model="model.returnTime">
             </label>
             <label class="item item-input">
-               <span class="input-label">返回时间:</span><input type="text"  ng-click="openReturnTimeDatePicker()" ng-model="model.returnTime" placeholder="如 2015-10-01 12:30:00">
+               <span class="input-label">捡人数目:</span><input type="text" placeholder="必填,邀请他人搭车的人数" ng-model="model.capacity">
+            </label>
+             <label class="item item-input">
+                 <span class="input-label">联系电话:</span><textarea type="number" placeholder="必填,仅对申请搭你车的人可见" ng-model="model.phone"></textarea>
+             </label>
+            <label class="item item-input">
+               <span class="input-label">集合地点:</span><textarea type="text" placeholder="如:亚运村" ng-model="model.venue"></textarea>
             </label>
             <label class="item item-input">
-               <span class="input-label">汽车类型:</span><input type="text" ng-model="model.carType">
+               <span class="input-label">车辆概况:</span><textarea type="text" placeholder="帮助搭车者了解车辆空间,车况,如SUV,三厢车,车况好" ng-model="model.carType"></textarea>
             </label>
             <label class="item item-input">
-               <span class="input-label">捡人数目:</span><input type="text" ng-model="model.capacity">
+               <span class="input-label">费用:</span><textarea type="text" placeholder="如:100~150元往返,AA,面议" ng-model="model.charge"></textarea>
             </label>
             <label class="item item-input">
-               <span class="input-label">费用:</span><input type="text" ng-model="model.charge">
+               <span class="input-label">备注:</span><textarea type="text" placeholder="如:云顶滑雪,吃住一起,费用AA" ng-model="model.note"></textarea>
             </label>
-            <label class="item item-input">
-               <span class="input-label">备注:</span><input type="text" ng-model="model.note">
-            </label>
-            <button class="button button-block button-balanced" ng-click="publishPickActivity()">
-              <i class="icon ion-person-add"></i>&nbsp;发布捡人活动
-            </button>
          </div>
   </ion-content>
 </ion-view>

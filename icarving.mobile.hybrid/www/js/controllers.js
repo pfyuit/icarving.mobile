@@ -563,7 +563,48 @@ angular.module('icarving.controllers', [])
 	
 	$scope.model = {};
 	$scope.publishPickActivity = function(){
-		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"note":$scope.model.note};
+		var validationResult = false;
+		var validationMessage ='';
+		if ($scope.model.sourceAddress =="" || $scope.model.sourceAddress == undefined){
+			validationResult = true;
+			validationMessage = "出发地为必填项";
+		}
+		if ($scope.model.destAddress =="" || $scope.model.destAddress == undefined){
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "目的地为必填项";
+		}
+		var startTime = $scope.model.startTime;
+		var returnTime = $scope.model.returnTime;
+		console.log("returnTime=" + returnTime + "  startTime=" + startTime);
+		if (startTime != "" && startTime !=undefined && returnTime !="" && returnTime !=undefined) {
+			startTime = startTime.replace(/-/g, "/");
+			returnTime = returnTime.replace(/-/g, "/");
+			if (Date.parse(returnTime) < Date.parse(startTime)) {
+				validationResult = true;
+				validationMessage = validationMessage + "<br>"+"返回时间不能早于出发时间";
+			}
+		}else{
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "日期为必填项";
+		}
+		if ($scope.model.capacity == undefined){
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "人数为必填项";
+		}
+		if ($scope.model.capacity < 1){
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "人数不能为0";
+		}
+		if ($scope.model.phone == undefined){
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "电话为必填项,并且是数字";
+		}
+		if (validationResult) {
+			$scope.showAlert(validationMessage);
+			return false;
+		}
+
+		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"venue":$scope.model.venue,"phone":$scope.model.phone,"note":$scope.model.note};
 		$http.post('/icarving.api.pinche/activity/pick/create', payload).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert('捡人活动发布成功，可以在个人页面中查看活动详细信息');
@@ -642,7 +683,49 @@ angular.module('icarving.controllers', [])
 	
 	$scope.model = {};
 	$scope.publishPickedActivity = function(){
-		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"note":$scope.model.note};
+
+		var validationResult = false;
+		var validationMessage ='';
+		if ($scope.model.sourceAddress =="" || $scope.model.sourceAddress == undefined){
+			validationResult = true;
+			validationMessage = "出发地为必填项";
+		}
+		if ($scope.model.destAddress =="" || $scope.model.destAddress == undefined){
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "目的地为必填项";
+		}
+		var startTime = $scope.model.startTime;
+		var returnTime = $scope.model.returnTime;
+		console.log("returnTime=" + returnTime + "  startTime=" + startTime);
+		if (startTime != "" && startTime !=undefined && returnTime !="" && returnTime !=undefined) {
+			startTime = startTime.replace(/-/g, "/");
+			returnTime = returnTime.replace(/-/g, "/");
+			if (Date.parse(returnTime) < Date.parse(startTime)) {
+				validationResult = true;
+				validationMessage = validationMessage + "<br>"+"返回时间不能早于出发时间";
+			}
+		}else{
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "日期为必填项";
+		}
+		if ($scope.model.capacity == undefined){
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "人数为必填项";
+		}
+		if ($scope.model.capacity < 1){
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "人数不能为0";
+		}
+		if ($scope.model.phone == undefined){
+			validationResult = true;
+			validationMessage = validationMessage + "<br>" + "电话为必填项,并且是数字";
+		}
+		if (validationResult) {
+			$scope.showAlert(validationMessage);
+			return false;
+		}
+
+		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"venue":$scope.model.venue,"phone":$scope.model.phone,"note":$scope.model.note};
 		$http.post('/icarving.api.pinche/activity/picked/create', payload).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert('搭车活动发布成功，可以在个人页面中查看活动详细信息');
