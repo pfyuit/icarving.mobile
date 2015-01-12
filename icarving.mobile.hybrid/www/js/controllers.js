@@ -1039,7 +1039,7 @@ angular.module('icarving.controllers', [])
 	
 })
 
-.controller('MyActivityDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, Activity, ActivityApply) {
+.controller('MyActivityDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, MyActivity, ActivityApply) {
     $scope.showAlert = function(templateStr) {
 	   var alertPopup = $ionicPopup.alert({
 	     title: '<b>温馨提示</b>',
@@ -1050,7 +1050,7 @@ angular.module('icarving.controllers', [])
 	   });
     };
 	
-	$scope.activity = Activity.get($stateParams.activityId);
+	$scope.activity = MyActivity.get($stateParams.activityId);
 	if($scope.activity.ownerId == uid){
 		$scope.activity.my = true;
 	} else {

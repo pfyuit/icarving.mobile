@@ -1,4 +1,9 @@
-<ion-view view-title="个人">
+<ion-view view-title="个人">   
+     <ion-content>
+      <div class="item item-avatar" style="margin-bottom: 25px;">
+         <img src="img/car_pick.jpg">
+         <h2>Marty McFly</h2>
+      </div>
       <ion-tabs class="tabs-striped tabs-top">
           <ion-tab title="活动" on-select="selectActivity()">
           </ion-tab>
@@ -6,13 +11,7 @@
           </ion-tab>
           <ion-tab title="留言" on-select="selectMessage()">
           </ion-tab>
-      </ion-tabs>      
-<!--       <div class="item item-avatar" style="margin-bottom: 50px;"> -->
-<!--          <img src="img/car_pick.jpg"> -->
-<!--          <h2>Marty McFly</h2> -->
-<!--          <p>November 05, 1955</p> -->
-<!--       </div> -->
-     <ion-content>
+      </ion-tabs>
          <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher> 
          <div class="list card" ng-if="showActivity" style="margin-top: 0px;" ng-repeat="activity in activities | orderBy:'activityId' :reverse=true">               
            <div class="item item-avatar">
