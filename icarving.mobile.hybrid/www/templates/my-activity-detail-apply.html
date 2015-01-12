@@ -5,17 +5,11 @@
            <div class="row">
              <div class="col col-50" style="margin-left:-25px">申请人：{{apply.ownerName}}
              </div>
-               <button ng-if="activity.showUpdatePick" class="button button-balanced button-small icon ion-checkmark-circled col" style="margin-top: 0px" ng-click="approvePickActivityApply(apply.applyId)">
+               <button class="button button-balanced button-small icon ion-checkmark-circled col" style="margin-top: 0px" ng-click="approveApply(apply.applyId)">
                                                              批准
                </button>
-               <button ng-if="activity.showUpdatePicked" class="button button-balanced button-small icon ion-checkmark-circled col" style="margin-top: 0px" ng-click="approvePickedActivityApply(apply.applyId)">
-                                                              批准           
-               </button>
-               <button ng-if="activity.showUpdatePick" class="button button-assertive button-small icon ion-close-circled col" style="margin-top: 0px; margin-right:-20px" ng-click="unApprovePickActivityApply(apply.applyId)">
+               <button class="button button-assertive button-small icon ion-close-circled col" style="margin-top: 0px; margin-right:-20px" ng-click="unApproveApply(apply.applyId)">
                                                              拒绝    
-               </button>
-               <button ng-if="activity.showUpdatePicked" class="button button-assertive button-small icon ion-close-circled col" style="margin-top: 0px;  margin-right:-20px" ng-click="unApprovePickedActivityApply(apply.applyId)">
-                                                             拒绝            
                </button>
            </div>           
          </ion-item>

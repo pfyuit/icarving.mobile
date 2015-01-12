@@ -403,7 +403,7 @@ angular.module('icarving.controllers', [])
 })
 
 
-.controller('ViewActivityDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, Activity, ActivityApply) {
+.controller('ViewActivityDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, Activity) {
     $scope.showAlert = function(templateStr) {
 	   var alertPopup = $ionicPopup.alert({
 	     title: '<b>温馨提示</b>',
@@ -419,6 +419,18 @@ angular.module('icarving.controllers', [])
 		$scope.activity.my = true;
 	} else {
 		$scope.activity.my = false;
+	}	
+	$scope.activity.applied = false;
+	var applies = $scope.activity.applies;
+	if(applies != null){
+		$scope.applies = applies;
+		for(var i = 0; i < applies.length; i++){
+			if(applies[i].ownerId == uid){
+				$scope.activity.applied = true;
+				$scope.activity.myapply = applies[i];
+				break;
+			}
+		}
 	}
 	if($scope.activity.activityType==1){
 		$scope.activity.type = "捡人";
@@ -429,14 +441,10 @@ angular.module('icarving.controllers', [])
 		$scope.activity.pick = false;
 		$scope.activity.picked = true;
 	}
-	$scope.activity.showApplyPick = !$scope.activity.my && $scope.activity.pick;
-	$scope.activity.showApplyPicked = !$scope.activity.my && $scope.activity.picked;
-	$scope.activity.showUpdatePick = $scope.activity.my && $scope.activity.pick;
-	$scope.activity.showUpdatePicked = $scope.activity.my && $scope.activity.picked;
 	
-	$scope.applyPickActivity = function(){
-		var payload = {"pickActivityId":$scope.activity.activityId,"applyUserId":uid};
-		$http.post('/icarving.api.pinche/apply/pick/create', payload).
+	$scope.applyActivity = function(){
+		var payload = {"activityId":$scope.activity.activityId,"applyUserId":uid};
+		$http.post('/icarving.api.pinche/apply/create', payload).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert('捡人活动申请成功，可以在个人页面中查看申请详细信息');
 		  }).
@@ -445,20 +453,9 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 	
-	$scope.applyPickedActivity = function(){
-		var payload = {"pickedActivityId":$scope.activity.activityId,"applyUserId":uid};
-		$http.post('/icarving.api.pinche/apply/picked/create', payload).
-		  success(function(data, status, headers, config) {
-			  $scope.showAlert('搭车活动申请成功，可以在个人页面中查看申请详细信息');
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.showAlert('搭车活动申请失败。 '+data.message+"。");
-		  });
-	};
-	
-    $scope.updatePickActivity = function(){
-		var payload = {"pickActivityId":$scope.activity.activityId,"startTime":$scope.activity.startTime,"returnTime":$scope.activity.returnTime,"sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
-		$http.post('/icarving.api.pinche/activity/pick/update', payload).
+    $scope.updateActivity = function(){
+		var payload = {"activityId":$scope.activity.activityId,"startTime":$scope.activity.startTime+":00","returnTime":$scope.activity.returnTime+":00","sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
+		$http.post('/icarving.api.pinche/activity/update', payload).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert("捡人活动更新成功");
 		  }).
@@ -466,20 +463,9 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("捡人活动更新失败。 "+data.message+"。");
 		  });
     };
-    
-    $scope.updatePickedActivity = function(){
-		var payload = {"pickedActivityId":$scope.activity.activityId,"startTime":$scope.activity.startTime,"returnTime":$scope.activity.returnTime,"sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
-		$http.post('/icarving.api.pinche/activity/picked/update', payload).
-		  success(function(data, status, headers, config) {
-			  $scope.showAlert("搭车活动更新成功");
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.showAlert("搭车活动更新失败。 "+data.message+"。");
-		  });
-    };
 	
-    $scope.cancelPickActivity = function(){
-		 $http.get('/icarving.api.pinche/activity/pick/cancel?uid='+uid+'&pickActivityId='+$scope.activity.activityId).
+    $scope.cancelActivity = function(){
+		 $http.get('/icarving.api.pinche/activity/cancel?uid='+uid+'&activityId='+$scope.activity.activityId).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert("捡人活动取消成功");
 		  }).
@@ -487,26 +473,9 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
 		  });
     };
-     
-    $scope.cancelPickedActivity = function(){
-		 $http.get('/icarving.api.pinche/activity/picked/cancel?uid='+uid+'&pickedActivityId='+$scope.activity.activityId).
-		  success(function(data, status, headers, config) {
-			  $scope.showAlert("搭车活动取消成功");
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.showAlert("搭车活动取消失败。 "+data.message+"。");
-		  });
-    };
     
-    // activity apply
-    $scope.applies = [];
-    ActivityApply.all($stateParams.activityId).success(function(res){
-		$scope.applies = res.response;
-		ActivityApply.save($scope.applies);
-	});
-    
-	$scope.approvePickActivityApply = function(applyId){
-		 $http.get('/icarving.api.pinche/apply/pick/approve?pickActivityApplyId='+applyId).
+	$scope.approveApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/approve?applyId='+applyId).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert("批准申请成功");
 		  }).
@@ -515,8 +484,8 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 	
-	$scope.unApprovePickActivityApply = function(applyId){
-		 $http.get('/icarving.api.pinche/apply/pick/unapprove?pickActivityApplyId='+applyId).
+	$scope.unApproveApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/unapprove?applyId='+applyId).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert("拒绝申请成功");
 		  }).
@@ -525,23 +494,13 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 	
-	$scope.approvePickedActivityApply = function(applyId){
-		 $http.get('/icarving.api.pinche/apply/picked/approve?pickedActivityApplyId='+applyId).
+	$scope.cancelApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/cancel?uid='+uid+'&applyId='+applyId).
 		  success(function(data, status, headers, config) {
-			  $scope.showAlert("批准申请成功");
+			  $scope.showAlert("取消申请成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("批准申请失败。 "+data.message+"。");
-		  });
-	};
-	
-	$scope.unApprovePickedActivityApply = function(applyId){
-		 $http.get('/icarving.api.pinche/apply/picked/unapprove?pickedActivityApplyId='+applyId).
-		  success(function(data, status, headers, config) {
-			  $scope.showAlert("拒绝申请成功");
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.showAlert("拒绝申请失败。 "+data.message+"。");
+			  $scope.showAlert("取消申请失败。 "+data.message+"。");
 		  });
 	};
 	
@@ -650,8 +609,8 @@ angular.module('icarving.controllers', [])
 			return false;
 		}
 
-		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"venue":$scope.model.venue,"phone":$scope.model.phone,"note":$scope.model.note};
-		$http.post('/icarving.api.pinche/activity/pick/create', payload).
+		var payload = {"ownerId":uid, "activityType":1, "startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"venue":$scope.model.venue,"phone":$scope.model.phone,"note":$scope.model.note};
+		$http.post('/icarving.api.pinche/activity/create', payload).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert('捡人活动发布成功，可以在个人页面中查看活动详细信息');
 		  }).
@@ -764,8 +723,8 @@ angular.module('icarving.controllers', [])
 			return false;
 		}
 
-		var payload = {"ownerId":uid,"startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"venue":$scope.model.venue,"phone":$scope.model.phone,"note":$scope.model.note};
-		$http.post('/icarving.api.pinche/activity/picked/create', payload).
+		var payload = {"ownerId":uid, "activityType":2, "startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"venue":$scope.model.venue,"phone":$scope.model.phone,"note":$scope.model.note};
+		$http.post('/icarving.api.pinche/activity/create', payload).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert('搭车活动发布成功，可以在个人页面中查看活动详细信息');
 		  }).
@@ -997,6 +956,17 @@ angular.module('icarving.controllers', [])
 			} else {
 				$scope.activities[i].my = false;
 			}
+			$scope.activities[i].applied = false;
+			var applies = $scope.activities[i].applies;
+			if(applies != null){
+				for(var j = 0; j < applies.length; j++){
+					if(applies[j].ownerId == uid){
+						$scope.activities[i].applied = true;
+						$scope.activities[i].myapply = applies[j];
+						break;
+					}
+				}
+			}
 			if($scope.activities[i].activityType==1){
 				$scope.activities[i].type = "捡人";
 				$scope.activities[i].pick = true;
@@ -1006,10 +976,6 @@ angular.module('icarving.controllers', [])
 				$scope.activities[i].pick = false;
 				$scope.activities[i].picked = true;
 			}
-			$scope.activities[i].showApplyPick = !$scope.activities[i].my && $scope.activities[i].pick;
-			$scope.activities[i].showApplyPicked = !$scope.activities[i].my && $scope.activities[i].picked;
-			$scope.activities[i].showUpdatePick = $scope.activities[i].my && $scope.activities[i].pick;
-			$scope.activities[i].showUpdatePicked = $scope.activities[i].my && $scope.activities[i].picked;
 		}
 		 
 	 });
@@ -1039,7 +1005,7 @@ angular.module('icarving.controllers', [])
 	
 })
 
-.controller('MyActivityDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, MyActivity, ActivityApply) {
+.controller('MyActivityDetailCtrl', function($scope, $http, $stateParams, $ionicPopup, $filter, MyActivity) {
     $scope.showAlert = function(templateStr) {
 	   var alertPopup = $ionicPopup.alert({
 	     title: '<b>温馨提示</b>',
@@ -1055,6 +1021,18 @@ angular.module('icarving.controllers', [])
 		$scope.activity.my = true;
 	} else {
 		$scope.activity.my = false;
+	}	
+	$scope.activity.applied = false;
+	var applies = $scope.activity.applies;
+	if(applies != null){
+		$scope.applies = applies;
+		for(var i = 0; i < applies.length; i++){
+			if(applies[i].ownerId == uid){
+				$scope.activity.applied = true;
+				$scope.activity.myapply = applies[i];
+				break;
+			}
+		}
 	}
 	if($scope.activity.activityType==1){
 		$scope.activity.type = "捡人";
@@ -1065,14 +1043,10 @@ angular.module('icarving.controllers', [])
 		$scope.activity.pick = false;
 		$scope.activity.picked = true;
 	}
-	$scope.activity.showApplyPick = !$scope.activity.my && $scope.activity.pick;
-	$scope.activity.showApplyPicked = !$scope.activity.my && $scope.activity.picked;
-	$scope.activity.showUpdatePick = $scope.activity.my && $scope.activity.pick;
-	$scope.activity.showUpdatePicked = $scope.activity.my && $scope.activity.picked;
 	
-	$scope.applyPickActivity = function(){
-		var payload = {"pickActivityId":$scope.activity.activityId,"applyUserId":uid};
-		$http.post('/icarving.api.pinche/apply/pick/create', payload).
+	$scope.applyActivity = function(){
+		var payload = {"activityId":$scope.activity.activityId,"applyUserId":uid};
+		$http.post('/icarving.api.pinche/apply/create', payload).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert('捡人活动申请成功，可以在个人页面中查看申请详细信息');
 		  }).
@@ -1081,20 +1055,9 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 	
-	$scope.applyPickedActivity = function(){
-		var payload = {"pickedActivityId":$scope.activity.activityId,"applyUserId":uid};
-		$http.post('/icarving.api.pinche/apply/picked/create', payload).
-		  success(function(data, status, headers, config) {
-			  $scope.showAlert('搭车活动申请成功，可以在个人页面中查看申请详细信息');
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.showAlert('搭车活动申请失败。 '+data.message+"。");
-		  });
-	};
-	
-    $scope.updatePickActivity = function(){
-		var payload = {"pickActivityId":$scope.activity.activityId,"startTime":$scope.activity.startTime,"returnTime":$scope.activity.returnTime,"sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
-		$http.post('/icarving.api.pinche/activity/pick/update', payload).
+    $scope.updateActivity = function(){
+		var payload = {"activityId":$scope.activity.activityId,"startTime":$scope.activity.startTime+":00","returnTime":$scope.activity.returnTime+":00","sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
+		$http.post('/icarving.api.pinche/activity/update', payload).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert("捡人活动更新成功");
 		  }).
@@ -1102,20 +1065,9 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("捡人活动更新失败。 "+data.message+"。");
 		  });
     };
-    
-    $scope.updatePickedActivity = function(){
-		var payload = {"pickedActivityId":$scope.activity.activityId,"startTime":$scope.activity.startTime,"returnTime":$scope.activity.returnTime,"sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
-		$http.post('/icarving.api.pinche/activity/picked/update', payload).
-		  success(function(data, status, headers, config) {
-			  $scope.showAlert("搭车活动更新成功");
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.showAlert("搭车活动更新失败。 "+data.message+"。");
-		  });
-    };
 	
-    $scope.cancelPickActivity = function(){
-		 $http.get('/icarving.api.pinche/activity/pick/cancel?uid='+uid+'&pickActivityId='+$scope.activity.activityId).
+    $scope.cancelActivity = function(){
+		 $http.get('/icarving.api.pinche/activity/cancel?uid='+uid+'&activityId='+$scope.activity.activityId).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert("捡人活动取消成功");
 		  }).
@@ -1123,26 +1075,9 @@ angular.module('icarving.controllers', [])
 			  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
 		  });
     };
-     
-    $scope.cancelPickedActivity = function(){
-		 $http.get('/icarving.api.pinche/activity/picked/cancel?uid='+uid+'&pickedActivityId='+$scope.activity.activityId).
-		  success(function(data, status, headers, config) {
-			  $scope.showAlert("搭车活动取消成功");
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.showAlert("搭车活动取消失败。 "+data.message+"。");
-		  });
-    };
-    
-    // activity apply
-    $scope.applies = [];
-    ActivityApply.all($stateParams.activityId).success(function(res){
-		$scope.applies = res.response;
-		ActivityApply.save($scope.applies);
-	});
-    
-	$scope.approvePickActivityApply = function(applyId){
-		 $http.get('/icarving.api.pinche/apply/pick/approve?pickActivityApplyId='+applyId).
+
+	$scope.approveApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/approve?applyId='+applyId).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert("批准申请成功");
 		  }).
@@ -1151,8 +1086,8 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 	
-	$scope.unApprovePickActivityApply = function(applyId){
-		 $http.get('/icarving.api.pinche/apply/pick/unapprove?pickActivityApplyId='+applyId).
+	$scope.unApproveApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/unapprove?applyId='+applyId).
 		  success(function(data, status, headers, config) {
 			  $scope.showAlert("拒绝申请成功");
 		  }).
@@ -1161,23 +1096,13 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 	
-	$scope.approvePickedActivityApply = function(applyId){
-		 $http.get('/icarving.api.pinche/apply/picked/approve?pickedActivityApplyId='+applyId).
+	$scope.cancelApply = function(applyId){
+		 $http.get('/icarving.api.pinche/apply/cancel?uid='+uid+'&applyId='+applyId).
 		  success(function(data, status, headers, config) {
-			  $scope.showAlert("批准申请成功");
+			  $scope.showAlert("取消申请成功");
 		  }).
 		  error(function(data, status, headers, config) {
-			  $scope.showAlert("批准申请失败。 "+data.message+"。");
-		  });
-	};
-	
-	$scope.unApprovePickedActivityApply = function(applyId){
-		 $http.get('/icarving.api.pinche/apply/picked/unapprove?pickedActivityApplyId='+applyId).
-		  success(function(data, status, headers, config) {
-			  $scope.showAlert("拒绝申请成功");
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.showAlert("拒绝申请失败。 "+data.message+"。");
+			  $scope.showAlert("取消申请失败。 "+data.message+"。");
 		  });
 	};
 	

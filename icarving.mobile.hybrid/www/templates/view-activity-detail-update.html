@@ -1,9 +1,6 @@
 <ion-view view-title="{{activity.sourceAddress}}->{{activity.destAddress}}">
   <ion-nav-buttons side="right">
-       <button ng-if="activity.showUpdatePick" class="button button-block button-balanced" style="margin-top: 0px" ng-click="updatePickActivity()">
-                              完成
-       </button>
-       <button ng-if="activity.showUpdatePicked" class="button button-block button-balanced" style="margin-top: 0px" ng-click="updatePickedActivity()">
+       <button class="button button-block button-balanced" style="margin-top: 0px" ng-click="updateActivity()">
                               完成
        </button>
   </ion-nav-buttons>

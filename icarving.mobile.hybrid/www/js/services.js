@@ -85,6 +85,15 @@ angular.module('icarving.services', [])
     all: function(activityId) {
       return $http.get('/icarving.api.pinche/apply/findByActivity?activityId='+activityId);
     },
+    
+    fetch: function(uid) {
+        for (var i = 0; i < applies.length; i++) {
+            if (applies[i].ownerId === parseInt(uid)) {
+              return applies[i];
+            }
+          }
+          return null;
+    },
 
     get: function(applyId) {
       for (var i = 0; i < applies.length; i++) {
