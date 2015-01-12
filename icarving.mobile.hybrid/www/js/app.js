@@ -1,5 +1,5 @@
 var uid = 0; // Initialize to 0, it means no body registered/logged in.
-var appid = "wxe0a065ca64369148"; // Initialize to 0, it means no app id set up.
+var appid = "wxe0a065ca64369148";
 
 angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services', 'ui.bootstrap.datetimepicker'])
 
@@ -42,7 +42,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     }
    })
    
-    //  View Tab - Search
+    //  View Tab - Search Form
    .state('tab.view-search-form', {
     url: '/view/searchform',
     views: {
@@ -53,6 +53,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     }
    })
    
+    //  View Tab - Search Activity List 
    .state('tab.view-search-activity-list', {
     url: '/view/searchactivitylist/:sourceAddress/:destAddress/:startTime/:returnTime',
     views: {
@@ -63,7 +64,6 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
     }
    })
    
-
    //  View Tab - Activity Detail
   .state('tab.view-activity-detail', {
       url: '/view/activitydetail/:activityId',
@@ -74,18 +74,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
         }
       }
     })
-    
-   //  View Tab - Activity Applies
-  .state('tab.view-activity-detail-apply', {
-      url: '/view/activitydetailapply/:activityId',
-      views: {
-        'tab-view': {
-          templateUrl: 'templates/view-activity-detail-apply.html',
-          controller: 'ViewActivityDetailCtrl'
-        }
-      }
-    })
-    
+       
    //  View Tab - Activity Detail Update
   .state('tab.view-activity-detail-update', {
       url: '/view/activitydetailupdate/:activityId',
@@ -96,8 +85,18 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
         }
       }
     })
-
     
+   //  View Tab - Activity Details Apply
+  .state('tab.view-activity-detail-apply', {
+      url: '/view/activitydetailapply/:activityId',
+      views: {
+        'tab-view': {
+          templateUrl: 'templates/view-activity-detail-apply.html',
+          controller: 'ViewActivityDetailCtrl'
+        }
+      }
+    })
+  
   // Pick Tab
   .state('tab.pick', {
       url: '/pick',
@@ -132,38 +131,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
       }
     }
    })
-   
-   .state('tab.my-message-list', {
-    url: '/my/messagelist',
-    views: {
-      'tab-my': {
-        templateUrl: 'templates/my-message-list.html',
-        controller: 'MyMessageListCtrl'
-      }
-    }
-   })
-   
-   .state('tab.my-message-detail', {
-    url: '/my/messagedetail/:userMessageId',
-    views: {
-      'tab-my': {
-        templateUrl: 'templates/my-message-detail.html',
-        controller: 'MyMessageDetailCtrl'
-      }
-    }
-   })
-    
-   //  My Tab - Activity Applies
-  .state('tab.my-activity-detail-apply', {
-      url: '/my/activitydetailapply/:activityId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-activity-detail-apply.html',
-          controller: 'MyActivityDetailCtrl'
-        }
-      }
-    })
-    
+        
    //  My Tab - Activity Detail Update
   .state('tab.my-activity-detail-update', {
       url: '/my/activitydetailupdate/:activityId',
@@ -174,126 +142,29 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
         }
       }
     })
-   
-  .state('tab.my-pick-list', {
-    url: '/my/picklist',
+    
+   //  My Tab - Activity Detail Apply
+  .state('tab.my-activity-detail-apply', {
+      url: '/my/activitydetailapply/:activityId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-activity-detail-apply.html',
+          controller: 'MyActivityDetailCtrl'
+        }
+      }
+    })
+    
+    //  My Tab - Message Detail    
+   .state('tab.my-message-detail', {
+    url: '/my/messagedetail/:userMessageId',
     views: {
       'tab-my': {
-        templateUrl: 'templates/my-pick-list.html',
-        controller: 'MyCtrl'
+        templateUrl: 'templates/my-message-detail.html',
+        controller: 'MyMessageDetailCtrl'
       }
     }
-   })
-   
-   .state('tab.my-picked-list', {
-    url: '/my/pickedlist',
-    views: {
-      'tab-my': {
-        templateUrl: 'templates/my-picked-list.html',
-        controller: 'MyCtrl'
-      }
-    }
-   })
-   
-   .state('tab.my-pick-apply-list', {
-    url: '/my/pickapplylist',
-    views: {
-      'tab-my': {
-        templateUrl: 'templates/my-pick-apply-list.html',
-        controller: 'MyCtrl'
-      }
-    }
-   })
-   
-   .state('tab.my-picked-apply-list', {
-    url: '/my/pickedapplylist',
-    views: {
-      'tab-my': {
-        templateUrl: 'templates/my-picked-apply-list.html',
-        controller: 'MyCtrl'
-      }
-    }
-   })
-  
-   .state('tab.my-pick-detail', {
-      url: '/my/pickdetail/:pickId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-pick-detail.html',
-          controller: 'MyPickDetailCtrl'
-        }
-      }
-    })
-    
-   .state('tab.my-picked-detail', {
-      url: '/my/pickeddetail/:pickedId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-picked-detail.html',
-          controller: 'MyPickedDetailCtrl'
-        }
-      }
-    })
-    
-   .state('tab.my-pick-apply-detail', {
-      url: '/my/pickapplydetail/:pickApplyId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-pick-apply-detail.html',
-          controller: 'MyPickApplyDetailCtrl'
-        }
-      }
-    })
-    
-   .state('tab.my-picked-apply-detail', {
-      url: '/my/pickedapplydetail/:pickedApplyId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-picked-apply-detail.html',
-          controller: 'MyPickedApplyDetailCtrl'
-        }
-      }
-    })
-    
-    .state('tab.my-pick-people-apply-list', {
-      url: '/my/pickpeopleapplylist/:pickActivityId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-pick-people-apply-list.html',
-          controller: 'MyPickPeopleApplyListCtrl'
-        }
-      }
-    })
-    
-    .state('tab.my-pick-people-apply-detail', {
-      url: '/my/pickpeopleapplydetail/:pickActivityApplyId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-pick-people-apply-detail.html',
-          controller: 'MyPickPeopleApplyDetailCtrl'
-        }
-      }
-    })
-    
-    .state('tab.my-picked-people-apply-list', {
-      url: '/my/pickedpeopleapplylist/:pickedActivityId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-picked-people-apply-list.html',
-          controller: 'MyPickedPeopleApplyListCtrl'
-        }
-      }
-    })
-    
-    .state('tab.my-picked-people-apply-detail', {
-      url: '/my/pickedpeopleapplydetail/:pickedActivityApplyId',
-      views: {
-        'tab-my': {
-          templateUrl: 'templates/my-picked-people-apply-detail.html',
-          controller: 'MyPickedPeopleApplyDetailCtrl'
-        }
-      }
-    });
+   });
+
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/view');
