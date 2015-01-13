@@ -86,7 +86,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
       }
     })
     
-   //  View Tab - Activity Details Apply
+   //  View Tab - Activity Detail Apply
   .state('tab.view-activity-detail-apply', {
       url: '/view/activitydetailapply/:activityId',
       views: {
@@ -131,6 +131,17 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
       }
     }
    })
+   
+   //  My Tab - Activity Detail    
+  .state('tab.my-activity-detail', {
+      url: '/my/activitydetail/:activityId/:messageId',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-activity-detail.html',
+          controller: 'MyActivityDetailCtrl'
+        }
+      }
+    })
         
    //  My Tab - Activity Detail Update
   .state('tab.my-activity-detail-update', {
@@ -152,18 +163,7 @@ angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services'
           controller: 'MyActivityDetailCtrl'
         }
       }
-    })
-    
-    //  My Tab - Message Detail    
-   .state('tab.my-message-detail', {
-    url: '/my/messagedetail/:userMessageId',
-    views: {
-      'tab-my': {
-        templateUrl: 'templates/my-message-detail.html',
-        controller: 'MyMessageDetailCtrl'
-      }
-    }
-   });
+    });
 
 
   // if none of the above states are matched, use this as the fallback

@@ -7,17 +7,17 @@
       <ion-tabs class="tabs-striped tabs-top">
           <ion-tab title="活动" on-select="selectActivity()">
           </ion-tab>
-          <ion-tab title="通知" on-select="selectNotify()">
+          <ion-tab title="通知" on-select="selectNotify()" badge="notifyLength" badge-style="badge-assertive">
           </ion-tab>
-          <ion-tab title="留言" on-select="selectMessage()">
+          <ion-tab title="留言" on-select="selectMessage()" badge="messageLength" badge-style="badge-assertive">
           </ion-tab>
       </ion-tabs>
          <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher> 
          <div class="list card" ng-if="showActivity" style="margin-top: 0px;" ng-repeat="activity in activities | orderBy:'activityId' :reverse=true">               
            <div class="item item-avatar">
-             <img src="img/car_pick.jpg">
+             <img src="{{activity.ownerAvatar}}">
              <h2>{{activity.ownerName}}</h2>
-             <p>{{activity.ownerCountry}} {{activity.ownerProvince}} {{activity.ownerCity}}</p>
+             <h4>{{activity.ownerCountry}} {{activity.ownerProvince}} {{activity.ownerCity}}</h4>
            </div>              
            <div class="item item-body">
             <h3 style="margin-top: 0px;"> 拼车类型：{{activity.type}} </h3>
@@ -70,8 +70,17 @@
          </div>
           
          <ion-list ng-if="showNotify" scroll="false" animation="fade-out">
-            <ion-item  class="item-icon-right" ng-repeat="msg in msgs" href="#/tab/my/messagedetail/{{msg.userMessageId}}">
+            <ion-item  class="item-icon-right" ng-repeat="msg in notifies" href="#/tab/my/activitydetail/{{msg.activityId}}/{{msg.messageId}}">
                <h3 ng-class="{newmessage: msg.isNew, oldmessage: msg.isOld}">{{msg.content}}</h3>
+               <h4 ng-class="{newmessage: msg.isNew, oldmessage: msg.isOld}">{{msg.activitySourceAddress}} -> {{msg.activityDestAddress}}</h4>
+               <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+         </ion-list>
+         
+        <ion-list ng-if="showMessage" scroll="false" animation="fade-out">
+            <ion-item  class="item-icon-right" ng-repeat="msg in msgs" href="#/tab/my/activitydetail/{{msg.activityId}}/{{msg.messageId}}">
+               <h3 ng-class="{newmessage: msg.isNew, oldmessage: msg.isOld}">{{msg.content}}</h3>
+               <h4 ng-class="{newmessage: msg.isNew, oldmessage: msg.isOld}">{{msg.activitySourceAddress}} -> {{msg.activityDestAddress}}</h4>
                <i class="icon ion-chevron-right icon-accessory"></i>
             </ion-item>
          </ion-list>

@@ -19,9 +19,9 @@
       <hr/>      
       <p>
         <a ng-if="!activity.my && activity.pick" href="#" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准     <h4 ng-if="activity.applied">(您已申请，状态：{{activity.myapply.status}})</h4></a>
-        <a ng-if="activity.my && activity.pick" href="#/tab/view/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准 </a>
+        <a ng-if="activity.my && activity.pick" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准 </a>
         <a ng-if="!activity.my && activity.picked" href="#" class="subdued">{{activity.applyNumber}}个车主申请   <h4 ng-if="activity.applied">(您已申请，状态：{{activity.myapply.status}})</h4></a>
-        <a ng-if="activity.my && activity.picked" href="#/tab/view/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个车主申请 </a>
+        <a ng-if="activity.my && activity.picked" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个车主申请 </a>
       </p>      
      </div>   
      <div class="item tabs tabs-secondary tabs-icon-left">
@@ -37,7 +37,7 @@
          <i class="icon ion-minus-circled"></i>
                                 取消申请
        </a>
-       <a ng-if="activity.my" class="tab-item" href="#/tab/view/activitydetailupdate/{{activity.activityId}}">
+       <a ng-if="activity.my" class="tab-item" href="#/tab/my/activitydetailupdate/{{activity.activityId}}">
          <i class="icon ion-edit"></i>
                                 修改
        </a>

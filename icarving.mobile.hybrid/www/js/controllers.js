@@ -172,6 +172,9 @@ angular.module('icarving.controllers', [])
 	
 	$scope.selectAll = function(){
 		$scope.activities = [];
+		if($scope.items == null || $scope.items == undefined){
+			return;
+		}
 		for(var i =0;i<$scope.items.length; i++){
 			$scope.activities[i] = $scope.items[i];
 			if($scope.items[i].activityType==1){
@@ -909,9 +912,12 @@ angular.module('icarving.controllers', [])
 		 });
 	 }; 
 	 
+	 var cookieUid = UserService.getUid();
+	 $scope.messages = [];
+	 $scope.notifyLength = 0;
+	 $scope.notifies = [];
 	 $scope.messageLength = 0;
 	 $scope.msgs = [];
-	 var cookieUid = UserService.getUid();
 	 $scope.activities = [];
 	 $scope.showActivity = true;
 	 $scope.showNotify = false;
@@ -922,13 +928,6 @@ angular.module('icarving.controllers', [])
 			MyMessage.all().success(function(res){
 			 $scope.messages = res.response;
 			 MyMessage.save($scope.messages);
-			 if($scope.messages != null && $scope.messages != undefined){
-				 for(var i = 0; i < $scope.messages.length; i++){
-					 if($scope.messages[i].status == 0){
-						 $scope.messageLength =  $scope.messageLength +1; 
-					 }
-				 }
-			 }
 			 var msg = {};
 			 for(var i =0; i<$scope.messages.length; i++){
 				 var msg = $scope.messages[i];
@@ -939,7 +938,18 @@ angular.module('icarving.controllers', [])
 					 msg.isNew = false;
 					 msg.isOld = true; 
 				 }
-				 $scope.msgs[i] = msg;
+				 if(msg.messageType == 1){
+					 $scope.notifies[i] = msg;
+					 if(msg.status == 0){
+						 $scope.notifyLength = $scope.notifyLength + 1;
+					 }
+				 }
+				 if(msg.messageType == 2){
+					 $scope.msgs[i] = msg;
+					 if(msg.status == 0){
+						 $scope.messageLength = $scope.messageLength + 1;
+					 }
+				 }
 			 }
 			});
 		} else {
@@ -1106,6 +1116,14 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 	
+    if($stateParams.messageId != undefined){
+		$http.get('/icarving.api.pinche/message/read?msgId='+$stateParams.messageId)
+	    .success(function(data, status, headers, config) {
+	     })
+	    .error(function(data, status, headers, config) {
+	    });
+	}
+	
 	// date time picker
     $scope.model = {};
     $scope.openStartTimeDatePicker = function() {		  
@@ -1154,16 +1172,6 @@ angular.module('icarving.controllers', [])
 	    });
 	 };
 	
-})
-
-.controller('MyMessageDetailCtrl', function($scope, $http, $stateParams, MyMessage) {
-	$scope.message = MyMessage.get($stateParams.userMessageId);
-	
-	$http.get('/icarving.api.pinche/message/read?msgId='+$stateParams.userMessageId)
-	.success(function(data, status, headers, config) {
-	 })
-	.error(function(data, status, headers, config) {
-	 });
 })
 
 
