@@ -35,7 +35,12 @@
               <a ng-if="activity.my && activity.pick" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准 </a>
               <a ng-if="!activity.my && activity.picked" href="#" class="subdued">{{activity.applyNumber}}个车主申请   <h4 ng-if="activity.applied">(您已申请，状态：{{activity.myapply.status}})</h4></a>
               <a ng-if="activity.my && activity.picked" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个车主申请 </a>
-            </p>                 
+            </p>
+            <hr/>
+            <div ng-repeat="message in activity.messages" >
+              <a ng-if="message.isReply==0" ng-click="replyMessage(activity, message.fromUid, message.fromName)"><h4>{{message.fromName}}: {{message.content}}</h4></a>
+              <a ng-if="message.isReply==1" ng-click="replyMessage(activity, message.fromUid, message.fromName)"><h4>{{message.fromName}}回复{{message.toName}}: {{message.content}}</h4></a>
+            </div>                   
            </div>              
            <div class="item tabs tabs-secondary tabs-icon-left">
              <a ng-if="!activity.my && activity.pick && !activity.applied" class="tab-item" href="#" ng-click="applyActivity()">
@@ -58,7 +63,7 @@
                <i class="icon ion-minus-circled"></i>
                                        取消
              </a>
-             <a class="tab-item" href="#">
+             <a class="tab-item" href="#" ng-click="leaveMessage(activity)">
                <i class="icon ion-chatbox"></i>
                                         留言
              </a>
@@ -66,13 +71,17 @@
                <i class="icon ion-share"></i>
                                  分享
              </a>
+           </div>
+           <div ng-if="activity.showMessageWidget" class="row">
+               <input type="text" class="col col-80" style="border: 1px solid lightgray;" placeholder="{{activity.messagePlaceHolder}}" ng-model="activity.data.userMessage" autofocus="autofocus"></input>
+               <button class="button button-small button-balanced icon-left ion-paper-airplane col" ng-click="sendMessage(activity)">发送</button>
            </div>             
          </div>
           
          <ion-list ng-if="showNotify" scroll="false" animation="fade-out">
-            <ion-item  class="item-icon-right" ng-repeat="msg in notifies" href="#/tab/my/activitydetail/{{msg.activityId}}/{{msg.messageId}}">
-               <h3 ng-class="{newmessage: msg.isNew, oldmessage: msg.isOld}">{{msg.content}}</h3>
-               <h4 ng-class="{newmessage: msg.isNew, oldmessage: msg.isOld}">{{msg.activitySourceAddress}} -> {{msg.activityDestAddress}}</h4>
+            <ion-item  class="item-icon-right" ng-repeat="notify in notifies" href="#/tab/my/activitydetail/{{notify.activityId}}/{{notify.messageId}}">
+               <h3 ng-class="{newmessage: notify.isNew, oldmessage: notify.isOld}">{{notify.content}}</h3>
+               <h4 ng-class="{newmessage: notify.isNew, oldmessage: notify.isOld}">{{notify.activitySourceAddress}} -> {{notify.activityDestAddress}}</h4>
                <i class="icon ion-chevron-right icon-accessory"></i>
             </ion-item>
          </ion-list>

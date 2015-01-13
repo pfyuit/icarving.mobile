@@ -507,6 +507,64 @@ angular.module('icarving.controllers', [])
 		  });
 	};
 	
+	$scope.messages = [];
+	$http.get('/icarving.api.pinche/message/'+$scope.activity.activityId+'/allmessage')
+	.success(function(data, status, headers, config) {
+		  $scope.messages = data.response;
+	})
+	.error(function(data, status, headers, config) {
+		  $scope.showAlert("取活动留言失败。 "+data.message+"。");
+	});
+	
+	$scope.messagePlaceHolder = "请留言";
+	$scope.showMessageWidget = false;
+	$scope.leave = false;
+	$scope.reply = false;
+	$scope.data = {};
+	$scope.leaveMessage = function(){
+		$scope.messagePlaceHolder = "请留言";
+		$scope.leave = true;
+		$scope.reply = false;
+		$scope.showMessageWidget = true;
+	};
+	$scope.replyMessage = function(fromUid, fromName){
+		$scope.messagePlaceHolder = "回复"+fromName+":";
+		$scope.leave = false;
+		$scope.reply = true;
+		$scope.showMessageWidget = true;
+		$scope.toUid = fromUid;
+		$scope.toName = fromName;
+	};
+	$scope.sendMessage = function(){
+		$scope.showMessageWidget = false;
+		var toUid = 0;
+		var toName = "";
+		var isReply = 0;
+		if($scope.leave == true){
+			toUid = $scope.activity.ownerId;
+		}
+		if($scope.reply == true){
+			toUid = $scope.toUid;
+			toName  = $scope.toName;
+			isReply = 1;
+		}
+		var payload = {"messageType":2, "activityId":$scope.activity.activityId, "activitySourceAddress":$scope.activity.sourceAddress,"activityDestAddress":$scope.activity.destAddress,"applyId":0, "fromUid":uid, "toUid": toUid, "toName":toName, "content":$scope.data.userMessage, "isReply":isReply};
+		$http.post('/icarving.api.pinche/message/send', payload)
+		.success(function(data, status, headers, config) {
+			$http.get('/icarving.api.pinche/message/'+$scope.activity.activityId+'/allmessage')
+			.success(function(data, status, headers, config) {
+				  $scope.messages = data.response;
+			})
+			.error(function(data, status, headers, config) {
+				  $scope.showAlert("取活动留言失败。 "+data.message+"。");
+			});
+		})
+		.error(function(data, status, headers, config) {
+			  $scope.showAlert('消息发布失败。 '+data.message+"。");
+		});
+		$scope.data.userMessage = "";
+	};
+	
 	// date time picker
     $scope.model = {};
     $scope.openStartTimeDatePicker = function() {		  
@@ -939,13 +997,13 @@ angular.module('icarving.controllers', [])
 					 msg.isOld = true; 
 				 }
 				 if(msg.messageType == 1){
-					 $scope.notifies[i] = msg;
+					 $scope.notifies.push(msg);
 					 if(msg.status == 0){
 						 $scope.notifyLength = $scope.notifyLength + 1;
 					 }
 				 }
 				 if(msg.messageType == 2){
-					 $scope.msgs[i] = msg;
+					 $scope.msgs.push(msg);
 					 if(msg.status == 0){
 						 $scope.messageLength = $scope.messageLength + 1;
 					 }
@@ -985,10 +1043,76 @@ angular.module('icarving.controllers', [])
 				$scope.activities[i].type = "搭车";
 				$scope.activities[i].pick = false;
 				$scope.activities[i].picked = true;
-			}
+			}					
 		}
+		
+		$scope.refreshData(); 
 		 
 	 });
+	 
+	$scope.refreshData = function(){		
+		   for(var i =0; i<$scope.activities.length; i++){
+			$http.get('/icarving.api.pinche/message/'+$scope.activities[i].activityId+'/allmessage')
+			.success(function(data, status, headers, config) {
+				if(data.response.length == 0){
+					return;
+				}
+				for(var j =0; j<$scope.activities.length; j++){
+					if($scope.activities[j].activityId == data.response[0].activityId){
+						$scope.activities[j].messages = data.response;
+						break;
+					}
+				}
+			})
+			.error(function(data, status, headers, config) {
+				  $scope.showAlert("取活动留言失败。 "+data.message+"。");
+			});
+		}
+	};
+		
+	$scope.leaveMessage = function(activity){
+		activity.messagePlaceHolder = "请留言";
+		activity.leave = true;
+		activity.reply = false;
+		activity.showMessageWidget = true;
+	};
+	$scope.replyMessage = function(activity, fromUid, fromName){
+		activity.messagePlaceHolder = "回复"+fromName+":";
+		activity.leave = false;
+		activity.reply = true;
+		activity.showMessageWidget = true;
+		activity.toUid = fromUid;
+		activity.toName = fromName;
+	};
+	$scope.sendMessage = function(activity){
+		activity.showMessageWidget = false;
+		var toUid = 0;
+		var toName = "";
+		var isReply = 0;
+		if(activity.leave == true){
+			toUid = activity.ownerId;
+		}
+		if(activity.reply == true){
+			toUid = activity.toUid;
+			toName  = activity.toName;
+			isReply = 1;
+		}
+		var payload = {"messageType":2, "activityId":activity.activityId, "activitySourceAddress":activity.sourceAddress,"activityDestAddress":activity.destAddress,"applyId":0, "fromUid":uid, "toUid": toUid, "toName":toName, "content":activity.data.userMessage, "isReply":isReply};
+		$http.post('/icarving.api.pinche/message/send', payload)
+		.success(function(data, status, headers, config) {
+			$http.get('/icarving.api.pinche/message/'+activity.activityId+'/allmessage')
+			.success(function(data, status, headers, config) {
+				activity.messages = data.response;
+			})
+			.error(function(data, status, headers, config) {
+				  $scope.showAlert("取活动留言失败。 "+data.message+"。");
+			});
+		})
+		.error(function(data, status, headers, config) {
+			  $scope.showAlert('消息发布失败。 '+data.message+"。");
+		});
+		activity.data.userMessage = "";
+	};
 	 
 	$scope.selectActivity = function(){
 		 $scope.showActivity = true;
@@ -1123,6 +1247,64 @@ angular.module('icarving.controllers', [])
 	    .error(function(data, status, headers, config) {
 	    });
 	}
+	
+	$scope.messages = [];
+	$http.get('/icarving.api.pinche/message/'+$scope.activity.activityId+'/allmessage')
+	.success(function(data, status, headers, config) {
+		  $scope.messages = data.response;
+	})
+	.error(function(data, status, headers, config) {
+		  $scope.showAlert("取活动留言失败。 "+data.message+"。");
+	});
+	
+	$scope.messagePlaceHolder = "请留言";
+	$scope.showMessageWidget = false;
+	$scope.leave = false;
+	$scope.reply = false;
+	$scope.data = {};
+	$scope.leaveMessage = function(){
+		$scope.messagePlaceHolder = "请留言";
+		$scope.leave = true;
+		$scope.reply = false;
+		$scope.showMessageWidget = true;
+	};
+	$scope.replyMessage = function(fromUid, fromName){
+		$scope.messagePlaceHolder = "回复"+fromName+":";
+		$scope.leave = false;
+		$scope.reply = true;
+		$scope.showMessageWidget = true;
+		$scope.toUid = fromUid;
+		$scope.toName = fromName;
+	};
+	$scope.sendMessage = function(){
+		$scope.showMessageWidget = false;
+		var toUid = 0;
+		var toName = "";
+		var isReply = 0;
+		if($scope.leave == true){
+			toUid = $scope.activity.ownerId;
+		}
+		if($scope.reply == true){
+			toUid = $scope.toUid;
+			toName  = $scope.toName;
+			isReply = 1;
+		}
+		var payload = {"messageType":2, "activityId":$scope.activity.activityId, "activitySourceAddress":$scope.activity.sourceAddress,"activityDestAddress":$scope.activity.destAddress,"applyId":0, "fromUid":uid, "toUid": toUid, "toName":toName, "content":$scope.data.userMessage, "isReply":isReply};
+		$http.post('/icarving.api.pinche/message/send', payload)
+		.success(function(data, status, headers, config) {
+			$http.get('/icarving.api.pinche/message/'+$scope.activity.activityId+'/allmessage')
+			.success(function(data, status, headers, config) {
+				  $scope.messages = data.response;
+			})
+			.error(function(data, status, headers, config) {
+				  $scope.showAlert("取活动留言失败。 "+data.message+"。");
+			});
+		})
+		.error(function(data, status, headers, config) {
+			  $scope.showAlert('消息发布失败。 '+data.message+"。");
+		});
+		$scope.data.userMessage = "";
+	};
 	
 	// date time picker
     $scope.model = {};
