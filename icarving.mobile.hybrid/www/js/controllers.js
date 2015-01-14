@@ -172,9 +172,6 @@ angular.module('icarving.controllers', [])
 	
 	$scope.selectAll = function(){
 		$scope.activities = [];
-		if($scope.items == null || $scope.items == undefined){
-			return;
-		}
 		for(var i =0;i<$scope.items.length; i++){
 			$scope.activities[i] = $scope.items[i];
 			if($scope.items[i].activityType==1){
