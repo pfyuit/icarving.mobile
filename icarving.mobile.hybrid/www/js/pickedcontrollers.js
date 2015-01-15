@@ -1,6 +1,6 @@
 angular.module('icarving.pickedcontrollers', [])
 
-.controller('PickedCtrl', function($scope, $http, $ionicPopup, $filter, User, Activity, Apply, Message) {
+.controller('PickedCtrl', function($scope, $http, $ionicModal, $ionicPopup, $filter, User, Activity, Apply, Message) {
     $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
 		     title: '<b>温馨提示</b>',
@@ -9,8 +9,152 @@ angular.module('icarving.pickedcontrollers', [])
 		   alertPopup.then(function(res) {
 		     console.log('');
 		   });
-    };	
-	
+    };
+    
+      $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.modal = modal;
+      });
+      $scope.openModal = function() {
+        $scope.modal.show();
+      }; 
+      $scope.closeModal = function() {
+        $scope.modal.hide();
+      }; 
+      $scope.$on('$destroy', function() {
+        $scope.modal.remove();
+      });
+      $scope.$on('modal.hidden', function() {
+      });
+      $scope.$on('modal.removed', function() {
+      });
+      
+      $scope.data = {};
+      $scope.data1 = {};  
+      $scope.login = function (data) {
+    	  if(data.username == undefined || data.username==null || data.username ==""){
+    		  $scope.showAlert("登录失败。用户名不可为空。");
+    		  return;
+    	  }
+    	  if(data.password == undefined || data.password==null || data.password ==""){
+    		  $scope.showAlert("登录失败。密码不可为空。");
+    		  return;
+    	  }	  
+    	  $http.get('/icarving.api.pinche/user/login?username='+data.username+'&password='+data.password).
+    	  success(function(data, status, headers, config) {
+    		  var userid = data.response.uid;
+    		  var username = data.response.username;
+    		  var password = data.response.password;
+    		  
+    		  var date=new Date();
+    		  var expireDays=10;
+    		  date.setTime(date.getTime()+expireDays*24*3600*1000);
+    		  var cookieStr = "uid="+userid+"; expires="+date.toUTCString();
+    		  document.cookie=cookieStr;
+    		  cookieStr = "username="+username+"; expires="+date.toUTCString();
+    		  document.cookie=cookieStr;
+    		  cookieStr = "password="+password+"; expires="+date.toUTCString();
+    		  document.cookie=cookieStr;
+    		  
+    		  uid=userid;		  
+    		  $scope.closeModal(); 
+    	  }).
+    	  error(function(data, status, headers, config) {
+    		  $scope.showAlert("登录失败。 "+data.message+"。");
+    	 });
+      }; 
+    	
+       $scope.register = function (data1) { 
+    	   if(data1.username == undefined || data1.username==null || data1.username ==""){
+    		   $scope.showAlert("注册失败。用户名不可为空。");
+    		   return;
+    	   }
+    	   if(data1.password == undefined || data1.password==null || data1.password ==""){
+    		   $scope.showAlert("注册失败。密码不可为空。");
+    		   return;
+    	   }
+    	   if(data1.password != data1.password1){
+    		   $scope.showAlert("注册失败。密码不匹配，请重试。");
+    		   return;
+    	   }
+    	   var payload = {"username":data1.username,"password":data1.password,"name":"","phone":data1.phone}
+    	   $http.post('/icarving.api.pinche/user/register', payload).
+    	   success(function(data, status, headers, config) {
+    		  var userid = data.response.uid;
+    		  var username = data.response.username;
+    		  var password = data.response.password;
+    		  
+    		  var date=new Date();
+    		  var expireDays=10;
+    		  date.setTime(date.getTime()+expireDays*24*3600*1000);
+    		  var cookieStr = "uid="+userid+"; expires="+date.toUTCString();
+    		  document.cookie=cookieStr;
+    		  cookieStr = "username="+username+"; expires="+date.toUTCString();
+    		  document.cookie=cookieStr;
+    		  cookieStr = "password="+password+"; expires="+date.toUTCString();
+    		  document.cookie=cookieStr;
+    		  
+    		  uid=userid;		  
+    		  $scope.closeModal(); 
+    	   }).
+    	   error(function(data, status, headers, config) {
+    		   $scope.showAlert("注册失败。 "+data.message+"。");
+    	   });
+      };
+
+      //Check authentication
+  	var cookieUid = User.getUid();
+  	if(cookieUid != ""){
+  		uid = cookieUid;
+  	} else {
+  		var index = window.location.href.indexOf("?", 0);			
+  		if(index > -1){
+  			var query = window.location.href.substring(index+1,  window.location.href.length);
+  			if(query != null && query != undefined && query != ""){					
+  				var args = new Object( );
+  			    var pairs = query.split("&");
+  			    for(var i = 0; i < pairs.length; i++) {
+  			        var pos = pairs[i].indexOf('='); 
+  			        if (pos == -1) continue;  
+  			        var argname = pairs[i].substring(0,pos);
+  			        var value = pairs[i].substring(pos+1);
+  			        args[argname] = value;
+  			    }				   
+  			    uid = args["uid"];
+  			    var username = args["username"];
+  			    var password = args["password"];				    
+  				var date=new Date();
+  				var expireDays=10;
+  				date.setTime(date.getTime()+expireDays*24*3600*1000);
+  				var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
+  				document.cookie=cookieStr;
+  				cookieStr = "username="+username+"; expires="+date.toUTCString();
+  				document.cookie=cookieStr;
+  				cookieStr = "password="+password+"; expires="+date.toUTCString();
+  				document.cookie=cookieStr;
+  			}			
+  		} else {
+  			var userAgent = navigator.userAgent.toLowerCase(); 
+  			if(userAgent.indexOf("micromessenger", 0) > -1){
+  				window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+  			} else {
+				if($scope.modal != undefined){
+					$scope.openModal();
+				} else {
+					  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+					    scope: $scope,
+					    animation: 'slide-in-up'
+					  }).then(function(modal) {
+					    $scope.modal = modal;
+					    $scope.openModal();
+					  });
+				}	
+  			}
+  		}
+  	}	 	
+      
 	$scope.model = {};
 	
 	$scope.publishPickedActivity = function(){

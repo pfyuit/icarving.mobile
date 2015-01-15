@@ -17,6 +17,7 @@ angular.module('icarving.mycontrollers', [])
 	  }).then(function(modal) {
 	    $scope.modal = modal;
 	  });
+	 
 	  $scope.openModal = function() {
 	    $scope.modal.show();
 	  };
@@ -121,15 +122,19 @@ angular.module('icarving.mycontrollers', [])
 			  document.cookie=deleteCookieStr;	
 			 
 			  uid = 0;
-			  $scope.openModal(); 
+			  var userAgent = navigator.userAgent.toLowerCase(); 
+			  if(userAgent.indexOf("micromessenger", 0) > -1){
+				window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+			  } else {
+				while($scope.modal == undefined){}
+				$scope.openModal();
+			  }
 		  }).
 		  error(function(data, status, headers, config) {
 			  $scope.showAlert('退出登录失败。 '+data.message+"。");
 		 });
 	 }; 
-	 
-	 var cookieUid = User.getUid();
-	 
+	 	 
 	 var updateModel = function(){
 		 //process activities
 		 $scope.activities = Activity.getAllByOwnerId(uid);
@@ -195,24 +200,70 @@ angular.module('icarving.mycontrollers', [])
 		 }
 	 };
 	 
+    //Check authentication
+	var cookieUid = User.getUid();
+	if(cookieUid != ""){
+		uid = cookieUid;
+	} else {
+		var index = window.location.href.indexOf("?", 0);			
+		if(index > -1){
+			var query = window.location.href.substring(index+1,  window.location.href.length);
+			if(query != null && query != undefined && query != ""){					
+				var args = new Object( );
+			    var pairs = query.split("&");
+			    for(var i = 0; i < pairs.length; i++) {
+			        var pos = pairs[i].indexOf('='); 
+			        if (pos == -1) continue;  
+			        var argname = pairs[i].substring(0,pos);
+			        var value = pairs[i].substring(pos+1);
+			        args[argname] = value;
+			    }				   
+			    uid = args["uid"];
+			    var username = args["username"];
+			    var password = args["password"];				    
+				var date=new Date();
+				var expireDays=10;
+				date.setTime(date.getTime()+expireDays*24*3600*1000);
+				var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
+				document.cookie=cookieStr;
+				cookieStr = "username="+username+"; expires="+date.toUTCString();
+				document.cookie=cookieStr;
+				cookieStr = "password="+password+"; expires="+date.toUTCString();
+				document.cookie=cookieStr;
+			}			
+		} else {
+			var userAgent = navigator.userAgent.toLowerCase(); 
+			if(userAgent.indexOf("micromessenger", 0) > -1){
+				window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+			} else {
+				if($scope.modal != undefined){
+					$scope.openModal();
+				} else {
+					  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+					    scope: $scope,
+					    animation: 'slide-in-up'
+					  }).then(function(modal) {
+					    $scope.modal = modal;
+					    $scope.openModal();
+					  });
+				}	
+			}
+		}
+	}	 		  
+	 	 
 	 //Read cache and update model
 	 updateModel();
 	 
 	 //Request network, update cache, and update model 
 	 Activity.fetchAllByOwnerId().success(function(res){
-		if(cookieUid != ""){
-			uid = cookieUid;
-			Message.fetchAllByOwnerId()
-			.success(function(data, status, headers, config) {
-				Message.saveOrUpdateAll(data.response);
-				updateModel();
-			})
-			.error(function(data, status, headers, config) {
-				$scope.showAlert("取活动消息失败。 "+data.message+"。");
-			});
-		} else {
-			$scope.openModal();
-		}
+		Message.fetchAllByOwnerId()
+		.success(function(data, status, headers, config) {
+			Message.saveOrUpdateAll(data.response);
+			updateModel();
+		})
+		.error(function(data, status, headers, config) {
+			$scope.showAlert("取活动消息失败。 "+data.message+"。");
+		});
 		
 		for(var i = 0; i < res.response.length; i ++){
 			Apply.fetchAllByActivityId(res.response[i].activityId)
