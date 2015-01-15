@@ -2,7 +2,7 @@
    <ion-content>
 		 <ion-list scroll="false" animation="fade-out">          
            <ion-item class="item-avatar item-icon-right" ng-repeat="item in acts | orderBy:'activityId' :reverse=true" href="#/tab/view/activitydetail/{{item.activityId}}">
-             <img ng-src="img/car_pick.jpg">
+             <img ng-src="{{item.ownerAvatar}}">
              <h3>{{item.sourceAddress}}->{{item.destAddress}}</h3>
              <p><h4>{{item.startTime}}->{{item.returnTime}}</h4></p>
              <p><h4>组织者：{{item.ownerName}}</h4></p>

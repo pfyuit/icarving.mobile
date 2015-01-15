@@ -1,7 +1,7 @@
 var uid = 0; // Initialize to 0, it means no body registered/logged in.
 var appid = "wxe0a065ca64369148";
 
-angular.module('icarving', ['ionic', 'icarving.controllers', 'icarving.services', 'ui.bootstrap.datetimepicker'])
+angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickcontrollers', 'icarving.pickedcontrollers', 'icarving.mycontrollers', 'icarving.services', 'ui.bootstrap.datetimepicker'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
