@@ -1,6 +1,7 @@
 angular.module('icarving.services', [])
 
-.factory('User', function() {
+.factory('User', function($http) {
+  var user = {};
   var getCookie =  function(name) {
   	var cookie = "";	    	
 	var strcookie = document.cookie;
@@ -15,6 +16,9 @@ angular.module('icarving.services', [])
   };
   
   return {
+	fetchUser: function(){
+		return $http.get('/icarving.api.pinche/user/info?uid='+uid);
+	},
     getUid: function() {
     	return getCookie("uid");
     },    
@@ -23,6 +27,12 @@ angular.module('icarving.services', [])
     },    
     getPassword: function() {	
     	return getCookie("password");
+    },
+    getUser: function(){
+    	return user;
+    },
+    saveUser: function(_user){
+    	user = _user;
     }
    }
  })

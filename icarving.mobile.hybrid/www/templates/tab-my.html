@@ -1,8 +1,8 @@
 <ion-view view-title="个人">   
      <ion-content>
       <div class="item item-avatar" style="margin-bottom: 25px;">
-         <img src="img/car_pick.jpg">
-         <h2>Marty McFly</h2>
+         <img src="{{user.avatar}}">
+         <h2>{{user.name}}</h2>
       </div>
       <ion-tabs class="tabs-striped tabs-top">
           <ion-tab title="活动" on-select="selectActivity()">

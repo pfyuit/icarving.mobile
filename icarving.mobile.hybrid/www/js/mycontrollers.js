@@ -287,7 +287,16 @@ angular.module('icarving.mycontrollers', [])
 		
 		Activity.saveOrUpdateAll(res.response);		
 		updateModel();
-	 });	 
+	 });
+	 
+	 $scope.user = User.getUser();
+	 User.fetchUser()
+	 .success(function(data, status, headers, config) {
+	     User.saveUser(data.response);
+	     $scope.user = User.getUser();
+	 })
+	 .error(function(data, status, headers, config) {
+	 });
 	
 	//Leave and reply messages
 	$scope.leaveMessage = function(activity){
