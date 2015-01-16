@@ -23,7 +23,7 @@
             <h3 style="margin-top: 0px;"> 拼车类型：{{activity.type}} </h3>
             <h3> 地点：{{activity.sourceAddress}} -> {{activity.destAddress}} </h3>
             <h3> 时间：{{activity.startTime}} -> {{activity.returnTime}} </h3>
-            <h3> 容纳人数：{{activity.capacity}} </h3>
+            <h3 ng-if="activity.pick"> 容纳人数：{{activity.capacity}} </h3>
             <h3 ng-if="activity.pick">剩余空位：{{activity.capacity-activity.approveNumber}}</h3><h3 ng-if="activity.picked">搭车人数：{{activity.capacity}}</h3>
             <h3> 手机：{{activity.ownerPhone}} </h3>
             <h3> 费用：{{activity.charge}} </h3>
@@ -32,9 +32,9 @@
             <hr/>                 
             <p>
               <a ng-if="!activity.my && activity.pick" href="#" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准     <h4 ng-if="activity.applied">(您已申请，状态：{{activity.myapply.status}})</h4></a>
-              <a ng-if="activity.my && activity.pick" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准 </a>
-              <a ng-if="!activity.my && activity.picked" href="#" class="subdued">{{activity.applyNumber}}个车主申请   <h4 ng-if="activity.applied">(您已申请，状态：{{activity.myapply.status}})</h4></a>
-              <a ng-if="activity.my && activity.picked" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个车主申请 </a>
+              <a ng-if="activity.my && activity.pick" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准   (点击处理申请)</a>
+              <a ng-if="!activity.my && activity.picked" href="#" class="subdued">{{activity.applyNumber}}个车主申请，{{activity.approveNumber}}人被批准 <h4 ng-if="activity.applied">(您已申请，状态：{{activity.myapply.status}})</h4></a>
+              <a ng-if="activity.my && activity.picked" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个车主申请，{{activity.approveNumber}}人被批准  (点击处理申请)</a>
             </p>
             <hr/>
             <div ng-repeat="message in activity.messages" >
@@ -43,25 +43,21 @@
             </div>                   
            </div>              
            <div class="item tabs tabs-secondary tabs-icon-left">
-             <a ng-if="!activity.my && activity.pick && !activity.applied" class="tab-item" href="#" ng-click="applyActivity()">
-               <i class="icon ion-thumbsup"></i>
-                                       搭车
-             </a>
-             <a ng-if="!activity.my && activity.picked && !activity.applied" class="tab-item" href="#" ng-click="applyActivity()">
-               <i class="icon ion-thumbsup"></i>
-                                       捡TA
-             </a>
-             <a ng-if="!activity.my && activity.applied" class="tab-item" href="#" ng-click="cancelApply(activity.myapply.applyId)">
+             <a ng-if="!activity.my && activity.applied && (activity.myapply.status=='等待批准' || activity.myapply.status=='已批准')" class="tab-item" href="#" ng-click="cancelApply(activity.myapply.applyId)">
                <i class="icon ion-minus-circled"></i>
                                       取消申请
              </a>
+             <a ng-if="!activity.my && activity.applied && (activity.myapply.status=='已拒绝' || activity.myapply.status=='已取消')" class="tab-item" href="#" ng-click="renewApply(activity.myapply.applyId)">
+               <i class="icon ion-thumbsup"></i>
+                                    再次申请
+             </a>             
              <a ng-if="activity.my" class="tab-item" href="#/tab/my/activitydetailupdate/{{activity.activityId}}">
                <i class="icon ion-edit"></i>
-                                      修改
+                                      修改活动
              </a>
-             <a ng-if="activity.my" class="tab-item" href="#" ng-click="cancelActivity()">
+             <a ng-if="activity.my" class="tab-item" href="#" ng-click="cancelActivity(activity)">
                <i class="icon ion-minus-circled"></i>
-                                       取消
+                                       取消活动
              </a>
              <a class="tab-item" href="#" ng-click="leaveMessage(activity)">
                <i class="icon ion-chatbox"></i>

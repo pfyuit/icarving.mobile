@@ -578,6 +578,37 @@ angular.module('icarving.viewcontrollers', [])
 				$scope.showAlert("取消申请失败。 "+data.message+"。");
 		});
 	};
+	
+	$scope.renewApply = function(applyId){
+		Apply.renewApply(applyId)
+		.success(function(data, status, headers, config) {
+				Activity.fetchByActivityId($scope.activity.activityId)
+				.success(function(data, status, headers, config) {
+					Activity.saveOrUpdate(data.response);
+				 	updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					$scope.showAlert('获取活动失败。 '+data.message+"。");
+				});	
+				
+				Message.fetchAllByActivityId(data.response.activityId)
+				.success(function(data, status, headers, config) {
+					Message.saveOrUpdateAll(data.response);
+				 	updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					$scope.showAlert('获取消息失败。 '+data.message+"。");
+				});
+				
+				Apply.saveOrUpdate(data.response);
+			 	updateModel();
+			 	
+			 	$scope.showAlert("再次申请成功");				
+		})
+		.error(function(data, status, headers, config) {
+				$scope.showAlert("再次申请失败。 "+data.message+"。");
+		});
+	};
 
 	
 	$scope.messagePlaceHolder = "请留言";

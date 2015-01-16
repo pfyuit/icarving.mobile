@@ -3,12 +3,24 @@
         <ion-list scroll="false" animation="fade-out">
          <ion-item ng-repeat="apply in applies | orderBy:'applyId' :reverse=true">
            <div class="row">
-             <div class="col col-50" style="margin-left:-25px">申请人：{{apply.ownerName}}
-             </div>
-               <button class="button button-balanced button-small icon ion-checkmark-circled col" style="margin-top: 0px" ng-click="approveApply(apply.applyId)">
+               <div class="col col-50" style="margin-left:-25px">申请人：{{apply.ownerName}}
+               </div>
+               <button ng-if="apply.status=='等待批准'" class="button button-outline button-stable button-small" style="margin-top: 0px">
+                                                             等待批准
+               </button>
+               <button ng-if="apply.status=='已批准'" class="button button-outline button-stable button-small" style="margin-top: 0px">
+                                                            已批准
+               </button>
+               <button ng-if="apply.status=='已拒绝'" class="button button-outline button-stable button-small" style="margin-top: 0px">
+                                                            已拒绝
+               </button>
+               <button ng-if="apply.status=='已取消'" class="button button-outline button-stable button-small" style="margin-top: 0px">
+                                                             已取消
+               </button>
+               <button ng-if="apply.status=='等待批准'" class="button button-outline button-balanced button-small icon ion-checkmark-circled col" style="margin-top: 0px" ng-click="approveApply(apply.applyId)">
                                                              批准
                </button>
-               <button class="button button-assertive button-small icon ion-close-circled col" style="margin-top: 0px; margin-right:-20px" ng-click="unApproveApply(apply.applyId)">
+               <button ng-if="apply.status=='等待批准' || apply.status=='已批准'" class="button button-outline button-assertive button-small icon ion-close-circled col" style="margin-top: 0px; margin-right:-20px" ng-click="unApproveApply(apply.applyId)">
                                                              拒绝    
                </button>
            </div>           

@@ -37,7 +37,7 @@ angular.module('icarving.services', [])
    }
  })
 
-.factory('Activity', function($http) { 
+.factory('Activity', function($http, Apply) { 
   var activities = [];  
   return {	  
     fetchAllValid: function() {
@@ -78,7 +78,15 @@ angular.module('icarving.services', [])
     getAllByOwnerId: function(ownerId) {
     	var result = [];
     	for(var i = 0; i < activities.length; i++ ){
-    		if(activities[i].ownerId == parseInt(ownerId)){
+			var hasApplied = false;
+    		var applies = Apply.getAllByActivityId(activities[i].activityId);
+			for (var j = 0; j < applies.length; j ++) {
+				if (applies[j].ownerId == ownerId) {
+					hasApplied = true;
+					break;
+				}
+			}	
+    		if(activities[i].ownerId == parseInt(ownerId) || hasApplied){
     			result.push(activities[i]);
     		}
     	}
@@ -146,6 +154,9 @@ angular.module('icarving.services', [])
     },
     cancelApply: function(applyId){
     	return $http.get('/icarving.api.pinche/apply/cancel?uid='+uid+'&applyId='+applyId);
+    },
+    renewApply: function(applyId){
+    	return $http.get('/icarving.api.pinche/apply/renew?applyId='+applyId);	
     },
     getByApplyId: function(applyId) {
         for (var i = 0; i < applies.length; i++) {

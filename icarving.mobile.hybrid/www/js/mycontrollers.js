@@ -297,6 +297,100 @@ angular.module('icarving.mycontrollers', [])
 	 })
 	 .error(function(data, status, headers, config) {
 	 });
+	 
+	 
+     $scope.cancelActivity = function(activity){
+		 Activity.cancelActivity(activity.activityId)
+		 .success(function(data, status, headers, config) {
+				Apply.fetchAllByActivityId(data.response.activityId)
+				.success(function(data, status, headers, config) {
+				   Apply.saveOrUpdateAll(data.response);
+				   updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					 $scope.showAlert('获取申请失败。 '+data.message+"。");
+				});	
+				
+				Message.fetchAllByActivityId(data.response.activityId)
+				.success(function(data, status, headers, config) {
+				   Message.saveOrUpdateAll(data.response);
+				   updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					 $scope.showAlert('获取消息失败。 '+data.message+"。");
+				});
+				
+				Activity.saveOrUpdate(data.response);
+				updateModel();
+				  
+			  $scope.showAlert("活动取消成功");
+		  })
+		  .error(function(data, status, headers, config) {
+			  $scope.showAlert("活动取消失败。 "+data.message+"。");
+		  });
+      };
+	
+	  $scope.cancelApply = function(applyId){
+		Apply.cancelApply(applyId)
+		.success(function(data, status, headers, config) {
+				Activity.fetchByActivityId(data.response.activityId)
+				.success(function(data, status, headers, config) {
+					Activity.saveOrUpdate(data.response);
+				 	updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					$scope.showAlert('获取活动失败。 '+data.message+"。");
+				});	
+				
+				Message.fetchAllByActivityId(data.response.activityId)
+				.success(function(data, status, headers, config) {
+					Message.saveOrUpdateAll(data.response);
+				 	updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					$scope.showAlert('获取消息失败。 '+data.message+"。");
+				});
+				
+				Apply.saveOrUpdate(data.response);
+			 	updateModel();
+			 	
+			 	$scope.showAlert("取消申请成功");				
+		})
+		.error(function(data, status, headers, config) {
+				$scope.showAlert("取消申请失败。 "+data.message+"。");
+		});
+	  };
+	
+	  $scope.renewApply = function(applyId){
+		Apply.renewApply(applyId)
+		.success(function(data, status, headers, config) {
+				Activity.fetchByActivityId(data.response.activityId)
+				.success(function(data, status, headers, config) {
+					Activity.saveOrUpdate(data.response);
+				 	updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					$scope.showAlert('获取活动失败。 '+data.message+"。");
+				});	
+				
+				Message.fetchAllByActivityId(data.response.activityId)
+				.success(function(data, status, headers, config) {
+					Message.saveOrUpdateAll(data.response);
+				 	updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					$scope.showAlert('获取消息失败。 '+data.message+"。");
+				});
+				
+				Apply.saveOrUpdate(data.response);
+			 	updateModel();
+			 	
+			 	$scope.showAlert("再次申请成功");				
+		})
+		.error(function(data, status, headers, config) {
+				$scope.showAlert("再次申请失败。 "+data.message+"。");
+		});
+	 };
 	
 	//Leave and reply messages
 	$scope.leaveMessage = function(activity){
@@ -691,6 +785,37 @@ angular.module('icarving.mycontrollers', [])
 		})
 		.error(function(data, status, headers, config) {
 				$scope.showAlert("取消申请失败。 "+data.message+"。");
+		});
+	};
+	
+	$scope.renewApply = function(applyId){
+		Apply.renewApply(applyId)
+		.success(function(data, status, headers, config) {
+				Activity.fetchByActivityId($scope.activity.activityId)
+				.success(function(data, status, headers, config) {
+					Activity.saveOrUpdate(data.response);
+				 	updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					$scope.showAlert('获取活动失败。 '+data.message+"。");
+				});	
+				
+				Message.fetchAllByActivityId(data.response.activityId)
+				.success(function(data, status, headers, config) {
+					Message.saveOrUpdateAll(data.response);
+				 	updateModel();
+				})
+				.error(function(data, status, headers, config) {
+					$scope.showAlert('获取消息失败。 '+data.message+"。");
+				});
+				
+				Apply.saveOrUpdate(data.response);
+			 	updateModel();
+			 	
+			 	$scope.showAlert("再次申请成功");				
+		})
+		.error(function(data, status, headers, config) {
+				$scope.showAlert("再次申请失败。 "+data.message+"。");
 		});
 	};
     
