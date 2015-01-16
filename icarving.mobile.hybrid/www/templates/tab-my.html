@@ -16,8 +16,25 @@
              <img src="{{activity.ownerAvatar}}">
              <h2>{{activity.ownerName}}</h2>
              <h4>{{activity.ownerCountry}} {{activity.ownerProvince}} {{activity.ownerCity}}</h4>
-           </div>              
-           <div class="item item-body">
+           </div>
+
+             <div class="item item-divider">
+                 您已申请，等待批准中
+             </div>
+            <div class="row">
+                <div class="col col-75">
+                    <div class="item item-text-wrap">
+                        1个车主申请，0人被批准
+                    </div>
+                </div>
+                <div class="col col-25">
+                    <button class="button button-full button-balanced">
+                        处理
+                    </button>
+                </div>
+            </div>
+
+             <div class="item item-body">
             <h3 style="margin-top: 0px;"> 拼车类型：{{activity.type}} </h3>
             <h3> 地点：{{activity.sourceAddress}} -> {{activity.destAddress}} </h3>
             <h3> 时间：{{activity.startTime}} -> {{activity.returnTime}} </h3>
