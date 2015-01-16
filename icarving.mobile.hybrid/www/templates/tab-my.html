@@ -1,17 +1,15 @@
-<ion-view view-title="个人">   
-     <ion-content>
-      <div class="item item-avatar" style="margin-bottom: 25px;">
-         <img src="{{user.avatar}}">
-         <h2>{{user.name}}</h2>
-      </div>
-      <ion-tabs class="tabs-striped tabs-top">
+<ion-view view-title="个人">
+    <div>
+       <ion-tabs class="tabs-striped tabs-top">
           <ion-tab title="活动" on-select="selectActivity()">
           </ion-tab>
           <ion-tab title="通知" on-select="selectNotify()" badge="notifyLength" badge-style="badge-assertive">
           </ion-tab>
           <ion-tab title="留言" on-select="selectMessage()" badge="messageLength" badge-style="badge-assertive">
           </ion-tab>
-      </ion-tabs>
+       </ion-tabs>
+     </div>     
+     <ion-content style="margin-top:47px">
          <ion-refresher  pulling-text="下拉刷新..." on-refresh="doRefresh()"></ion-refresher> 
          <div class="list card" ng-if="showActivity" style="margin-top: 0px;" ng-repeat="activity in activities | orderBy:'activityId' :reverse=true">               
            <div class="item item-avatar">
