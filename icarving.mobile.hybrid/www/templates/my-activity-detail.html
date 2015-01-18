@@ -57,11 +57,11 @@
          <i class="icon ion-thumbsup"></i>
                               再次申请
        </a>
-       <a ng-if="activity.my" class="tab-item" href="#/tab/my/activitydetailupdate/{{activity.activityId}}">
+       <a ng-if="activity.my && activity.status != '已取消'" class="tab-item" href="#/tab/my/activitydetailupdate/{{activity.activityId}}">
          <i class="icon ion-edit"></i>
                                 修改活动
        </a>
-       <a ng-if="activity.my" class="tab-item" href="#" ng-click="cancelActivity()">
+       <a ng-if="activity.my && activity.status != '已取消'" class="tab-item" href="#" ng-click="cancelActivity()">
          <i class="icon ion-minus-circled"></i>
                                  取消活动
        </a>
