@@ -345,21 +345,6 @@ angular.module('icarving.viewcontrollers', [])
 	   });
     };
     
-    $scope.confirmCancelActivity = false;
-    $scope.showConfirm = function() {
-	   var confirmPopup = $ionicPopup.confirm({
-	     title: '取消活动',
-	     template: '您确定要取消活动吗？一旦取消，将不可恢复，且所有活动申请被自动取消。'
-	   });
-	   confirmPopup.then(function(res) {
-	     if(res) {
-	       $scope.confirmCancelActivity = true;
-	     } else {
-	       $scope.confirmCancelActivity = false;
-	     }
-	   });
-    };
-    
     var updateModel = function(){
     	//process activity
     	$scope.activity = Activity.getByActivityId($stateParams.activityId);
@@ -490,37 +475,43 @@ angular.module('icarving.viewcontrollers', [])
     };
 	
     $scope.cancelActivity = function(){
-    	$scope.showConfirm();
-    	if($scope.confirmCancelActivity == true){
-   		 Activity.cancelActivity($scope.activity.activityId)
-		 .success(function(data, status, headers, config) {
-				Apply.fetchAllByActivityId(data.response.activityId)
-				.success(function(data, status, headers, config) {
-				   Apply.saveOrUpdateAll(data.response);
-				   updateModel();
-				})
-				.error(function(data, status, headers, config) {
-					 $scope.showAlert('获取申请失败。 '+data.message+"。");
-				});	
-				
-				Message.fetchAllByActivityId(data.response.activityId)
-				.success(function(data, status, headers, config) {
-				   Message.saveOrUpdateAll(data.response);
-				   updateModel();
-				})
-				.error(function(data, status, headers, config) {
-					 $scope.showAlert('获取消息失败。 '+data.message+"。");
-				});
-				
-				Activity.saveOrUpdate(data.response);
-				updateModel();
-				  
-			  $scope.showAlert("捡人活动取消成功");
-		  })
-		  .error(function(data, status, headers, config) {
-			  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
-		  });
-    	}
+ 	   var confirmPopup = $ionicPopup.confirm({
+ 		     title: '<b>取消活动</b>',
+ 		     template: '您确定要取消活动吗？一旦取消，将不可恢复，且所有活动申请被自动取消。'
+ 	   });
+	   confirmPopup.then(function(res) {
+	     if(res) {
+	   		 Activity.cancelActivity($scope.activity.activityId)
+			 .success(function(data, status, headers, config) {
+					Apply.fetchAllByActivityId(data.response.activityId)
+					.success(function(data, status, headers, config) {
+					   Apply.saveOrUpdateAll(data.response);
+					   updateModel();
+					})
+					.error(function(data, status, headers, config) {
+						 $scope.showAlert('获取申请失败。 '+data.message+"。");
+					});	
+					
+					Message.fetchAllByActivityId(data.response.activityId)
+					.success(function(data, status, headers, config) {
+					   Message.saveOrUpdateAll(data.response);
+					   updateModel();
+					})
+					.error(function(data, status, headers, config) {
+						 $scope.showAlert('获取消息失败。 '+data.message+"。");
+					});
+					
+					Activity.saveOrUpdate(data.response);
+					updateModel();
+					  
+				  $scope.showAlert("捡人活动取消成功");
+			  })
+			  .error(function(data, status, headers, config) {
+				  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
+			  });
+	     } else {
+	     }
+	   });
     };
     
 	$scope.approveApply = function(applyId){
