@@ -1,6 +1,6 @@
 angular.module('icarving.pickedcontrollers', [])
 
-.controller('PickedCtrl', function($scope, $http, $ionicModal, $ionicPopup, $filter, User, Activity, Apply, Message) {
+.controller('PickedCtrl', function($scope, $http, $ionicModal, $ionicPopup, $filter, $ionicLoading, User, Activity, Apply, Message) {
     $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
 		     title: '<b>温馨提示</b>',
@@ -199,13 +199,18 @@ angular.module('icarving.pickedcontrollers', [])
 			return false;
 		}
 
+	    $ionicLoading.show({
+	        template: '发布中...'
+	    });
 		var payload = {"ownerId":uid, "activityType":2, "startTime":$scope.model.startTime,"returnTime":$scope.model.returnTime,"sourceAddress":$scope.model.sourceAddress,"destAddress":$scope.model.destAddress,"charge":$scope.model.charge,"carType":$scope.model.carType,"capacity":$scope.model.capacity,"venue":$scope.model.venue,"phone":$scope.model.phone,"note":$scope.model.note};
 		Activity.createActivity(payload).
 		  success(function(data, status, headers, config) {
 			  Activity.saveOrUpdate(data.response);
+			  $ionicLoading.hide();
 			  $scope.showAlert('搭车活动发布成功，可以在个人页面中查看活动详细信息');
 		  }).
 		  error(function(data, status, headers, config) {
+			  $ionicLoading.hide();
 			  $scope.showAlert('搭车活动发布失败。 '+data.message+"。");
 		  });
 	};
