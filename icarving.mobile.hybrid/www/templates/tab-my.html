@@ -1,4 +1,4 @@
-<ion-view view-title="个人">
+<ion-view view-title="{{user.name}}">
     <div>
        <ion-tabs class="tabs-striped tabs-top">
           <ion-tab title="活动" on-select="selectActivity()">
@@ -17,24 +17,25 @@
              <h2>{{activity.ownerName}}</h2>
              <h4>{{activity.ownerCountry}} {{activity.ownerProvince}} {{activity.ownerCity}}</h4>
            </div>
-
-             <div class="item item-divider">
-                 您已申请，等待批准中
-             </div>
+            <div ng-if="activity.applied" class="item item-divider">
+                 <h4 >您已申请，状态：{{activity.myapply.status}}</h4>
+            </div>
             <div class="row">
                 <div class="col col-75">
-                    <div class="item item-text-wrap">
-                        1个车主申请，0人被批准
+                    <div ng-if="activity.pick" class="item item-text-wrap" style="margin-top: -9px; margin-left: -10px;">
+                        {{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准
+                    </div>
+                    <div ng-if="activity.picked" class="item item-text-wrap" style="margin-top: -9px; margin-left: -10px;">
+                        {{activity.applyNumber}}个车主申请，{{activity.approveNumber}}人被批准
                     </div>
                 </div>
                 <div class="col col-25">
-                    <button class="button button-full button-balanced">
-                        处理
-                    </button>
+                    <a ng-if="activity.my" style="margin-top: -1px;" class="button button-small button-full button-balanced" href="#/tab/my/activitydetailapply/{{activity.activityId}}">
+                                                                           处理
+                    </a>
                 </div>
             </div>
-
-             <div class="item item-body">
+            <div  style="margin-top: -15px;" class="item item-body">
             <h3 style="margin-top: 0px;"> 拼车类型：{{activity.type}} </h3>
             <h3> 地点：{{activity.sourceAddress}} -> {{activity.destAddress}} </h3>
             <h3> 时间：{{activity.startTime}} -> {{activity.returnTime}} </h3>
@@ -44,13 +45,6 @@
             <h3> 费用：{{activity.charge}} </h3>
             <h3> 汽车类型：{{activity.carType}} </h3>
             <h3> 说明：{{activity.note}} </h3>          
-            <hr/>                 
-            <p>
-              <a ng-if="!activity.my && activity.pick" href="#" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准     <h4 ng-if="activity.applied">(您已申请，状态：{{activity.myapply.status}})</h4></a>
-              <a ng-if="activity.my && activity.pick" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个搭车申请，{{activity.approveNumber}}人被批准   (点击处理申请)</a>
-              <a ng-if="!activity.my && activity.picked" href="#" class="subdued">{{activity.applyNumber}}个车主申请，{{activity.approveNumber}}人被批准 <h4 ng-if="activity.applied">(您已申请，状态：{{activity.myapply.status}})</h4></a>
-              <a ng-if="activity.my && activity.picked" href="#/tab/my/activitydetailapply/{{activity.activityId}}" class="subdued">{{activity.applyNumber}}个车主申请，{{activity.approveNumber}}人被批准  (点击处理申请)</a>
-            </p>
             <hr/>
             <div ng-repeat="message in activity.messages" >
               <a ng-if="message.isReply==0" ng-click="replyMessage(activity, message.fromUid, message.fromName)"><h4>{{message.fromName}}: {{message.content}}</h4></a>
