@@ -297,7 +297,8 @@ angular.module('icarving.viewcontrollers', [])
     };
 })
 
-.controller('ViewSearchFormCtrl', function($scope, $ionicPopup, $stateParams, User, Activity, Apply, Message) {
+.controller('ViewSearchFormCtrl', function($scope, $ionicPopup, $filter, $stateParams, User, Activity, Apply, Message) {
+	$scope.model = {};
 	//Date time picker
 	$scope.openStartTimeDatePicker = function() {		  
 		$scope.$watch('model.startTimeStr', function(unformattedDate){
