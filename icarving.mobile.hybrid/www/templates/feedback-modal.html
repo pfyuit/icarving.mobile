@@ -1,0 +1,16 @@
+<ion-modal-view>
+ <ion-content class="padding">
+   <div class="list"> 
+      <form ng-submit="sendFeedback()"> 
+         <div class="list"> 
+            <label class="item item-input"> 
+                <textarea style="height:300px" placeholder="请输入您的建议反馈..." ng-model="feedback.content"/> 
+            </label> 
+            <button class="button button-block button-balanced" type="submit"> 
+                <i class="icon ion-model-s"></i>&nbsp;反馈
+            </button> 
+         </div> 
+      </form>
+   </div> 
+ </ion-content>
+</ion-modal-view>

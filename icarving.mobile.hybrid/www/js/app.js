@@ -1,6 +1,13 @@
 var uid = 0; // Initialize to 0, it means no body registered/logged in.
 var appid = "wxe0a065ca64369148";
 
+// Change them in online environment
+var admin_uid = 1;
+var admin_name = "小冰";
+var admin_feedback_activity_id = 1;
+var admin_feedback_activity_source_address = "";
+var admin_feedback_activity_dest_address = "";
+
 angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickcontrollers', 'icarving.pickedcontrollers', 'icarving.mycontrollers', 'icarving.services', 'ui.bootstrap.datetimepicker'])
 
 .run(function($ionicPlatform) {

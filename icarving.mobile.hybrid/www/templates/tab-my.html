@@ -1,4 +1,7 @@
 <ion-view view-title="{{user.name}}">
+    <ion-nav-buttons side="right" type="submit">
+        <a class="button button-block button-balanced " style="margin-top: 0px" ng-click="showFeedback()">&nbsp;建议反馈</a>
+    </ion-nav-buttons>
     <div>
        <ion-tabs class="tabs-striped tabs-top">
           <ion-tab title="活动" on-select="selectActivity()">

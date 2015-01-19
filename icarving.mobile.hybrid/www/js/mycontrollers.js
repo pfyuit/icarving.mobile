@@ -1,6 +1,6 @@
 angular.module('icarving.mycontrollers', [])
 
-.controller('MyCtrl', function($scope, $http, $ionicModal, $ionicPopup, User, Activity, Apply, Message) {
+.controller('MyCtrl', function($scope, $http, $ionicModal, $ionicPopup, $ionicLoading, User, Activity, Apply, Message) {
      $scope.showAlert = function(templateStr) {
 		   var alertPopup = $ionicPopup.alert({
 		     title: '<b>温馨提示</b>',
@@ -529,6 +529,35 @@ angular.module('icarving.mycontrollers', [])
 			updateModel();
 		 });	
 	  $scope.$broadcast('scroll.refreshComplete');
+    };
+    
+    $scope.feedback = {};
+    $scope.showFeedback = function(){
+   	  $ionicModal.fromTemplateUrl('templates/feedback-modal.html', {
+ 	    scope: $scope,
+ 	    animation: 'slide-in-up'
+ 	  }).then(function(modal) {
+ 	    $scope.modal = modal;
+ 	    $scope.modal.show();
+ 	  });
+    };
+    
+    $scope.sendFeedback = function(){
+	    $ionicLoading.show({
+	        template: '发布中...'
+	    });
+		var payload = {"messageType":3, "activityId":admin_feedback_activity_id, "activitySourceAddress":admin_feedback_activity_source_address,"activityDestAddress":admin_feedback_activity_dest_address,"applyId":0, "fromUid":uid, "toUid": admin_uid, "toName":admin_name, "content":$scope.feedback.content, "isReply":0};
+		Message.sendMessage(payload)
+		.success(function(data, status, headers, config) {
+			$ionicLoading.hide();
+			$scope.modal.hide();
+			$scope.showAlert('反馈成功。感谢您的建议，我们会努力改进。');
+		})
+		.error(function(data, status, headers, config) {
+			$ionicLoading.hide();
+			$scope.modal.hide();
+			$scope.showAlert('反馈失败。 '+data.message+"。");
+		});
     };
 	
 })
