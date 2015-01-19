@@ -298,7 +298,51 @@ angular.module('icarving.viewcontrollers', [])
 })
 
 .controller('ViewSearchFormCtrl', function($scope, $ionicPopup, $stateParams, User, Activity, Apply, Message) {
-	//TODO
+	//Date time picker
+	$scope.openStartTimeDatePicker = function() {		  
+		$scope.$watch('model.startTimeStr', function(unformattedDate){
+			$scope.model.startTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.startTimeStr;	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.startTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	};	  
+	$scope.openReturnTimeDatePicker = function() {
+		$scope.$watch('model.returnTimeStr', function(unformattedDate){
+		    $scope.model.returnTime = $filter('date')(unformattedDate, 'yyyy-MM-dd HH:mm:ss');
+		});		  
+	    $scope.tmp = {};
+	    $scope.tmp.newDate = $scope.model.returnTimeStr;	    
+	    var birthDatePopup = $ionicPopup.show({
+	     template: '<datetimepicker ng-model="tmp.newDate" datetimepicker-config="{startView:\'day\', minView:\'hour\'}"></datetimepicker>',
+	     title: "请选择时间",
+	     scope: $scope,
+	     buttons: [
+	       { text: '取消' },
+	       {
+	         text: '<b>保存</b>',
+	         type: 'button-positive',
+	         onTap: function(e) {
+	        	 $scope.model.returnTimeStr = $scope.tmp.newDate;
+	         }
+	       }
+	     ]
+	    });
+	 }
 })
 
 .controller('ViewSearchActivityListCtrl', function($scope, $ionicPopup, $stateParams, Search) {
