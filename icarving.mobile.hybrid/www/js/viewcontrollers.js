@@ -345,7 +345,7 @@ angular.module('icarving.viewcontrollers', [])
 	 }
 })
 
-.controller('ViewSearchActivityListCtrl', function($scope, $ionicPopup, $stateParams, Search) {
+.controller('ViewSearchActivityListCtrl', function($scope, $ionicPopup, $stateParams, $ionicLoading, Search) {
     $scope.showAlert = function(templateStr) {
 	   var alertPopup = $ionicPopup.alert({
 	     title: '<b>温馨提示</b>',
@@ -357,9 +357,12 @@ angular.module('icarving.viewcontrollers', [])
     };
 	
 	$scope.acts = [];
+    $ionicLoading.show({
+        template: '正在搜索...'
+    });
 	Search.search($stateParams.sourceAddress, $stateParams.destAddress,$stateParams.startTime, $stateParams.returnTime).success(function(res){	
 		Search.save(res.response);
-		
+		$ionicLoading.hide();
 		for(var i = 0; i < res.response.length; i++){
 			$scope.acts[i] = res.response[i];
 			if($scope.acts[i].activityType==1){
@@ -373,6 +376,7 @@ angular.module('icarving.viewcontrollers', [])
 			}
 		}		
 	}).error(function(res) {
+		$ionicLoading.hide();
 		$scope.showAlert("搜索失败。 "+res.message+"。");
 	});  
 })
