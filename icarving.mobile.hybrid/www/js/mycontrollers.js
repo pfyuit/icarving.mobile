@@ -472,20 +472,30 @@ angular.module('icarving.mycontrollers', [])
 	$scope.showActivity = true;
 	$scope.showNotify = false;
 	$scope.showMessage = false;
+	$scope.showProfile = false;
 	$scope.selectActivity = function(){
 		 $scope.showActivity = true;
 		 $scope.showNotify = false;
 		 $scope.showMessage = false;
+		 $scope.showProfile = false;
 	};	
 	$scope.selectNotify = function(){
 		 $scope.showActivity = false;
 		 $scope.showNotify = true;
 		 $scope.showMessage = false;
+		 $scope.showProfile = false;
 	};	
 	$scope.selectMessage = function(){
 		 $scope.showActivity = false;
 		 $scope.showNotify = false;
 		 $scope.showMessage = true;
+		 $scope.showProfile = false;
+	};
+	$scope.selectProfile = function(){
+		 $scope.showActivity = false;
+		 $scope.showNotify = false;
+		 $scope.showMessage = false;
+		 $scope.showProfile = true;
 	};
 	
 	$scope.doRefresh = function() {
@@ -948,4 +958,36 @@ angular.module('icarving.mycontrollers', [])
 	    });
 	}	
 	
+})
+
+.controller('MyProfileUpdateCtrl', function($scope, $ionicPopup, $ionicLoading, User) {
+     $scope.showAlert = function(templateStr) {
+	   var alertPopup = $ionicPopup.alert({
+	     title: '<b>温馨提示</b>',
+	     template: templateStr
+	   });
+	   alertPopup.then(function(res) {
+	     console.log('');
+	   });
+     };
+     
+     $scope.model = User.getUser();    
+     $scope.updateUser = function(){
+ 	     $ionicLoading.show({
+	        template: '更新中...'
+	     });
+    	 var password = User.getPassword();
+    	 var payload = {"uid": uid, "password": password, "name": $scope.model.name, "country": $scope.model.country, "province": $scope.model.province, "city": $scope.model.city, "phone": $scope.model.phone};
+    	 User.updateUser(payload)
+    	 .success(function(data, status, headers, config) {
+    	     User.saveUser(data.response);
+    	     $scope.model = User.getUser();
+    	     $ionicLoading.hide();
+    	     $scope.showAlert('更新个人资料成功。 ');
+    	 })
+    	 .error(function(data, status, headers, config) {
+    		 $ionicLoading.hide();
+    		 $scope.showAlert('更新个人资料失败。 '+data.message+"。");
+    	 });
+     };    
 })

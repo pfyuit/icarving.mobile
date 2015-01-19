@@ -170,6 +170,17 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
           controller: 'MyActivityDetailCtrl'
         }
       }
+    })
+    
+   //  My Tab - Profile Update
+  .state('tab.my-profile-update', {
+      url: '/my/profileupdate',
+      views: {
+        'tab-my': {
+          templateUrl: 'templates/my-profile-update.html?v=1.8',
+          controller: 'MyProfileUpdateCtrl'
+        }
+      }
     });
 
 

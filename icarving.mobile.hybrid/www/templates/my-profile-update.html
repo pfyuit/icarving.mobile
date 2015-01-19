@@ -1,0 +1,24 @@
+<ion-view view-title="更新个人资料">
+    <ion-nav-buttons side="right" type="submit">
+        <a class="button button-block button-balanced " style="margin-top: 0px" ng-click="updateUser()">&nbsp;完成</a>
+    </ion-nav-buttons>
+  <ion-content>
+         <div class="list">
+            <label class="item item-input">
+                <span class="input-label">昵称:</span><input type="text" placeholder="建议真实姓名，提高诚信度" ng-model="model.name">
+            </label>
+            <label class="item item-input validated">
+                <span class="input-label">国家:</span><input type="text" placeholder="" ng-model="model.country">
+            </label>
+            <label class="item item-input">
+               <span class="input-label">省份:</span><input type="text" placeholder="" ng-model="model.province">
+            </label>
+            <label class="item item-input">
+               <span class="input-label">城市:</span><input type="text" placeholder="" ng-model="model.city">
+            </label>
+            <label class="item item-input">
+               <span class="input-label">手机:</span><input type="text" placeholder="必须为真实手机号" ng-model="model.phone">
+            </label>
+         </div>
+  </ion-content>
+</ion-view>

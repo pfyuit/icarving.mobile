@@ -19,6 +19,9 @@ angular.module('icarving.services', [])
 	fetchUser: function(){
 		return $http.get('/icarving.api.pinche/user/info?uid='+uid);
 	},
+	updateUser: function(payload){
+		return $http.post('/icarving.api.pinche/user/update', payload);
+	},
     getUid: function() {
     	return getCookie("uid");
     },    
