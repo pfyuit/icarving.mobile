@@ -338,6 +338,10 @@ angular.module('icarving.mycontrollers', [])
  	     }
  	   });
       };
+      
+      $scope.shareActivity = function(){
+      	document.getElementById('mcover').style.display='block';
+      };
 	
 	  $scope.cancelApply = function(applyId){
 		Apply.cancelApply(applyId)
@@ -750,6 +754,10 @@ angular.module('icarving.mycontrollers', [])
 	     } else {	       
 	     }
 	   });
+    };
+    
+    $scope.shareActivity = function(){
+    	document.getElementById('mcover').style.display='block';
     };
     
 	$scope.approveApply = function(applyId){

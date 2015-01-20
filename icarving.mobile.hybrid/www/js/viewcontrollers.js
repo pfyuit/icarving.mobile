@@ -563,6 +563,10 @@ angular.module('icarving.viewcontrollers', [])
 	   });
     };
     
+    $scope.shareActivity = function(){
+    	document.getElementById('mcover').style.display='block';
+    };
+    
 	$scope.approveApply = function(applyId){
 		Apply.approveApply(applyId)
 		.success(function(data, status, headers, config) {
