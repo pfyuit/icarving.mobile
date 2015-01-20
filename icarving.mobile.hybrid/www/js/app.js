@@ -8,6 +8,9 @@ var admin_feedback_activity_id = 1;
 var admin_feedback_activity_source_address = "";
 var admin_feedback_activity_dest_address = "";
 
+// Variable for share
+var fromShare = false;
+
 angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickcontrollers', 'icarving.pickedcontrollers', 'icarving.mycontrollers', 'icarving.services', 'ui.bootstrap.datetimepicker'])
 
 .run(function($ionicPlatform) {

@@ -1,4 +1,7 @@
 <ion-view view-title="{{activity.sourceAddress}}->{{activity.destAddress}}">
+  <ion-nav-buttons side="left">
+      <a ng-if="fromShare" class="button button-block button-positive" style="margin-top: 0px" href="#/tab/view/"><i class="ion-arrow-left-c"></i>返回首页</a>
+  </ion-nav-buttons>
   <ion-content class="padding">
    <div class="list card" style="margin-top: 0px;">  
      <div class="item item-avatar">

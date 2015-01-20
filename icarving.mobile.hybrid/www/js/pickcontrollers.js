@@ -123,18 +123,37 @@ angular.module('icarving.pickcontrollers', [])
   			        var value = pairs[i].substring(pos+1);
   			        args[argname] = value;
   			    }				   
-  			    uid = args["uid"];
-  			    var username = args["username"];
-  			    var password = args["password"];				    
-  				var date=new Date();
-  				var expireDays=10;
-  				date.setTime(date.getTime()+expireDays*24*3600*1000);
-  				var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
-  				document.cookie=cookieStr;
-  				cookieStr = "username="+username+"; expires="+date.toUTCString();
-  				document.cookie=cookieStr;
-  				cookieStr = "password="+password+"; expires="+date.toUTCString();
-  				document.cookie=cookieStr;
+			    if(args["uid"] != undefined){
+				    uid = args["uid"];
+				    var username = args["username"];
+				    var password = args["password"];				    
+					var date=new Date();
+					var expireDays=10;
+					date.setTime(date.getTime()+expireDays*24*3600*1000);
+					var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
+					document.cookie=cookieStr;
+					cookieStr = "username="+username+"; expires="+date.toUTCString();
+					document.cookie=cookieStr;
+					cookieStr = "password="+password+"; expires="+date.toUTCString();
+					document.cookie=cookieStr;
+			    } else {
+					var userAgent = navigator.userAgent.toLowerCase(); 
+					if(userAgent.indexOf("micromessenger", 0) > -1){
+						window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+					} else {
+						if($scope.modal != undefined){
+							$scope.openModal();
+						} else {
+							  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+							    scope: $scope,
+							    animation: 'slide-in-up'
+							  }).then(function(modal) {
+							    $scope.modal = modal;
+							    $scope.openModal();
+							  });
+						}				
+					}
+			    }
   			}			
   		} else {
   			var userAgent = navigator.userAgent.toLowerCase(); 
