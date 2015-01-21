@@ -22,7 +22,13 @@ angular.module('icarving.services', [])
 	updateUser: function(payload){
 		return $http.post('/icarving.api.pinche/user/update', payload);
 	},
+	verifyInvitation: function(code){
+		return $http.get('/icarving.api.pinche/invitation/verify?code='+code);
+	},
     getUid: function() {
+    	if(uid != 0){
+    		return uid;
+    	}
     	return getCookie("uid");
     },    
     getUsername: function() {
@@ -33,6 +39,16 @@ angular.module('icarving.services', [])
     },
     getUser: function(){
     	return user;
+    },
+    getInvitationStatus: function(){
+    	if(invitation == "verified"){
+    		return invitation;
+    	}
+    	var result = getCookie("invitation");
+    	if(result != ""){
+    		invitation = result;
+    	}
+    	return result;
     },
     saveUser: function(_user){
     	user = _user;

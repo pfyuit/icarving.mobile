@@ -1,5 +1,6 @@
 var uid = 0; // Initialize to 0, it means no body registered/logged in.
 var appid = "wxe0a065ca64369148";
+var invitation = ""; // Initialize to empty, it means not verified yet.
 
 // Change them in online environment
 var admin_uid = 1;

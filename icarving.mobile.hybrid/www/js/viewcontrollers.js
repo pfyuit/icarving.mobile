@@ -62,6 +62,7 @@ angular.module('icarving.viewcontrollers', [])
 		  
 		  uid=userid;		  
 		  $scope.closeModal(); 
+		  $scope.showAlert("欢迎进入爱卡冰拼车内部测试(Beta阶段)，为了给雪友营造一个良好的拼车体验，请大家踊跃反馈问题 - 通过点击 \"个人\" ->右上角\" 建议反馈\" 报告问题。因为是在测试阶段，请真正进行拼车去滑雪的时候，在留言里注明，以免他人只是因为测试误申请了您的拼车。");		  
 	  }).
 	  error(function(data, status, headers, config) {
 		  $scope.showAlert("登录失败。 "+data.message+"。");
@@ -100,6 +101,7 @@ angular.module('icarving.viewcontrollers', [])
 		  
 		  uid=userid;		  
 		  $scope.closeModal(); 
+		  $scope.showAlert("欢迎进入爱卡冰拼车内部测试(Beta阶段)，为了给雪友营造一个良好的拼车体验，请大家踊跃反馈问题 - 通过点击 \"个人\" ->右上角\" 建议反馈\" 报告问题。因为是在测试阶段，请真正进行拼车去滑雪的时候，在留言里注明，以免他人只是因为测试误申请了您的拼车。");
 	   }).
 	   error(function(data, status, headers, config) {
 		   $scope.showAlert("注册失败。 "+data.message+"。");
@@ -151,152 +153,342 @@ angular.module('icarving.viewcontrollers', [])
 		}
     };
     
-    //Check authentication
-	var cookieUid = User.getUid();
-	if(cookieUid != ""){
-		uid = cookieUid;
-	} else {
-		var index = window.location.href.indexOf("?", 0);			
-		if(index > -1){
-			var query = window.location.href.substring(index+1,  window.location.href.length);
-			if(query != null && query != undefined && query != ""){					
-				var args = new Object( );
-			    var pairs = query.split("&");
-			    for(var i = 0; i < pairs.length; i++) {
-			        var pos = pairs[i].indexOf('='); 
-			        if (pos == -1) continue;  
-			        var argname = pairs[i].substring(0,pos);
-			        var value = pairs[i].substring(pos+1);
-			        args[argname] = value;
-			    }
-			    if(args["uid"] != undefined){
-				    uid = args["uid"];
-				    var username = args["username"];
-				    var password = args["password"];				    
-					var date=new Date();
-					var expireDays=10;
-					date.setTime(date.getTime()+expireDays*24*3600*1000);
-					var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
-					document.cookie=cookieStr;
-					cookieStr = "username="+username+"; expires="+date.toUTCString();
-					document.cookie=cookieStr;
-					cookieStr = "password="+password+"; expires="+date.toUTCString();
-					document.cookie=cookieStr;
-			    } else {
-					var userAgent = navigator.userAgent.toLowerCase(); 
-					if(userAgent.indexOf("micromessenger", 0) > -1){
-						window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
-					} else {
-						if($scope.modal != undefined){
-							$scope.openModal();
-						} else {
-							  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
-							    scope: $scope,
-							    animation: 'slide-in-up'
-							  }).then(function(modal) {
-							    $scope.modal = modal;
-							    $scope.openModal();
-							  });
-						}				
-					}
-			    }
-			}			
-		} else {
-			var userAgent = navigator.userAgent.toLowerCase(); 
-			if(userAgent.indexOf("micromessenger", 0) > -1){
-				window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
-			} else {
-				if($scope.modal != undefined){
-					$scope.openModal();
-				} else {
-					  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
-					    scope: $scope,
-					    animation: 'slide-in-up'
-					  }).then(function(modal) {
-					    $scope.modal = modal;
-					    $scope.openModal();
-					  });
-				}				
-			}
-		}
-	}	 		
-       
-    //Read cache and update model
-    updateModelAll();
-    
-    //Request network, update cache, and update model
-	Activity.fetchAllValid().success(function(res){
-		for(var i = 0; i < res.response.length; i ++){
-			Apply.fetchAllByActivityId(res.response[i].activityId)
-			.success(function(data, status, headers, config) {
-			   Apply.saveOrUpdateAll(data.response);
-			})
-			.error(function(data, status, headers, config) {
-				 $scope.showAlert('获取申请失败。 '+data.message+"。");
-			});
-			 
-			Message.fetchAllByActivityId(res.response[i].activityId)
-			.success(function(data, status, headers, config) {
-			   Message.saveOrUpdateAll(data.response);
-			})
-			.error(function(data, status, headers, config) {
-				 $scope.showAlert('获取消息失败。 '+data.message+"。");
-			});
-		}
-		
-		Activity.saveOrUpdateAll(res.response);
-		updateModelAll();
-	});
-	
-	//Select tab: All, Pick, Picked
-	$scope.selectAll = function(){
-		updateModelAll();
-		filter = 0;
-	};	
-	$scope.selectPick = function(){
-		updateModelPick();
-		filter = 1;
-	};	
-	$scope.selectPicked = function(){
-		updateModelPicked();
-		filter = 2;
-	};
+    //Check invitation code
+    $scope.invitation = {};
+    var cookieInvitationStatus = User.getInvitationStatus();
+    if(cookieInvitationStatus == ""){
+       	var myPopup = $ionicPopup.show({
+      	    template: '<input type="text" ng-model="invitation.code">',
+      	    title: '请输入邀请码：',
+      	    scope: $scope,
+       	    buttons: [
+        	      {
+          	        text: '确定',
+          	        type: 'button-positive',
+          	        onTap: function(e) {
+          	          if (!$scope.invitation.code) {
+          	            e.preventDefault();
+          	          } else {
+         	            return $scope.invitation.code;
+          	          }
+          	        }
+          	      }
+        	    ]
+        	  });
+        	  myPopup.then(function(res) {		  
+        		  User.verifyInvitation(parseInt(res))
+      			  .success(function(data, status, headers, config) {
+     					var date=new Date();
+    					var expireDays=100;
+     					date.setTime(date.getTime()+expireDays*24*3600*1000);
+    					var cookieStr = "invitation=verified; expires="+date.toUTCString();
+     					document.cookie=cookieStr;
+     					invitation = "verified";
+     				    //Check authentication
+     					var cookieUid = User.getUid();
+     					if(cookieUid != ""){
+     						uid = cookieUid;
+     					} else {
+     						var index = window.location.href.indexOf("?", 0);			
+     						if(index > -1){
+     							var query = window.location.href.substring(index+1,  window.location.href.length);
+     							if(query != null && query != undefined && query != ""){					
+     								var args = new Object( );
+     							    var pairs = query.split("&");
+     							    for(var i = 0; i < pairs.length; i++) {
+     							        var pos = pairs[i].indexOf('='); 
+     							        if (pos == -1) continue;  
+     							        var argname = pairs[i].substring(0,pos);
+     							        var value = pairs[i].substring(pos+1);
+     							        args[argname] = value;
+     							    }
+     							    if(args["uid"] != undefined){
+     								    uid = args["uid"];
+     								    var username = args["username"];
+     								    var password = args["password"];				    
+     									var date=new Date();
+     									var expireDays=10;
+     									date.setTime(date.getTime()+expireDays*24*3600*1000);
+     									var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
+     									document.cookie=cookieStr;
+     									cookieStr = "username="+username+"; expires="+date.toUTCString();
+     									document.cookie=cookieStr;
+     									cookieStr = "password="+password+"; expires="+date.toUTCString();
+     									document.cookie=cookieStr;
+     									$scope.showAlert("欢迎进入爱卡冰拼车内部测试(Beta阶段)，为了给雪友营造一个良好的拼车体验，请大家踊跃反馈问题 - 通过点击 \"个人\" ->右上角\" 建议反馈\" 报告问题。因为是在测试阶段，请真正进行拼车去滑雪的时候，在留言里注明，以免他人只是因为测试误申请了您的拼车。");
 
-	//Refresh the home page
-	$scope.doRefresh = function() {
-		//Request network, update cache, and update model
-		Activity.fetchAllValid().success(function(res){
-			for(var i = 0; i < res.response.length; i ++){
-				Apply.fetchAllByActivityId(res.response[i].activityId)
-				.success(function(data, status, headers, config) {
-				   Apply.saveOrUpdateAll(data.response);
-				})
-				.error(function(data, status, headers, config) {
-					 $scope.showAlert('获取申请失败。 '+data.message+"。");
-				});
-				 
-				Message.fetchAllByActivityId(res.response[i].activityId)
-				.success(function(data, status, headers, config) {
-				   Message.saveOrUpdateAll(data.response);
-				})
-				.error(function(data, status, headers, config) {
-					 $scope.showAlert('获取消息失败。 '+data.message+"。");
-				});
-			}
-			
-			Activity.saveOrUpdateAll(res.response);
-		    if(filter == 0){
-		    	updateModelAll();
-		    }
-		    if(filter == 1){
-		    	updateModelPick();
-		    }
-		    if(filter == 2){
-		    	updateModelPicked();
-		    }
-		});
-		$scope.$broadcast('scroll.refreshComplete');
-    };
+     							    } else {
+     									var userAgent = navigator.userAgent.toLowerCase(); 
+     									if(userAgent.indexOf("micromessenger", 0) > -1){
+     										window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+     									} else {
+     										if($scope.modal != undefined){
+     											$scope.openModal();
+     										} else {
+     											  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+     											    scope: $scope,
+     											    animation: 'slide-in-up'
+     											  }).then(function(modal) {
+     											    $scope.modal = modal;
+     											    $scope.openModal();
+     											  });
+     										}				
+     									}
+     							    }
+     							}			
+     						} else {
+     							var userAgent = navigator.userAgent.toLowerCase(); 
+     							if(userAgent.indexOf("micromessenger", 0) > -1){
+     								window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+     							} else {
+     								if($scope.modal != undefined){
+     									$scope.openModal();
+     								} else {
+     									  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+     									    scope: $scope,
+     									    animation: 'slide-in-up'
+     									  }).then(function(modal) {
+     									    $scope.modal = modal;
+     									    $scope.openModal();
+     									  });
+     								}				
+     							}
+     						}
+     					}	 		
+     				       
+     				    //Read cache and update model
+     				    updateModelAll();
+     				    
+     				    //Request network, update cache, and update model
+     					Activity.fetchAllValid().success(function(res){
+     						for(var i = 0; i < res.response.length; i ++){
+     							Apply.fetchAllByActivityId(res.response[i].activityId)
+     							.success(function(data, status, headers, config) {
+     							   Apply.saveOrUpdateAll(data.response);
+     							})
+     							.error(function(data, status, headers, config) {
+     								 $scope.showAlert('获取申请失败。 '+data.message+"。");
+     							});
+     							 
+     							Message.fetchAllByActivityId(res.response[i].activityId)
+     							.success(function(data, status, headers, config) {
+     							   Message.saveOrUpdateAll(data.response);
+     							})
+     							.error(function(data, status, headers, config) {
+     								 $scope.showAlert('获取消息失败。 '+data.message+"。");
+     							});
+     						}
+     						
+     						Activity.saveOrUpdateAll(res.response);
+     						updateModelAll();
+     					});
+     					
+     					//Select tab: All, Pick, Picked
+     					$scope.selectAll = function(){
+     						updateModelAll();
+     						filter = 0;
+     					};	
+     					$scope.selectPick = function(){
+     						updateModelPick();
+     						filter = 1;
+     					};	
+     					$scope.selectPicked = function(){
+     						updateModelPicked();
+     						filter = 2;
+     					};
+
+     					//Refresh the home page
+     					$scope.doRefresh = function() {
+     						//Request network, update cache, and update model
+     						Activity.fetchAllValid().success(function(res){
+     							for(var i = 0; i < res.response.length; i ++){
+     								Apply.fetchAllByActivityId(res.response[i].activityId)
+     								.success(function(data, status, headers, config) {
+     								   Apply.saveOrUpdateAll(data.response);
+     								})
+     								.error(function(data, status, headers, config) {
+     									 $scope.showAlert('获取申请失败。 '+data.message+"。");
+     								});
+     								 
+     								Message.fetchAllByActivityId(res.response[i].activityId)
+     								.success(function(data, status, headers, config) {
+     								   Message.saveOrUpdateAll(data.response);
+     								})
+     								.error(function(data, status, headers, config) {
+     									 $scope.showAlert('获取消息失败。 '+data.message+"。");
+     								});
+     							}
+     							
+     							Activity.saveOrUpdateAll(res.response);
+     						    if(filter == 0){
+     						    	updateModelAll();
+     						    }
+     						    if(filter == 1){
+     						    	updateModelPick();
+     						    }
+     						    if(filter == 2){
+     						    	updateModelPicked();
+     						    }
+     						});
+     						$scope.$broadcast('scroll.refreshComplete');
+     				    };
+      			  })
+      			  .error(function(data, status, headers, config) {
+ 				     $scope.showAlert('校验邀请码失败。 '+data.message+"。");
+			      });
+        	  });		  
+       }  else {
+    	    //Check authentication
+    		var cookieUid = User.getUid();
+    		if(cookieUid != ""){
+    			uid = cookieUid;
+    		} else {
+    			var index = window.location.href.indexOf("?", 0);			
+    			if(index > -1){
+    				var query = window.location.href.substring(index+1,  window.location.href.length);
+    				if(query != null && query != undefined && query != ""){					
+    					var args = new Object( );
+    				    var pairs = query.split("&");
+    				    for(var i = 0; i < pairs.length; i++) {
+    				        var pos = pairs[i].indexOf('='); 
+    				        if (pos == -1) continue;  
+    				        var argname = pairs[i].substring(0,pos);
+    				        var value = pairs[i].substring(pos+1);
+    				        args[argname] = value;
+    				    }
+    				    if(args["uid"] != undefined){
+    					    uid = args["uid"];
+    					    var username = args["username"];
+    					    var password = args["password"];				    
+    						var date=new Date();
+    						var expireDays=10;
+    						date.setTime(date.getTime()+expireDays*24*3600*1000);
+    						var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
+    						document.cookie=cookieStr;
+    						cookieStr = "username="+username+"; expires="+date.toUTCString();
+    						document.cookie=cookieStr;
+    						cookieStr = "password="+password+"; expires="+date.toUTCString();
+    						document.cookie=cookieStr;
+    						$scope.showAlert("欢迎进入爱卡冰拼车内部测试(Beta阶段)，为了给雪友营造一个良好的拼车体验，请大家踊跃反馈问题 - 通过点击 \"个人\" ->右上角\" 建议反馈\" 报告问题。因为是在测试阶段，请真正进行拼车去滑雪的时候，在留言里注明，以免他人只是因为测试误申请了您的拼车。");
+    				    } else {
+    						var userAgent = navigator.userAgent.toLowerCase(); 
+    						if(userAgent.indexOf("micromessenger", 0) > -1){
+    							window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+    						} else {
+    							if($scope.modal != undefined){
+    								$scope.openModal();
+    							} else {
+    								  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+    								    scope: $scope,
+    								    animation: 'slide-in-up'
+    								  }).then(function(modal) {
+    								    $scope.modal = modal;
+    								    $scope.openModal();
+    								  });
+    							}				
+    						}
+    				    }
+    				}			
+    			} else {
+    				var userAgent = navigator.userAgent.toLowerCase(); 
+    				if(userAgent.indexOf("micromessenger", 0) > -1){
+    					window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallback&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+    				} else {
+    					if($scope.modal != undefined){
+    						$scope.openModal();
+    					} else {
+    						  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+    						    scope: $scope,
+    						    animation: 'slide-in-up'
+    						  }).then(function(modal) {
+    						    $scope.modal = modal;
+    						    $scope.openModal();
+    						  });
+    					}				
+    				}
+    			}
+    		}	 		
+    	       
+    	    //Read cache and update model
+    	    updateModelAll();
+    	    
+    	    //Request network, update cache, and update model
+    		Activity.fetchAllValid().success(function(res){
+    			for(var i = 0; i < res.response.length; i ++){
+    				Apply.fetchAllByActivityId(res.response[i].activityId)
+    				.success(function(data, status, headers, config) {
+    				   Apply.saveOrUpdateAll(data.response);
+    				})
+    				.error(function(data, status, headers, config) {
+    					 $scope.showAlert('获取申请失败。 '+data.message+"。");
+    				});
+    				 
+    				Message.fetchAllByActivityId(res.response[i].activityId)
+    				.success(function(data, status, headers, config) {
+    				   Message.saveOrUpdateAll(data.response);
+    				})
+    				.error(function(data, status, headers, config) {
+    					 $scope.showAlert('获取消息失败。 '+data.message+"。");
+    				});
+    			}
+    			
+    			Activity.saveOrUpdateAll(res.response);
+    			updateModelAll();
+    		});
+    		
+    		//Select tab: All, Pick, Picked
+    		$scope.selectAll = function(){
+    			updateModelAll();
+    			filter = 0;
+    		};	
+    		$scope.selectPick = function(){
+    			updateModelPick();
+    			filter = 1;
+    		};	
+    		$scope.selectPicked = function(){
+    			updateModelPicked();
+    			filter = 2;
+    		};
+
+    		//Refresh the home page
+    		$scope.doRefresh = function() {
+    			//Request network, update cache, and update model
+    			Activity.fetchAllValid().success(function(res){
+    				for(var i = 0; i < res.response.length; i ++){
+    					Apply.fetchAllByActivityId(res.response[i].activityId)
+    					.success(function(data, status, headers, config) {
+    					   Apply.saveOrUpdateAll(data.response);
+    					})
+    					.error(function(data, status, headers, config) {
+    						 $scope.showAlert('获取申请失败。 '+data.message+"。");
+    					});
+    					 
+    					Message.fetchAllByActivityId(res.response[i].activityId)
+    					.success(function(data, status, headers, config) {
+    					   Message.saveOrUpdateAll(data.response);
+    					})
+    					.error(function(data, status, headers, config) {
+    						 $scope.showAlert('获取消息失败。 '+data.message+"。");
+    					});
+    				}
+    				
+    				Activity.saveOrUpdateAll(res.response);
+    			    if(filter == 0){
+    			    	updateModelAll();
+    			    }
+    			    if(filter == 1){
+    			    	updateModelPick();
+    			    }
+    			    if(filter == 2){
+    			    	updateModelPicked();
+    			    }
+    			});
+    			$scope.$broadcast('scroll.refreshComplete');
+    	    };  
+       }
+      			  
+    
+
 })
 
 .controller('ViewSearchFormCtrl', function($scope, $ionicPopup, $filter, $stateParams, User, Activity, Apply, Message) {
@@ -590,6 +782,7 @@ angular.module('icarving.viewcontrollers', [])
 					document.cookie=cookieStr;
 					cookieStr = "password="+password+"; expires="+date.toUTCString();
 					document.cookie=cookieStr;
+					$scope.showAlert("欢迎进入爱卡冰拼车内部测试(Beta阶段)，为了给雪友营造一个良好的拼车体验，请大家踊跃反馈问题 - 通过点击 \"个人\" ->右上角\" 建议反馈\" 报告问题。因为是在测试阶段，请真正进行拼车去滑雪的时候，在留言里注明，以免他人只是因为测试误申请了您的拼车。");					
 			    } else {
 					var userAgent = navigator.userAgent.toLowerCase(); 
 					if(userAgent.indexOf("micromessenger", 0) > -1){
