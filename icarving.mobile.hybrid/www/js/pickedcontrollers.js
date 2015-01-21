@@ -312,7 +312,7 @@ angular.module('icarving.pickedcontrollers', [])
        					 }
         			  })
         			  .error(function(data, status, headers, config) {
-   				     $scope.showAlert('校验邀请码失败。 '+data.message+"。");
+ 	 				     $scope.showAlert('校验邀请码失败。'+data.message+"。请联系微信小冰(welikesnow)获取邀请码。");
   			      });
           	  });		  
          }  else {
