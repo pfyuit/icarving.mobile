@@ -3,9 +3,9 @@ var appid = "wxe0a065ca64369148";
 var invitation = ""; // Initialize to empty, it means not verified yet.
 
 // Change them in online environment
-var admin_uid = 1;
+var admin_uid = 29;
 var admin_name = "小冰";
-var admin_feedback_activity_id = 1;
+var admin_feedback_activity_id = 38;
 var admin_feedback_activity_source_address = "";
 var admin_feedback_activity_dest_address = "";
 
@@ -39,7 +39,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
   .state('tab', {
     url: "/tab",
     abstract: true,
-    templateUrl: "templates/tabs.html?v=1.8"
+    templateUrl: "templates/tabs.html?v=1.3"
   })
 
    // View Tab
@@ -47,7 +47,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
     url: '/view',
     views: {
       'tab-view': {
-        templateUrl: 'templates/tab-view.html?v=1.8',
+        templateUrl: 'templates/tab-view.html?v=1.3',
         controller: 'ViewCtrl'
       }
     }
@@ -58,7 +58,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
     url: '/view/searchform',
     views: {
       'tab-view': {
-        templateUrl: 'templates/view-search-form.html?v=1.8',
+        templateUrl: 'templates/view-search-form.html?v=1.3',
         controller: 'ViewSearchFormCtrl'
       }
     }
@@ -69,7 +69,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
     url: '/view/searchactivitylist/:sourceAddress/:destAddress/:startTime/:returnTime',
     views: {
       'tab-view': {
-        templateUrl: 'templates/view-search-activity-list.html?v=1.8',
+        templateUrl: 'templates/view-search-activity-list.html?v=1.3',
         controller: 'ViewSearchActivityListCtrl'
       }
     }
@@ -80,7 +80,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/view/activitydetail/:activityId',
       views: {
         'tab-view': {
-          templateUrl: 'templates/view-activity-detail.html?v=1.8',
+          templateUrl: 'templates/view-activity-detail.html?v=1.3',
           controller: 'ViewActivityDetailCtrl'
         }
       }
@@ -91,7 +91,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/view/activitydetailupdate/:activityId',
       views: {
         'tab-view': {
-          templateUrl: 'templates/view-activity-detail-update.html?v=1.8',
+          templateUrl: 'templates/view-activity-detail-update.html?v=1.3',
           controller: 'ViewActivityDetailCtrl'
         }
       }
@@ -102,7 +102,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/view/activitydetailapply/:activityId',
       views: {
         'tab-view': {
-          templateUrl: 'templates/view-activity-detail-apply.html?v=1.8',
+          templateUrl: 'templates/view-activity-detail-apply.html?v=1.3',
           controller: 'ViewActivityDetailCtrl'
         }
       }
@@ -113,7 +113,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/pick',
       views: {
         'tab-pick': {
-          templateUrl: 'templates/tab-pick.html?v=1.8',
+          templateUrl: 'templates/tab-pick.html?v=1.3',
           controller: 'PickCtrl'
         }
       }
@@ -125,7 +125,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/picked',
       views: {
         'tab-picked': {
-          templateUrl: 'templates/tab-picked.html?v=1.8',
+          templateUrl: 'templates/tab-picked.html?v=1.3',
           controller: 'PickedCtrl'
         }
       }
@@ -137,7 +137,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
     url: '/my',
     views: {
       'tab-my': {
-        templateUrl: 'templates/tab-my.html?v=1.8',
+        templateUrl: 'templates/tab-my.html?v=1.3',
         controller: 'MyCtrl'
       }
     }
@@ -148,7 +148,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/my/activitydetail/:activityId/:messageId',
       views: {
         'tab-my': {
-          templateUrl: 'templates/my-activity-detail.html?v=1.8',
+          templateUrl: 'templates/my-activity-detail.html?v=1.3',
           controller: 'MyActivityDetailCtrl'
         }
       }
@@ -159,7 +159,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/my/activitydetailupdate/:activityId',
       views: {
         'tab-my': {
-          templateUrl: 'templates/my-activity-detail-update.html?v=1.8',
+          templateUrl: 'templates/my-activity-detail-update.html?v=1.3',
           controller: 'MyActivityDetailCtrl'
         }
       }
@@ -170,7 +170,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/my/activitydetailapply/:activityId',
       views: {
         'tab-my': {
-          templateUrl: 'templates/my-activity-detail-apply.html?v=1.8',
+          templateUrl: 'templates/my-activity-detail-apply.html?v=1.3',
           controller: 'MyActivityDetailCtrl'
         }
       }
@@ -181,7 +181,7 @@ angular.module('icarving', ['ionic', 'icarving.viewcontrollers', 'icarving.pickc
       url: '/my/profileupdate',
       views: {
         'tab-my': {
-          templateUrl: 'templates/my-profile-update.html?v=1.8',
+          templateUrl: 'templates/my-profile-update.html?v=1.3',
           controller: 'MyProfileUpdateCtrl'
         }
       }

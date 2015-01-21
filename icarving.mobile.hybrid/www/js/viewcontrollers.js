@@ -751,410 +751,856 @@ angular.module('icarving.viewcontrollers', [])
     	}
     };
     
-    //Check authentication
-	var cookieUid = User.getUid();
-	if(cookieUid != ""){
-		uid = cookieUid;
-	} else {
-		var index = window.location.href.indexOf("?", 0);			
-		if(index > -1){
-			var query = window.location.href.substring(index+1,  window.location.href.length);
-			if(query != null && query != undefined && query != ""){					
-				var args = new Object( );
-			    var pairs = query.split("&");
-			    for(var i = 0; i < pairs.length; i++) {
-			        var pos = pairs[i].indexOf('='); 
-			        if (pos == -1) continue;  
-			        var argname = pairs[i].substring(0,pos);
-			        var value = pairs[i].substring(pos+1);
-			        args[argname] = value;
-			    }
-			    if(args["uid"] != undefined){
-				    uid = args["uid"];
-				    var username = args["username"];
-				    var password = args["password"];				    
-					var date=new Date();
-					var expireDays=10;
-					date.setTime(date.getTime()+expireDays*24*3600*1000);
-					var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
-					document.cookie=cookieStr;
-					cookieStr = "username="+username+"; expires="+date.toUTCString();
-					document.cookie=cookieStr;
-					cookieStr = "password="+password+"; expires="+date.toUTCString();
-					document.cookie=cookieStr;
-					$scope.showAlert("欢迎进入爱卡冰拼车内部测试(Beta阶段)，为了给雪友营造一个良好的拼车体验，请大家踊跃反馈问题 - 通过点击 \"个人\" ->右上角\" 建议反馈\" 报告问题。因为是在测试阶段，请真正进行拼车去滑雪的时候，在留言里注明，以免他人只是因为测试误申请了您的拼车。");					
-			    } else {
-					var userAgent = navigator.userAgent.toLowerCase(); 
-					if(userAgent.indexOf("micromessenger", 0) > -1){
-						window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallbackdetail%2F"+$stateParams.activityId+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
-					} else {
-						if($scope.modal != undefined){
-							$scope.openModal();
-						} else {
-							  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
-							    scope: $scope,
-							    animation: 'slide-in-up'
-							  }).then(function(modal) {
-							    $scope.modal = modal;
-							    $scope.openModal();
-							  });
-						}				
-					}
-			    }
-			}			
-		} else {
-			var userAgent = navigator.userAgent.toLowerCase(); 
-			if(userAgent.indexOf("micromessenger", 0) > -1){
-				window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallbackdetail%2F"+$stateParams.activityId+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
-			} else {
-				if($scope.modal != undefined){
-					$scope.openModal();
-				} else {
-					  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
-					    scope: $scope,
-					    animation: 'slide-in-up'
-					  }).then(function(modal) {
-					    $scope.modal = modal;
-					    $scope.openModal();
-					  });
-				}				
-			}
-		}
-	}	 		
-    	
-	//Read cache and update model
-	updateModel();
-	
-	//Request network, update cache, and update model
-	Activity.fetchByActivityId($stateParams.activityId)
-	.success(function(data, status, headers, config) {
-		Apply.fetchAllByActivityId(data.response.activityId)
-		.success(function(data, status, headers, config) {
-		   Apply.saveOrUpdateAll(data.response);
-		   updateModel();
-		})
-		.error(function(data, status, headers, config) {
-			 $scope.showAlert('获取申请失败。 '+data.message+"。");
-		});	
-		
-		Message.fetchAllByActivityId(data.response.activityId)
-		.success(function(data, status, headers, config) {
-		   Message.saveOrUpdateAll(data.response);
-		   updateModel();
-		})
-		.error(function(data, status, headers, config) {
-			 $scope.showAlert('获取消息失败。 '+data.message+"。");
-		});
-		
-		Activity.saveOrUpdate(data.response);		
-		updateModel();
-	})
-	.error(function(data, status, headers, config) {
-		 $scope.showAlert('获取活动失败。 '+data.message+"。");
-	});
-	
-	$scope.applyActivity = function(){
-		var payload = {"activityId":$scope.activity.activityId,"applyUserId":uid};
-		Apply.createApply(payload)
-		.success(function(data, status, headers, config) {			  
-			  Activity.fetchByActivityId($scope.activity.activityId)
-			  .success(function(data, status, headers, config) {
-				  Activity.saveOrUpdate(data.response);
-				  updateModel();
-			  })
-			  .error(function(data, status, headers, config) {
-				  $scope.showAlert('获取活动失败。 '+data.message+"。");
-			  });	
-			  
-			  Message.fetchAllByActivityId(data.response.activityId)
-			  .success(function(data, status, headers, config) {
-				  Message.saveOrUpdateAll(data.response);
-				  updateModel();
-			  })
-			  .error(function(data, status, headers, config) {
-				  $scope.showAlert('获取消息失败。 '+data.message+"。");
-			  });
-			   
-			  Apply.saveOrUpdate(data.response);
-			  updateModel();
-			  
-			  $scope.showAlert('活动申请成功，可以在个人页面中查看申请详细信息');
-		 })
-		.error(function(data, status, headers, config) {
-			  $scope.showAlert('活动申请失败。 '+data.message+"。");
-		 });
-	};
-	
-    $scope.updateActivity = function(){
-		var payload = {"activityId":$scope.activity.activityId,"startTime":$scope.activity.startTime+":00","returnTime":$scope.activity.returnTime+":00","sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
-		Activity.updateActivity(payload)
-		.success(function(data, status, headers, config) { 
-				Apply.fetchAllByActivityId(data.response.activityId)
-				.success(function(data, status, headers, config) {
-				   Apply.saveOrUpdateAll(data.response);
-				   updateModel();
-				})
-				.error(function(data, status, headers, config) {
-					 $scope.showAlert('获取申请失败。 '+data.message+"。");
-				});	
-				
-				Message.fetchAllByActivityId(data.response.activityId)
-				.success(function(data, status, headers, config) {
-				   Message.saveOrUpdateAll(data.response);
-				   updateModel();
-				})
-				.error(function(data, status, headers, config) {
-					 $scope.showAlert('获取消息失败。 '+data.message+"。");
-				});
-				
-				Activity.saveOrUpdate(data.response);
-				updateModel();
-				  
-			   $scope.showAlert("捡人活动更新成功");
-		 })
-		.error(function(data, status, headers, config) {
-			  $scope.showAlert("捡人活动更新失败。 "+data.message+"。");
-		 });
-    };
-	
-    $scope.cancelActivity = function(){
- 	   var confirmPopup = $ionicPopup.confirm({
- 		     title: '<b>取消活动</b>',
- 		     template: '您确定要取消活动吗？一旦取消，将不可恢复，且所有活动申请被自动取消。'
- 	   });
-	   confirmPopup.then(function(res) {
-	     if(res) {
-	   		 Activity.cancelActivity($scope.activity.activityId)
-			 .success(function(data, status, headers, config) {
-					Apply.fetchAllByActivityId(data.response.activityId)
-					.success(function(data, status, headers, config) {
-					   Apply.saveOrUpdateAll(data.response);
-					   updateModel();
-					})
-					.error(function(data, status, headers, config) {
-						 $scope.showAlert('获取申请失败。 '+data.message+"。");
-					});	
-					
-					Message.fetchAllByActivityId(data.response.activityId)
-					.success(function(data, status, headers, config) {
-					   Message.saveOrUpdateAll(data.response);
-					   updateModel();
-					})
-					.error(function(data, status, headers, config) {
-						 $scope.showAlert('获取消息失败。 '+data.message+"。");
-					});
-					
-					Activity.saveOrUpdate(data.response);
-					updateModel();
-					  
-				  $scope.showAlert("捡人活动取消成功");
-			  })
-			  .error(function(data, status, headers, config) {
-				  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
-			  });
-	     } else {
-	     }
-	   });
-    };
-    
-    $scope.shareActivity = function(){
-    	document.getElementById('mcover').style.display='block';
-    };
-    
-	$scope.approveApply = function(applyId){
-		Apply.approveApply(applyId)
-		.success(function(data, status, headers, config) {
-			Activity.fetchByActivityId($scope.activity.activityId)
-			.success(function(data, status, headers, config) {
-				Activity.saveOrUpdate(data.response);
-				updateModel();
-			})
-			.error(function(data, status, headers, config) {
-				$scope.showAlert('获取活动失败。 '+data.message+"。");
-			});
-			
-			Message.fetchAllByActivityId(data.response.activityId)
-			.success(function(data, status, headers, config) {
-				Message.saveOrUpdateAll(data.response);
-				updateModel();
-			})
-			.error(function(data, status, headers, config) {
-				$scope.showAlert('获取消息失败。 '+data.message+"。");
-			});
-			
-			Apply.saveOrUpdate(data.response);
-			updateModel();
-			
-			$scope.showAlert("批准申请成功");		
-		})
-		.error(function(data, status, headers, config) {
-			$scope.showAlert("批准申请失败。 "+data.message+"。");
-		});
-	};
-	
-	$scope.unApproveApply = function(applyId){
-		Apply.unapproveApply(applyId)
-		.success(function(data, status, headers, config) {
-			Activity.fetchByActivityId($scope.activity.activityId)
-			.success(function(data, status, headers, config) {
-				Activity.saveOrUpdate(data.response);
-				updateModel();
-			})
-			.error(function(data, status, headers, config) {
-				$scope.showAlert('获取活动失败。 '+data.message+"。");
-			});		
-			
-			Message.fetchAllByActivityId(data.response.activityId)
-			.success(function(data, status, headers, config) {
-				Message.saveOrUpdateAll(data.response);
-				updateModel();
-			})
-			.error(function(data, status, headers, config) {
-				$scope.showAlert('获取消息失败。 '+data.message+"。");
-			});
-			
-		 	Apply.saveOrUpdate(data.response);
-		 	updateModel();
-		   
-			$scope.showAlert("拒绝申请成功");
-		})
-		.error(function(data, status, headers, config) {
-				$scope.showAlert("拒绝申请失败。 "+data.message+"。");
-		});
-	};
-	
-	$scope.cancelApply = function(applyId){
-		Apply.cancelApply(applyId)
-		.success(function(data, status, headers, config) {
-				Activity.fetchByActivityId($scope.activity.activityId)
-				.success(function(data, status, headers, config) {
-					Activity.saveOrUpdate(data.response);
-				 	updateModel();
-				})
-				.error(function(data, status, headers, config) {
-					$scope.showAlert('获取活动失败。 '+data.message+"。");
-				});	
-				
-				Message.fetchAllByActivityId(data.response.activityId)
-				.success(function(data, status, headers, config) {
-					Message.saveOrUpdateAll(data.response);
-				 	updateModel();
-				})
-				.error(function(data, status, headers, config) {
-					$scope.showAlert('获取消息失败。 '+data.message+"。");
-				});
-				
-				Apply.saveOrUpdate(data.response);
-			 	updateModel();
-			 	
-			 	$scope.showAlert("取消申请成功");				
-		})
-		.error(function(data, status, headers, config) {
-				$scope.showAlert("取消申请失败。 "+data.message+"。");
-		});
-	};
-	
-	$scope.renewApply = function(applyId){
-		Apply.renewApply(applyId)
-		.success(function(data, status, headers, config) {
-				Activity.fetchByActivityId($scope.activity.activityId)
-				.success(function(data, status, headers, config) {
-					Activity.saveOrUpdate(data.response);
-				 	updateModel();
-				})
-				.error(function(data, status, headers, config) {
-					$scope.showAlert('获取活动失败。 '+data.message+"。");
-				});	
-				
-				Message.fetchAllByActivityId(data.response.activityId)
-				.success(function(data, status, headers, config) {
-					Message.saveOrUpdateAll(data.response);
-				 	updateModel();
-				})
-				.error(function(data, status, headers, config) {
-					$scope.showAlert('获取消息失败。 '+data.message+"。");
-				});
-				
-				Apply.saveOrUpdate(data.response);
-			 	updateModel();
-			 	
-			 	$scope.showAlert("再次申请成功");				
-		})
-		.error(function(data, status, headers, config) {
-				$scope.showAlert("再次申请失败。 "+data.message+"。");
-		});
-	};
+    //Check invitation code
+    $scope.invitation = {};
+    var cookieInvitationStatus = User.getInvitationStatus();
+    if(cookieInvitationStatus == ""){
+       	var myPopup = $ionicPopup.show({
+      	    template: '<input type="text" ng-model="invitation.code">',
+      	    title: '请输入邀请码：',
+      	    scope: $scope,
+       	    buttons: [
+        	      {
+          	        text: '确定',
+          	        type: 'button-positive',
+          	        onTap: function(e) {
+          	          if (!$scope.invitation.code) {
+          	            e.preventDefault();
+          	          } else {
+         	            return $scope.invitation.code;
+          	          }
+          	        }
+          	      }
+        	    ]
+        	  });
+        	  myPopup.then(function(res) {		  
+        		  User.verifyInvitation(parseInt(res))
+      			  .success(function(data, status, headers, config) {
+     					var date=new Date();
+    					var expireDays=100;
+     					date.setTime(date.getTime()+expireDays*24*3600*1000);
+    					var cookieStr = "invitation=verified; expires="+date.toUTCString();
+     					document.cookie=cookieStr;
+     					invitation = "verified";
+     				    //Check authentication
+     					var cookieUid = User.getUid();
+     					if(cookieUid != ""){
+     						uid = cookieUid;
+     					} else {
+     						var index = window.location.href.indexOf("?", 0);			
+     						if(index > -1){
+     							var query = window.location.href.substring(index+1,  window.location.href.length);
+     							if(query != null && query != undefined && query != ""){					
+     								var args = new Object( );
+     							    var pairs = query.split("&");
+     							    for(var i = 0; i < pairs.length; i++) {
+     							        var pos = pairs[i].indexOf('='); 
+     							        if (pos == -1) continue;  
+     							        var argname = pairs[i].substring(0,pos);
+     							        var value = pairs[i].substring(pos+1);
+     							        args[argname] = value;
+     							    }
+     							    if(args["uid"] != undefined){
+     								    uid = args["uid"];
+     								    var username = args["username"];
+     								    var password = args["password"];				    
+     									var date=new Date();
+     									var expireDays=10;
+     									date.setTime(date.getTime()+expireDays*24*3600*1000);
+     									var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
+     									document.cookie=cookieStr;
+     									cookieStr = "username="+username+"; expires="+date.toUTCString();
+     									document.cookie=cookieStr;
+     									cookieStr = "password="+password+"; expires="+date.toUTCString();
+     									document.cookie=cookieStr;
+     									$scope.showAlert("欢迎进入爱卡冰拼车内部测试(Beta阶段)，为了给雪友营造一个良好的拼车体验，请大家踊跃反馈问题 - 通过点击 \"个人\" ->右上角\" 建议反馈\" 报告问题。因为是在测试阶段，请真正进行拼车去滑雪的时候，在留言里注明，以免他人只是因为测试误申请了您的拼车。");					
+     							    } else {
+     									var userAgent = navigator.userAgent.toLowerCase(); 
+     									if(userAgent.indexOf("micromessenger", 0) > -1){
+     										window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallbackdetail%2F"+$stateParams.activityId+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+     									} else {
+     										if($scope.modal != undefined){
+     											$scope.openModal();
+     										} else {
+     											  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+     											    scope: $scope,
+     											    animation: 'slide-in-up'
+     											  }).then(function(modal) {
+     											    $scope.modal = modal;
+     											    $scope.openModal();
+     											  });
+     										}				
+     									}
+     							    }
+     							}			
+     						} else {
+     							var userAgent = navigator.userAgent.toLowerCase(); 
+     							if(userAgent.indexOf("micromessenger", 0) > -1){
+     								window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallbackdetail%2F"+$stateParams.activityId+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+     							} else {
+     								if($scope.modal != undefined){
+     									$scope.openModal();
+     								} else {
+     									  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+     									    scope: $scope,
+     									    animation: 'slide-in-up'
+     									  }).then(function(modal) {
+     									    $scope.modal = modal;
+     									    $scope.openModal();
+     									  });
+     								}				
+     							}
+     						}
+     					}	 		
+     				    	
+     					//Read cache and update model
+     					updateModel();
+     					
+     					//Request network, update cache, and update model
+     					Activity.fetchByActivityId($stateParams.activityId)
+     					.success(function(data, status, headers, config) {
+     						Apply.fetchAllByActivityId(data.response.activityId)
+     						.success(function(data, status, headers, config) {
+     						   Apply.saveOrUpdateAll(data.response);
+     						   updateModel();
+     						})
+     						.error(function(data, status, headers, config) {
+     							 $scope.showAlert('获取申请失败。 '+data.message+"。");
+     						});	
+     						
+     						Message.fetchAllByActivityId(data.response.activityId)
+     						.success(function(data, status, headers, config) {
+     						   Message.saveOrUpdateAll(data.response);
+     						   updateModel();
+     						})
+     						.error(function(data, status, headers, config) {
+     							 $scope.showAlert('获取消息失败。 '+data.message+"。");
+     						});
+     						
+     						Activity.saveOrUpdate(data.response);		
+     						updateModel();
+     					})
+     					.error(function(data, status, headers, config) {
+     						 $scope.showAlert('获取活动失败。 '+data.message+"。");
+     					});
+     					
+     					$scope.applyActivity = function(){
+     						var payload = {"activityId":$scope.activity.activityId,"applyUserId":uid};
+     						Apply.createApply(payload)
+     						.success(function(data, status, headers, config) {			  
+     							  Activity.fetchByActivityId($scope.activity.activityId)
+     							  .success(function(data, status, headers, config) {
+     								  Activity.saveOrUpdate(data.response);
+     								  updateModel();
+     							  })
+     							  .error(function(data, status, headers, config) {
+     								  $scope.showAlert('获取活动失败。 '+data.message+"。");
+     							  });	
+     							  
+     							  Message.fetchAllByActivityId(data.response.activityId)
+     							  .success(function(data, status, headers, config) {
+     								  Message.saveOrUpdateAll(data.response);
+     								  updateModel();
+     							  })
+     							  .error(function(data, status, headers, config) {
+     								  $scope.showAlert('获取消息失败。 '+data.message+"。");
+     							  });
+     							   
+     							  Apply.saveOrUpdate(data.response);
+     							  updateModel();
+     							  
+     							  $scope.showAlert('活动申请成功，可以在个人页面中查看申请详细信息');
+     						 })
+     						.error(function(data, status, headers, config) {
+     							  $scope.showAlert('活动申请失败。 '+data.message+"。");
+     						 });
+     					};
+     					
+     				    $scope.updateActivity = function(){
+     						var payload = {"activityId":$scope.activity.activityId,"startTime":$scope.activity.startTime+":00","returnTime":$scope.activity.returnTime+":00","sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
+     						Activity.updateActivity(payload)
+     						.success(function(data, status, headers, config) { 
+     								Apply.fetchAllByActivityId(data.response.activityId)
+     								.success(function(data, status, headers, config) {
+     								   Apply.saveOrUpdateAll(data.response);
+     								   updateModel();
+     								})
+     								.error(function(data, status, headers, config) {
+     									 $scope.showAlert('获取申请失败。 '+data.message+"。");
+     								});	
+     								
+     								Message.fetchAllByActivityId(data.response.activityId)
+     								.success(function(data, status, headers, config) {
+     								   Message.saveOrUpdateAll(data.response);
+     								   updateModel();
+     								})
+     								.error(function(data, status, headers, config) {
+     									 $scope.showAlert('获取消息失败。 '+data.message+"。");
+     								});
+     								
+     								Activity.saveOrUpdate(data.response);
+     								updateModel();
+     								  
+     							   $scope.showAlert("捡人活动更新成功");
+     						 })
+     						.error(function(data, status, headers, config) {
+     							  $scope.showAlert("捡人活动更新失败。 "+data.message+"。");
+     						 });
+     				    };
+     					
+     				    $scope.cancelActivity = function(){
+     				 	   var confirmPopup = $ionicPopup.confirm({
+     				 		     title: '<b>取消活动</b>',
+     				 		     template: '您确定要取消活动吗？一旦取消，将不可恢复，且所有活动申请被自动取消。'
+     				 	   });
+     					   confirmPopup.then(function(res) {
+     					     if(res) {
+     					   		 Activity.cancelActivity($scope.activity.activityId)
+     							 .success(function(data, status, headers, config) {
+     									Apply.fetchAllByActivityId(data.response.activityId)
+     									.success(function(data, status, headers, config) {
+     									   Apply.saveOrUpdateAll(data.response);
+     									   updateModel();
+     									})
+     									.error(function(data, status, headers, config) {
+     										 $scope.showAlert('获取申请失败。 '+data.message+"。");
+     									});	
+     									
+     									Message.fetchAllByActivityId(data.response.activityId)
+     									.success(function(data, status, headers, config) {
+     									   Message.saveOrUpdateAll(data.response);
+     									   updateModel();
+     									})
+     									.error(function(data, status, headers, config) {
+     										 $scope.showAlert('获取消息失败。 '+data.message+"。");
+     									});
+     									
+     									Activity.saveOrUpdate(data.response);
+     									updateModel();
+     									  
+     								  $scope.showAlert("捡人活动取消成功");
+     							  })
+     							  .error(function(data, status, headers, config) {
+     								  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
+     							  });
+     					     } else {
+     					     }
+     					   });
+     				    };
+     				    
+     				    $scope.shareActivity = function(){
+     				    	document.getElementById('mcover').style.display='block';
+     				    };
+     				    
+     					$scope.approveApply = function(applyId){
+     						Apply.approveApply(applyId)
+     						.success(function(data, status, headers, config) {
+     							Activity.fetchByActivityId($scope.activity.activityId)
+     							.success(function(data, status, headers, config) {
+     								Activity.saveOrUpdate(data.response);
+     								updateModel();
+     							})
+     							.error(function(data, status, headers, config) {
+     								$scope.showAlert('获取活动失败。 '+data.message+"。");
+     							});
+     							
+     							Message.fetchAllByActivityId(data.response.activityId)
+     							.success(function(data, status, headers, config) {
+     								Message.saveOrUpdateAll(data.response);
+     								updateModel();
+     							})
+     							.error(function(data, status, headers, config) {
+     								$scope.showAlert('获取消息失败。 '+data.message+"。");
+     							});
+     							
+     							Apply.saveOrUpdate(data.response);
+     							updateModel();
+     							
+     							$scope.showAlert("批准申请成功");		
+     						})
+     						.error(function(data, status, headers, config) {
+     							$scope.showAlert("批准申请失败。 "+data.message+"。");
+     						});
+     					};
+     					
+     					$scope.unApproveApply = function(applyId){
+     						Apply.unapproveApply(applyId)
+     						.success(function(data, status, headers, config) {
+     							Activity.fetchByActivityId($scope.activity.activityId)
+     							.success(function(data, status, headers, config) {
+     								Activity.saveOrUpdate(data.response);
+     								updateModel();
+     							})
+     							.error(function(data, status, headers, config) {
+     								$scope.showAlert('获取活动失败。 '+data.message+"。");
+     							});		
+     							
+     							Message.fetchAllByActivityId(data.response.activityId)
+     							.success(function(data, status, headers, config) {
+     								Message.saveOrUpdateAll(data.response);
+     								updateModel();
+     							})
+     							.error(function(data, status, headers, config) {
+     								$scope.showAlert('获取消息失败。 '+data.message+"。");
+     							});
+     							
+     						 	Apply.saveOrUpdate(data.response);
+     						 	updateModel();
+     						   
+     							$scope.showAlert("拒绝申请成功");
+     						})
+     						.error(function(data, status, headers, config) {
+     								$scope.showAlert("拒绝申请失败。 "+data.message+"。");
+     						});
+     					};
+     					
+     					$scope.cancelApply = function(applyId){
+     						Apply.cancelApply(applyId)
+     						.success(function(data, status, headers, config) {
+     								Activity.fetchByActivityId($scope.activity.activityId)
+     								.success(function(data, status, headers, config) {
+     									Activity.saveOrUpdate(data.response);
+     								 	updateModel();
+     								})
+     								.error(function(data, status, headers, config) {
+     									$scope.showAlert('获取活动失败。 '+data.message+"。");
+     								});	
+     								
+     								Message.fetchAllByActivityId(data.response.activityId)
+     								.success(function(data, status, headers, config) {
+     									Message.saveOrUpdateAll(data.response);
+     								 	updateModel();
+     								})
+     								.error(function(data, status, headers, config) {
+     									$scope.showAlert('获取消息失败。 '+data.message+"。");
+     								});
+     								
+     								Apply.saveOrUpdate(data.response);
+     							 	updateModel();
+     							 	
+     							 	$scope.showAlert("取消申请成功");				
+     						})
+     						.error(function(data, status, headers, config) {
+     								$scope.showAlert("取消申请失败。 "+data.message+"。");
+     						});
+     					};
+     					
+     					$scope.renewApply = function(applyId){
+     						Apply.renewApply(applyId)
+     						.success(function(data, status, headers, config) {
+     								Activity.fetchByActivityId($scope.activity.activityId)
+     								.success(function(data, status, headers, config) {
+     									Activity.saveOrUpdate(data.response);
+     								 	updateModel();
+     								})
+     								.error(function(data, status, headers, config) {
+     									$scope.showAlert('获取活动失败。 '+data.message+"。");
+     								});	
+     								
+     								Message.fetchAllByActivityId(data.response.activityId)
+     								.success(function(data, status, headers, config) {
+     									Message.saveOrUpdateAll(data.response);
+     								 	updateModel();
+     								})
+     								.error(function(data, status, headers, config) {
+     									$scope.showAlert('获取消息失败。 '+data.message+"。");
+     								});
+     								
+     								Apply.saveOrUpdate(data.response);
+     							 	updateModel();
+     							 	
+     							 	$scope.showAlert("再次申请成功");				
+     						})
+     						.error(function(data, status, headers, config) {
+     								$scope.showAlert("再次申请失败。 "+data.message+"。");
+     						});
+     					};
 
-	
-	$scope.messagePlaceHolder = "请留言";
-	$scope.showMessageWidget = false;
-	$scope.leave = false;
-	$scope.reply = false;
-	$scope.data = {};
-	$scope.leaveMessage = function(){
-		$scope.messagePlaceHolder = "请留言";
-		$scope.leave = true;
-		$scope.reply = false;
-		$scope.showMessageWidget = true;
-	};
-	$scope.replyMessage = function(fromUid, fromName){
-		$scope.messagePlaceHolder = "回复"+fromName+":";
-		$scope.leave = false;
-		$scope.reply = true;
-		$scope.showMessageWidget = true;
-		$scope.toUid = fromUid;
-		$scope.toName = fromName;
-	};
-	$scope.sendMessage = function(){
-		$scope.showMessageWidget = false;
-		var toUid = 0;
-		var toName = "";
-		var isReply = 0;
-		if($scope.leave == true){
-			toUid = $scope.activity.ownerId;
-		}
-		if($scope.reply == true){
-			toUid = $scope.toUid;
-			toName  = $scope.toName;
-			isReply = 1;
-		}
-		var payload = {"messageType":2, "activityId":$scope.activity.activityId, "activitySourceAddress":$scope.activity.sourceAddress,"activityDestAddress":$scope.activity.destAddress,"applyId":0, "fromUid":uid, "toUid": toUid, "toName":toName, "content":$scope.data.userMessage, "isReply":isReply};
-		Message.sendMessage(payload)
-		.success(function(data, status, headers, config) {
-			Message.fetchAllByActivityId($scope.activity.activityId)
-			.success(function(data, status, headers, config) {
-				  Message.saveOrUpdateAll(data.response);
-				  updateModel();
-			})
-			.error(function(data, status, headers, config) {
-				  $scope.showAlert("取活动消息失败。 "+data.message+"。");
-			});
-			
-			Apply.fetchAllByActivityId($scope.activity.activityId)
-			.success(function(data, status, headers, config) {
-			   Apply.saveOrUpdateAll(data.response);
-			   updateModel();
-			})
-			.error(function(data, status, headers, config) {
-				 $scope.showAlert('获取申请失败。 '+data.message+"。");
-			});	
-			
-			Activity.fetchByActivityId($scope.activity.activityId)
-			.success(function(data, status, headers, config) {
-				Activity.saveOrUpdate(data.response);
-			 	updateModel();
-			})
-			.error(function(data, status, headers, config) {
-				$scope.showAlert('获取活动失败。 '+data.message+"。");
-			});
-			
-			Message.saveOrUpdate(data.response);
-			updateModel();
-		})
-		.error(function(data, status, headers, config) {
-			  $scope.showAlert('消息发布失败。 '+data.message+"。");
-		});
-		$scope.data.userMessage = "";
-	};
+     					
+     					$scope.messagePlaceHolder = "请留言";
+     					$scope.showMessageWidget = false;
+     					$scope.leave = false;
+     					$scope.reply = false;
+     					$scope.data = {};
+     					$scope.leaveMessage = function(){
+     						$scope.messagePlaceHolder = "请留言";
+     						$scope.leave = true;
+     						$scope.reply = false;
+     						$scope.showMessageWidget = true;
+     					};
+     					$scope.replyMessage = function(fromUid, fromName){
+     						$scope.messagePlaceHolder = "回复"+fromName+":";
+     						$scope.leave = false;
+     						$scope.reply = true;
+     						$scope.showMessageWidget = true;
+     						$scope.toUid = fromUid;
+     						$scope.toName = fromName;
+     					};
+     					$scope.sendMessage = function(){
+     						$scope.showMessageWidget = false;
+     						var toUid = 0;
+     						var toName = "";
+     						var isReply = 0;
+     						if($scope.leave == true){
+     							toUid = $scope.activity.ownerId;
+     						}
+     						if($scope.reply == true){
+     							toUid = $scope.toUid;
+     							toName  = $scope.toName;
+     							isReply = 1;
+     						}
+     						var payload = {"messageType":2, "activityId":$scope.activity.activityId, "activitySourceAddress":$scope.activity.sourceAddress,"activityDestAddress":$scope.activity.destAddress,"applyId":0, "fromUid":uid, "toUid": toUid, "toName":toName, "content":$scope.data.userMessage, "isReply":isReply};
+     						Message.sendMessage(payload)
+     						.success(function(data, status, headers, config) {
+     							Message.fetchAllByActivityId($scope.activity.activityId)
+     							.success(function(data, status, headers, config) {
+     								  Message.saveOrUpdateAll(data.response);
+     								  updateModel();
+     							})
+     							.error(function(data, status, headers, config) {
+     								  $scope.showAlert("取活动消息失败。 "+data.message+"。");
+     							});
+     							
+     							Apply.fetchAllByActivityId($scope.activity.activityId)
+     							.success(function(data, status, headers, config) {
+     							   Apply.saveOrUpdateAll(data.response);
+     							   updateModel();
+     							})
+     							.error(function(data, status, headers, config) {
+     								 $scope.showAlert('获取申请失败。 '+data.message+"。");
+     							});	
+     							
+     							Activity.fetchByActivityId($scope.activity.activityId)
+     							.success(function(data, status, headers, config) {
+     								Activity.saveOrUpdate(data.response);
+     							 	updateModel();
+     							})
+     							.error(function(data, status, headers, config) {
+     								$scope.showAlert('获取活动失败。 '+data.message+"。");
+     							});
+     							
+     							Message.saveOrUpdate(data.response);
+     							updateModel();
+     						})
+     						.error(function(data, status, headers, config) {
+     							  $scope.showAlert('消息发布失败。 '+data.message+"。");
+     						});
+     						$scope.data.userMessage = "";
+     					};
+     					
+      			  })
+      			  .error(function(data, status, headers, config) {
+	 				     $scope.showAlert('校验邀请码失败。'+data.message+"。请联系微信小冰(welikesnow)获取邀请码。");
+			      });
+        	  });		  
+       }  else {
+    	    //Check authentication
+    		var cookieUid = User.getUid();
+    		if(cookieUid != ""){
+    			uid = cookieUid;
+    		} else {
+    			var index = window.location.href.indexOf("?", 0);			
+    			if(index > -1){
+    				var query = window.location.href.substring(index+1,  window.location.href.length);
+    				if(query != null && query != undefined && query != ""){					
+    					var args = new Object( );
+    				    var pairs = query.split("&");
+    				    for(var i = 0; i < pairs.length; i++) {
+    				        var pos = pairs[i].indexOf('='); 
+    				        if (pos == -1) continue;  
+    				        var argname = pairs[i].substring(0,pos);
+    				        var value = pairs[i].substring(pos+1);
+    				        args[argname] = value;
+    				    }
+    				    if(args["uid"] != undefined){
+    					    uid = args["uid"];
+    					    var username = args["username"];
+    					    var password = args["password"];				    
+    						var date=new Date();
+    						var expireDays=10;
+    						date.setTime(date.getTime()+expireDays*24*3600*1000);
+    						var cookieStr = "uid="+uid+"; expires="+date.toUTCString();
+    						document.cookie=cookieStr;
+    						cookieStr = "username="+username+"; expires="+date.toUTCString();
+    						document.cookie=cookieStr;
+    						cookieStr = "password="+password+"; expires="+date.toUTCString();
+    						document.cookie=cookieStr;
+    						$scope.showAlert("欢迎进入爱卡冰拼车内部测试(Beta阶段)，为了给雪友营造一个良好的拼车体验，请大家踊跃反馈问题 - 通过点击 \"个人\" ->右上角\" 建议反馈\" 报告问题。因为是在测试阶段，请真正进行拼车去滑雪的时候，在留言里注明，以免他人只是因为测试误申请了您的拼车。");					
+    				    } else {
+    						var userAgent = navigator.userAgent.toLowerCase(); 
+    						if(userAgent.indexOf("micromessenger", 0) > -1){
+    							window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallbackdetail%2F"+$stateParams.activityId+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+    						} else {
+    							if($scope.modal != undefined){
+    								$scope.openModal();
+    							} else {
+    								  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+    								    scope: $scope,
+    								    animation: 'slide-in-up'
+    								  }).then(function(modal) {
+    								    $scope.modal = modal;
+    								    $scope.openModal();
+    								  });
+    							}				
+    						}
+    				    }
+    				}			
+    			} else {
+    				var userAgent = navigator.userAgent.toLowerCase(); 
+    				if(userAgent.indexOf("micromessenger", 0) > -1){
+    					window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri=http%3A%2F%2Fwww.icarving.cn%2Ficarving.api.wechat%2Fuser%2Fauth%2Fcallbackdetail%2F"+$stateParams.activityId+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+    				} else {
+    					if($scope.modal != undefined){
+    						$scope.openModal();
+    					} else {
+    						  $ionicModal.fromTemplateUrl('templates/user-modal.html', {
+    						    scope: $scope,
+    						    animation: 'slide-in-up'
+    						  }).then(function(modal) {
+    						    $scope.modal = modal;
+    						    $scope.openModal();
+    						  });
+    					}				
+    				}
+    			}
+    		}	 		
+    	    	
+    		//Read cache and update model
+    		updateModel();
+    		
+    		//Request network, update cache, and update model
+    		Activity.fetchByActivityId($stateParams.activityId)
+    		.success(function(data, status, headers, config) {
+    			Apply.fetchAllByActivityId(data.response.activityId)
+    			.success(function(data, status, headers, config) {
+    			   Apply.saveOrUpdateAll(data.response);
+    			   updateModel();
+    			})
+    			.error(function(data, status, headers, config) {
+    				 $scope.showAlert('获取申请失败。 '+data.message+"。");
+    			});	
+    			
+    			Message.fetchAllByActivityId(data.response.activityId)
+    			.success(function(data, status, headers, config) {
+    			   Message.saveOrUpdateAll(data.response);
+    			   updateModel();
+    			})
+    			.error(function(data, status, headers, config) {
+    				 $scope.showAlert('获取消息失败。 '+data.message+"。");
+    			});
+    			
+    			Activity.saveOrUpdate(data.response);		
+    			updateModel();
+    		})
+    		.error(function(data, status, headers, config) {
+    			 $scope.showAlert('获取活动失败。 '+data.message+"。");
+    		});
+    		
+    		$scope.applyActivity = function(){
+    			var payload = {"activityId":$scope.activity.activityId,"applyUserId":uid};
+    			Apply.createApply(payload)
+    			.success(function(data, status, headers, config) {			  
+    				  Activity.fetchByActivityId($scope.activity.activityId)
+    				  .success(function(data, status, headers, config) {
+    					  Activity.saveOrUpdate(data.response);
+    					  updateModel();
+    				  })
+    				  .error(function(data, status, headers, config) {
+    					  $scope.showAlert('获取活动失败。 '+data.message+"。");
+    				  });	
+    				  
+    				  Message.fetchAllByActivityId(data.response.activityId)
+    				  .success(function(data, status, headers, config) {
+    					  Message.saveOrUpdateAll(data.response);
+    					  updateModel();
+    				  })
+    				  .error(function(data, status, headers, config) {
+    					  $scope.showAlert('获取消息失败。 '+data.message+"。");
+    				  });
+    				   
+    				  Apply.saveOrUpdate(data.response);
+    				  updateModel();
+    				  
+    				  $scope.showAlert('活动申请成功，可以在个人页面中查看申请详细信息');
+    			 })
+    			.error(function(data, status, headers, config) {
+    				  $scope.showAlert('活动申请失败。 '+data.message+"。");
+    			 });
+    		};
+    		
+    	    $scope.updateActivity = function(){
+    			var payload = {"activityId":$scope.activity.activityId,"startTime":$scope.activity.startTime+":00","returnTime":$scope.activity.returnTime+":00","sourceAddress":$scope.activity.sourceAddress,"destAddress":$scope.activity.destAddress,"charge":$scope.activity.charge,"carType":$scope.activity.carType,"note":$scope.activity.note};
+    			Activity.updateActivity(payload)
+    			.success(function(data, status, headers, config) { 
+    					Apply.fetchAllByActivityId(data.response.activityId)
+    					.success(function(data, status, headers, config) {
+    					   Apply.saveOrUpdateAll(data.response);
+    					   updateModel();
+    					})
+    					.error(function(data, status, headers, config) {
+    						 $scope.showAlert('获取申请失败。 '+data.message+"。");
+    					});	
+    					
+    					Message.fetchAllByActivityId(data.response.activityId)
+    					.success(function(data, status, headers, config) {
+    					   Message.saveOrUpdateAll(data.response);
+    					   updateModel();
+    					})
+    					.error(function(data, status, headers, config) {
+    						 $scope.showAlert('获取消息失败。 '+data.message+"。");
+    					});
+    					
+    					Activity.saveOrUpdate(data.response);
+    					updateModel();
+    					  
+    				   $scope.showAlert("捡人活动更新成功");
+    			 })
+    			.error(function(data, status, headers, config) {
+    				  $scope.showAlert("捡人活动更新失败。 "+data.message+"。");
+    			 });
+    	    };
+    		
+    	    $scope.cancelActivity = function(){
+    	 	   var confirmPopup = $ionicPopup.confirm({
+    	 		     title: '<b>取消活动</b>',
+    	 		     template: '您确定要取消活动吗？一旦取消，将不可恢复，且所有活动申请被自动取消。'
+    	 	   });
+    		   confirmPopup.then(function(res) {
+    		     if(res) {
+    		   		 Activity.cancelActivity($scope.activity.activityId)
+    				 .success(function(data, status, headers, config) {
+    						Apply.fetchAllByActivityId(data.response.activityId)
+    						.success(function(data, status, headers, config) {
+    						   Apply.saveOrUpdateAll(data.response);
+    						   updateModel();
+    						})
+    						.error(function(data, status, headers, config) {
+    							 $scope.showAlert('获取申请失败。 '+data.message+"。");
+    						});	
+    						
+    						Message.fetchAllByActivityId(data.response.activityId)
+    						.success(function(data, status, headers, config) {
+    						   Message.saveOrUpdateAll(data.response);
+    						   updateModel();
+    						})
+    						.error(function(data, status, headers, config) {
+    							 $scope.showAlert('获取消息失败。 '+data.message+"。");
+    						});
+    						
+    						Activity.saveOrUpdate(data.response);
+    						updateModel();
+    						  
+    					  $scope.showAlert("捡人活动取消成功");
+    				  })
+    				  .error(function(data, status, headers, config) {
+    					  $scope.showAlert("捡人活动取消失败。 "+data.message+"。");
+    				  });
+    		     } else {
+    		     }
+    		   });
+    	    };
+    	    
+    	    $scope.shareActivity = function(){
+    	    	document.getElementById('mcover').style.display='block';
+    	    };
+    	    
+    		$scope.approveApply = function(applyId){
+    			Apply.approveApply(applyId)
+    			.success(function(data, status, headers, config) {
+    				Activity.fetchByActivityId($scope.activity.activityId)
+    				.success(function(data, status, headers, config) {
+    					Activity.saveOrUpdate(data.response);
+    					updateModel();
+    				})
+    				.error(function(data, status, headers, config) {
+    					$scope.showAlert('获取活动失败。 '+data.message+"。");
+    				});
+    				
+    				Message.fetchAllByActivityId(data.response.activityId)
+    				.success(function(data, status, headers, config) {
+    					Message.saveOrUpdateAll(data.response);
+    					updateModel();
+    				})
+    				.error(function(data, status, headers, config) {
+    					$scope.showAlert('获取消息失败。 '+data.message+"。");
+    				});
+    				
+    				Apply.saveOrUpdate(data.response);
+    				updateModel();
+    				
+    				$scope.showAlert("批准申请成功");		
+    			})
+    			.error(function(data, status, headers, config) {
+    				$scope.showAlert("批准申请失败。 "+data.message+"。");
+    			});
+    		};
+    		
+    		$scope.unApproveApply = function(applyId){
+    			Apply.unapproveApply(applyId)
+    			.success(function(data, status, headers, config) {
+    				Activity.fetchByActivityId($scope.activity.activityId)
+    				.success(function(data, status, headers, config) {
+    					Activity.saveOrUpdate(data.response);
+    					updateModel();
+    				})
+    				.error(function(data, status, headers, config) {
+    					$scope.showAlert('获取活动失败。 '+data.message+"。");
+    				});		
+    				
+    				Message.fetchAllByActivityId(data.response.activityId)
+    				.success(function(data, status, headers, config) {
+    					Message.saveOrUpdateAll(data.response);
+    					updateModel();
+    				})
+    				.error(function(data, status, headers, config) {
+    					$scope.showAlert('获取消息失败。 '+data.message+"。");
+    				});
+    				
+    			 	Apply.saveOrUpdate(data.response);
+    			 	updateModel();
+    			   
+    				$scope.showAlert("拒绝申请成功");
+    			})
+    			.error(function(data, status, headers, config) {
+    					$scope.showAlert("拒绝申请失败。 "+data.message+"。");
+    			});
+    		};
+    		
+    		$scope.cancelApply = function(applyId){
+    			Apply.cancelApply(applyId)
+    			.success(function(data, status, headers, config) {
+    					Activity.fetchByActivityId($scope.activity.activityId)
+    					.success(function(data, status, headers, config) {
+    						Activity.saveOrUpdate(data.response);
+    					 	updateModel();
+    					})
+    					.error(function(data, status, headers, config) {
+    						$scope.showAlert('获取活动失败。 '+data.message+"。");
+    					});	
+    					
+    					Message.fetchAllByActivityId(data.response.activityId)
+    					.success(function(data, status, headers, config) {
+    						Message.saveOrUpdateAll(data.response);
+    					 	updateModel();
+    					})
+    					.error(function(data, status, headers, config) {
+    						$scope.showAlert('获取消息失败。 '+data.message+"。");
+    					});
+    					
+    					Apply.saveOrUpdate(data.response);
+    				 	updateModel();
+    				 	
+    				 	$scope.showAlert("取消申请成功");				
+    			})
+    			.error(function(data, status, headers, config) {
+    					$scope.showAlert("取消申请失败。 "+data.message+"。");
+    			});
+    		};
+    		
+    		$scope.renewApply = function(applyId){
+    			Apply.renewApply(applyId)
+    			.success(function(data, status, headers, config) {
+    					Activity.fetchByActivityId($scope.activity.activityId)
+    					.success(function(data, status, headers, config) {
+    						Activity.saveOrUpdate(data.response);
+    					 	updateModel();
+    					})
+    					.error(function(data, status, headers, config) {
+    						$scope.showAlert('获取活动失败。 '+data.message+"。");
+    					});	
+    					
+    					Message.fetchAllByActivityId(data.response.activityId)
+    					.success(function(data, status, headers, config) {
+    						Message.saveOrUpdateAll(data.response);
+    					 	updateModel();
+    					})
+    					.error(function(data, status, headers, config) {
+    						$scope.showAlert('获取消息失败。 '+data.message+"。");
+    					});
+    					
+    					Apply.saveOrUpdate(data.response);
+    				 	updateModel();
+    				 	
+    				 	$scope.showAlert("再次申请成功");				
+    			})
+    			.error(function(data, status, headers, config) {
+    					$scope.showAlert("再次申请失败。 "+data.message+"。");
+    			});
+    		};
+
+    		
+    		$scope.messagePlaceHolder = "请留言";
+    		$scope.showMessageWidget = false;
+    		$scope.leave = false;
+    		$scope.reply = false;
+    		$scope.data = {};
+    		$scope.leaveMessage = function(){
+    			$scope.messagePlaceHolder = "请留言";
+    			$scope.leave = true;
+    			$scope.reply = false;
+    			$scope.showMessageWidget = true;
+    		};
+    		$scope.replyMessage = function(fromUid, fromName){
+    			$scope.messagePlaceHolder = "回复"+fromName+":";
+    			$scope.leave = false;
+    			$scope.reply = true;
+    			$scope.showMessageWidget = true;
+    			$scope.toUid = fromUid;
+    			$scope.toName = fromName;
+    		};
+    		$scope.sendMessage = function(){
+    			$scope.showMessageWidget = false;
+    			var toUid = 0;
+    			var toName = "";
+    			var isReply = 0;
+    			if($scope.leave == true){
+    				toUid = $scope.activity.ownerId;
+    			}
+    			if($scope.reply == true){
+    				toUid = $scope.toUid;
+    				toName  = $scope.toName;
+    				isReply = 1;
+    			}
+    			var payload = {"messageType":2, "activityId":$scope.activity.activityId, "activitySourceAddress":$scope.activity.sourceAddress,"activityDestAddress":$scope.activity.destAddress,"applyId":0, "fromUid":uid, "toUid": toUid, "toName":toName, "content":$scope.data.userMessage, "isReply":isReply};
+    			Message.sendMessage(payload)
+    			.success(function(data, status, headers, config) {
+    				Message.fetchAllByActivityId($scope.activity.activityId)
+    				.success(function(data, status, headers, config) {
+    					  Message.saveOrUpdateAll(data.response);
+    					  updateModel();
+    				})
+    				.error(function(data, status, headers, config) {
+    					  $scope.showAlert("取活动消息失败。 "+data.message+"。");
+    				});
+    				
+    				Apply.fetchAllByActivityId($scope.activity.activityId)
+    				.success(function(data, status, headers, config) {
+    				   Apply.saveOrUpdateAll(data.response);
+    				   updateModel();
+    				})
+    				.error(function(data, status, headers, config) {
+    					 $scope.showAlert('获取申请失败。 '+data.message+"。");
+    				});	
+    				
+    				Activity.fetchByActivityId($scope.activity.activityId)
+    				.success(function(data, status, headers, config) {
+    					Activity.saveOrUpdate(data.response);
+    				 	updateModel();
+    				})
+    				.error(function(data, status, headers, config) {
+    					$scope.showAlert('获取活动失败。 '+data.message+"。");
+    				});
+    				
+    				Message.saveOrUpdate(data.response);
+    				updateModel();
+    			})
+    			.error(function(data, status, headers, config) {
+    				  $scope.showAlert('消息发布失败。 '+data.message+"。");
+    			});
+    			$scope.data.userMessage = "";
+    		};
+       }
+    
+
 	
 })

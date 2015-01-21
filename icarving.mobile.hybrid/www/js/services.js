@@ -258,7 +258,7 @@ angular.module('icarving.services', [])
   	getAllMessageByActivityId: function(activityId){
   		var result = [];
         for (var i = 0; i < messages.length; i++) {
-            if (messages[i].activityId === parseInt(activityId) && messages[i].messageType == 2) {
+            if (messages[i].activityId === parseInt(activityId) && (messages[i].messageType == 2 || messages[i].messageType == 3)) {
             	result.push(messages[i]);
             }
           }
@@ -276,7 +276,7 @@ angular.module('icarving.services', [])
   	getAllMessageByOwnerId: function(ownerId){
   		var result = [];
         for (var i = 0; i < messages.length; i++) {
-            if (messages[i].toUid === parseInt(ownerId) && messages[i].messageType == 2) {
+            if (messages[i].toUid === parseInt(ownerId) && (messages[i].messageType == 2 || messages[i].messageType == 3)) {
             	result.push(messages[i]);
             }
           }
